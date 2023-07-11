@@ -1,0 +1,17 @@
+1.在此目录下命令行运行命令: pip install -r ./requirement.txt    安装项目所有所需依赖包
+2.运行redis:
+    执行`redis-server`命令, 接着可以再打开一个cmd窗口运行`redis-cli`命令, 进入redis命令行测试ping, 如果有回应则运行成功
+3.确保项目根目录名称为: myflasky
+4.确保python环境中安装了requirement.txt中的依赖包.确保python解释器版本>=3.5<=3.10.7
+5.进入项目根目录, 打开命令行使用`python3 main.py`或者`python main.py`运行flask程序
+6.也可以使用编译器或者ide(pycharm)右击main文件运行flask程序
+
+初始登陆账户密码告知:
+    账户:admin@qq.com
+    密码:admin
+
+
+注册页面开发者密钥:ipython
+
+* 免安装方式, 访问我们部署的云服务器url: http://36.140.28.221:5000, 云服务器来源于赛题官方渠道
+* 无需安装即可体验全部系统功能, 与此项目包源代码一模一样, 使用中如有任何问题可以联系我们的团队, 邮箱2744726697@qq.com

@@ -1,0 +1,174 @@
+
+body, html {
+    margin: 0 auto;
+    padding: 0 0;
+    width: 100%;
+    height: 100%;
+}
+
+.aside-bar {
+    border: 1px solid palevioletred;
+}
+
+#camera {
+    width: 400px;
+    height: 255px;
+
+    position: relative;
+}
+
+#camera img {
+    width: 100%;
+    height: 100%;
+}
+
+#camera video {
+    /*相机视频组件*/
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+#camera button {
+    margin-top: 10px;
+}
+
+/* 遮罩层的样式 */
+.overlay {
+
+    filter: blur(5px); /*将div模糊掉*/
+    opacity: 0.5; /*使div更加透明*/
+
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+tbody {
+    word-break: break-word;
+}
+
+.rotate { /* 给refresh图片添加动画 */
+    animation-name: spin;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg); /* 从0度旋转 */
+    }
+    to {
+        transform: rotate(360deg); /* 旋转到360度 */
+    }
+}
+
+.rotate.stop {
+    /*旋转动画*/
+    animation-name: none;
+    transform: rotate(0deg);
+}
+
+
+#offcanvasNavbar {
+    /*侧边导航栏样式*/
+    max-width: 60%;
+}
+
+@media (min-width: 990px) {
+    /* 屏幕宽度>=990 */
+    /* 大屏显示隐藏按钮, 展示侧边栏 */
+    #btnLeft {
+        /* 两个导航栏上的按钮 */
+        display: none;
+    }
+
+    #main {
+        padding-left: 20%;
+    }
+
+}
+
+@media (max-width: 990px) {
+    /* 屏幕宽度<=990 */
+    /* 小屏显示, 隐藏侧边栏, 展示按钮 */
+    #aside {
+        display: none;
+    }
+}
+
+#aside {
+    /*侧边栏样式*/
+    overflow-y: auto;
+    position: fixed;
+    width: 20%;
+}
+
+a.nav-link {
+    /*菜单样式*/
+    width: 100%;
+}
+
+div#crops span:not([id]) {
+    /*background-color: #A7A7D9;*/
+    color: #0062cc;
+    border-radius: 5px 5px 5px 5px;
+    font-size: 1.45rem;
+}
+
+div#crops span img {
+    width: 2rem;
+    border-radius: 20%;
+    border: 1px solid palevioletred;
+}
+
+div#crops ul li {
+    font-size: 1.15rem;
+}
+
+div.card-header {
+    background-color: palevioletred;
+}
+
+div#menu4 #front img {
+    width: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #6c757d;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #3498db;
+}
+
+.scrollspy-example {
+    /*设置滑动条*/
+}
+
+#scroll h4 {
+    color: palevioletred;
+}
+
+#scroll p {
+    color: darkslategray;
+}
+
+.gradient-text {
+    background-image: linear-gradient(to right, #6ea8fe, #0062cc, #0a53be, #0d6efd);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+

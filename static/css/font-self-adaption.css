@@ -1,0 +1,55 @@
+
+@media (max-width: 400px) {
+    /* 自定义样式 */
+    .text-sm {
+        font-size: 0.95rem !important;
+    }
+}
+
+@media (max-width: 320px) {
+    .text-min {
+        font-size: 0.75rem !important;
+    }
+}
+
+/* 小屏幕（≥576px） */
+@media (min-width: 576px) {
+    /* 自定义样式 */
+    .text-md {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* 中等屏幕（≥768px） */
+@media (min-width: 768px) {
+    /* 自定义样式 */
+    .text-lg {
+        font-size: 1.25rem !important;
+    }
+
+}
+
+/* 大屏幕（≥992px） */
+@media (min-width: 992px) {
+    /* 自定义样式 */
+    .text-xl {
+        font-size: 1.345rem !important;
+    }
+}
+
+/* 超大屏幕（≥1200px） */
+@media (min-width: 1200px) {
+    /* 自定义样式 */
+    .text-xxl {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* 高分辨率屏幕（≥1400px） */
+@media (min-width: 1400px) {
+    /* 自定义样式 */
+    .text-max {
+        font-size: 1.75rem !important;
+    }
+}
+
