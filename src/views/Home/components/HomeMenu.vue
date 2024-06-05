@@ -16,7 +16,8 @@ import {
     BookOutline as BookIcon,
     PersonOutline as PersonIcon,
     WineOutline as WineIcon,
-    HomeOutline as HomeIcon
+    HomeOutline as HomeIcon,
+    EyeOutline as RecognitionIcon
 } from "@vicons/ionicons5";
 import {useUserProfile} from "@/stores/userProfile.js";
 
@@ -58,12 +59,12 @@ const menuOptions = [
         label: () => h(
             RouterLink,
             {
-                to: '/test',
+                to: '/recognition',
             },
             "Recognition"
         ),
         key: "Recognition",
-        icon: renderIcon(BookIcon)
+        icon: renderIcon(RecognitionIcon)
     },
     {
         label: "1973年的弹珠玩具",

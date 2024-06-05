@@ -26,9 +26,9 @@ const router = createRouter({
                     meta: {title: '玉米医生'}
                 },
                 {
-                    path: "/test",
-                    component: () => import('@/views/Page2/Test.vue'), //
-                    meta: {title: 'Test'}
+                    path: "/recognition",
+                    component: () => import('@/views/Recognition/Index.vue'), //
+                    meta: {title: '病害识别'}
                 },
                 {
                     path: "/page3",

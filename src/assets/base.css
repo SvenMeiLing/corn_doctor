@@ -1,5 +1,5 @@
  /*tailwindcss 引入*/
-/*@tailwind base; 禁用此基本样式,否则影响默认样式导致冲突*/
+/*@tailwind base; 禁用此基本样式,否则影响默认样式导致冲突, 有一问题:禁用此基本样式后border无法使用*/
 @tailwind components;
 @tailwind utilities;
 

@@ -16,11 +16,8 @@
             <n-scrollbar style="max-height: 500px" trigger="hover">
                 <HomeMenu></HomeMenu>
             </n-scrollbar>
-
         </n-message-provider>
-
     </n-layout-sider>
-
 </template>
 
 <script setup>
