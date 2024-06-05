@@ -1,6 +1,9 @@
 # vue_corn
 
-This template should help get you started developing with Vue 3 in Vite.
+玉米医生项目,重构版.
+* 后端基于 FastAPI+MySQL+Redis+ES+RabbitMQ
+* 服务器架构采用:Ubuntu+Docker+Nginx+Uvicorn
+* 前端基于:Vue3+vite4+NaiveUI
 
 ## Recommended IDE Setup
 
