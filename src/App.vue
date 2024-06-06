@@ -1,6 +1,6 @@
 <template>
     <n-config-provider
-            :theme="theme.name"
+            :theme="theme.name" :id="theme.title"
             >
         <RouterView/>
     </n-config-provider>

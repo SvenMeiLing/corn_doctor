@@ -22,7 +22,8 @@ export const useDesignSettingStore = defineStore(
             if (isDarkTheme.value) {
                 return {
                     name: darkTheme,
-                    icon: LightbulbOutlined
+                    icon: LightbulbOutlined,
+                    title:'dark'
                 }
             }
             return {
