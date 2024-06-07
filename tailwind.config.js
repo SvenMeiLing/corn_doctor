@@ -9,5 +9,6 @@ export default {
         extend: {},
     },
     plugins: [],
-    darkMode: ['selector', '#dark']
+    darkMode: ['selector', '#dark'], // 找到黑暗模式的标签, 可dark:bg-red-400 适配黑暗模式
+    important: true, // 强制样式
 }

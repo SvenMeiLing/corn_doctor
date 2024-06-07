@@ -15,3 +15,15 @@ html, body, #app {
     box-sizing: border-box;
     transition: background-color .5s ease-in-out, color .6s ease-in-out;
 }
+/*.file-list::-webkit-scrollbar {*/
+/*    width: 10px; !* 设置滚动条宽度 *!*/
+/*}*/
+
+/*.file-list::-webkit-scrollbar-thumb {*/
+/*    background-color: #888; !* 设置滚动条手柄的背景颜色 *!*/
+/*    border-radius: 5px; !* 设置滚动条手柄的圆角 *!*/
+/*}*/
+
+/*.file-list::-webkit-scrollbar-track {*/
+/*    background-color: #f1f1f1; !* 设置滚动条轨道的背景颜色 *!*/
+/*}*/

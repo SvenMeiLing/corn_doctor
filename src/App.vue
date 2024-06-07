@@ -1,4 +1,4 @@
-<template>
+<template class="first">
     <n-config-provider
             :theme="theme.name" :id="theme.title"
             >

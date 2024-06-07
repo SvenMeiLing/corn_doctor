@@ -13,13 +13,14 @@
                             <n-icon :component="LightbulbTwotone" size="30" class="bulb"></n-icon>
                         </n-button>
                         <n-modal
+                                to=".n-config-provider"
                                 v-model:show="showModal"
-                                class="custom-card"
+                                class="custom-card w-96 sm:w-96 md:w-4/6 xl:w-1/2"
                                 preset="card"
-                                :style="bodyStyle"
                                 size="huge"
                                 :bordered="false"
                                 :segmented="segmented"
+                                content-class="p-0"
                         >
                             <template #header>
                                 <n-space align="center" class="h-full" size="small"
@@ -33,28 +34,37 @@
 
                             </template>
 
-                            <n-form
-                                    ref="formRef"
-                                    inline
-                                    :label-width="80"
-                                    :model="formValue"
-                                    :rules="rules"
+                            <!--type为file的input-->
+                            <n-upload
+                                    action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
+                                    multiple
+                                    :create-thumbnail-url="createThumbnailUrl"
+                                    list-type="image"
+                                    :default-file-list="defaultFList"
+                                    :data="userFiles"
+                                    file-list-class="file-list flex flex-wrap overflow-auto
+                                          max-h-[6rem] bg-rose-100/75 dark:bg-rose-900/50 rounded shadow-md dark:shadow-rose-900/50"
+                                    class="flex flex-col "
+                                    accept="image/*"
+                                    @before-upload="beforeUpload"
+                                    @update-file-list="fileListUpdate"
                             >
-                                <n-form-item label="Upload" path="formValue">
-                                    <n-upload multiple
-                                              :create-thumbnail-url="createThumbnailUrl"
-                                              list-type="image"
-                                    >
-                                        <n-button @click="logFile">Upload file</n-button>
-                                    </n-upload>
-                                </n-form-item>
+                                <n-button @click="logFile">
+                                    <n-icon :size="25" :component="DriveFolderUploadFilled"></n-icon>
+                                    上传植物图片
+                                </n-button>
 
-
-                            </n-form>
+                            </n-upload>
 
 
                             <template #footer>
-                                尾部
+                                <n-button
+                                        :disabled="0"
+                                        style="margin-bottom: 12px"
+                                        @click="handleClick"
+                                >
+                                    上传文件
+                                </n-button>
                             </template>
                         </n-modal>
                         <n-text>Upload for Instant Diagnosis
@@ -63,7 +73,6 @@
                     </n-space>
                 </n-grid-item>
                 <n-grid-item style="border: 1px solid lightgreen">
-
                 </n-grid-item>
             </n-grid>
 
@@ -77,11 +86,12 @@
 
 </template>
 <script setup>
-import {ref} from 'vue'
+import {ref, computed} from 'vue'
 import {
     LightbulbTwotone,
     ArrowBackFilled,
-    ArrowForwardFilled
+    ArrowForwardFilled,
+    DriveFolderUploadFilled
 } from '@vicons/material'
 
 const createColumns = computed(() => {
@@ -108,26 +118,74 @@ const data = ref([])
 
 const showModal = ref(false)
 const bodyStyle = {
-        width: "600px"
+        width: "500px"
     },
     segmented = {
         content: "soft",
         footer: "soft"
     }
-const formValue = reactive({
-        files: []
-    }),
-    rules = reactive({
-        files: {
-            required: true,
-            trigger: 'blur'
-        }
-    }),
-    logFile = () => {
-        console.log(formValue.files)
+const userFiles = ref([]),
+
+    handleClick = () => {
+        // 上传文件逻辑
+        console.log('111')
     },
-    createThumbnailUrl1 = (file) => {
-        return file
+    defaultFList = reactive([
+        {
+            id: 'razars',
+            name: '刀.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        },
+        {
+            id: 'edge',
+            name: '锋.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        },
+        {
+            id: 'razars',
+            name: '剑.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        },
+        {
+            id: 'edge',
+            name: '客.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        },
+        {
+            id: 'razars',
+            name: '刀.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        },
+        {
+            id: 'edge',
+            name: '锋.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        },
+        {
+            id: 'razars',
+            name: '剑.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        },
+        {
+            id: 'edge',
+            name: '客.png',
+            status: 'finished',
+            url: "https://picsum.photos/50/50"
+        }
+    ]),
+    beforeUpload = (data) => {
+        console.log(data)
+    },
+    fileListUpdate = (fileList) => {
+        userFiles.value = fileList
+        console.log(userFiles.value)
     }
 
 onMounted(() => {
@@ -139,11 +197,31 @@ onMounted(() => {
             desc: "..."
         }
     )
+    // 打印
+    console.log('000')
 })
 
 </script>
 <style scoped>
 #dark .bulb {
+    /*黑暗模式时灯泡会亮*/
     filter: drop-shadow(0 -5px 4px yellow)
+}
+
+:deep(.file-list::-webkit-scrollbar) {
+    width: 5px; /* 设置滚动条宽度 */
+}
+
+:deep(.file-list::-webkit-scrollbar-thumb) {
+    background-color: #888; /* 设置滚动条手柄的背景颜色 */
+    border-radius: 7px; /* 设置滚动条手柄的圆角 */
+}
+
+:deep(.file-list::-webkit-scrollbar-track) {
+    background-color: transparent; /* 设置滚动条轨道的背景颜色 */
+}
+
+:deep(.n-upload-file) {
+    flex-grow: 1;
 }
 </style>
