@@ -36,11 +36,10 @@
 
                             <!--type为file的input-->
                             <n-upload
+                                    ref="uploadRef"
                                     action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
                                     multiple
-                                    :create-thumbnail-url="createThumbnailUrl"
                                     list-type="image"
-                                    :default-file-list="defaultFList"
                                     :data="userFiles"
                                     file-list-class="file-list flex flex-wrap overflow-auto
                                           max-h-[6rem] bg-rose-100/75 dark:bg-rose-900/50 rounded shadow-md dark:shadow-rose-900/50"
@@ -48,13 +47,15 @@
                                     accept="image/*"
                                     @before-upload="beforeUpload"
                                     @update-file-list="fileListUpdate"
+                                    @finish="onFinish"
                             >
-                                <n-button @click="logFile">
+                                <n-button>
                                     <n-icon :size="25" :component="DriveFolderUploadFilled"></n-icon>
                                     上传植物图片
                                 </n-button>
 
                             </n-upload>
+
 
 
                             <template #footer>
@@ -63,7 +64,7 @@
                                         style="margin-bottom: 12px"
                                         @click="handleClick"
                                 >
-                                    上传文件
+                                    提交
                                 </n-button>
                             </template>
                         </n-modal>
@@ -71,8 +72,6 @@
                             <n-text code style="color: palevioletred;">结果将显示在下方表格中:</n-text>
                         </n-text>
                     </n-space>
-                </n-grid-item>
-                <n-grid-item style="border: 1px solid lightgreen">
                 </n-grid-item>
             </n-grid>
 
@@ -93,6 +92,7 @@ import {
     ArrowForwardFilled,
     DriveFolderUploadFilled
 } from '@vicons/material'
+import {uploadImg} from "@/apis/recognition.js";
 
 const createColumns = computed(() => {
     return [
@@ -115,7 +115,6 @@ const createColumns = computed(() => {
     ]
 })
 const data = ref([])
-
 const showModal = ref(false)
 const bodyStyle = {
         width: "500px"
@@ -125,68 +124,80 @@ const bodyStyle = {
         footer: "soft"
     }
 const userFiles = ref([]),
-
-    handleClick = () => {
+    uploadRef = ref(),
+    handleClick = async () => {
+        const {data} = uploadRef.value
         // 上传文件逻辑
-        console.log('111')
+        let formData = new FormData()
+        data.forEach((value) => {
+            // 添加到表单
+            const {name, file} = value;
+            formData.append("file", file)
+        })
+        const res = await uploadImg(formData)
+        console.log(res)
     },
-    defaultFList = reactive([
-        {
-            id: 'razars',
-            name: '刀.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        },
-        {
-            id: 'edge',
-            name: '锋.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        },
-        {
-            id: 'razars',
-            name: '剑.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        },
-        {
-            id: 'edge',
-            name: '客.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        },
-        {
-            id: 'razars',
-            name: '刀.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        },
-        {
-            id: 'edge',
-            name: '锋.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        },
-        {
-            id: 'razars',
-            name: '剑.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        },
-        {
-            id: 'edge',
-            name: '客.png',
-            status: 'finished',
-            url: "https://picsum.photos/50/50"
-        }
-    ]),
+    // defaultFList = reactive([
+    //     {
+    //         id: 'razars',
+    //         name: '刀.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     },
+    //     {
+    //         id: 'edge',
+    //         name: '锋.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     },
+    //     {
+    //         id: 'razars',
+    //         name: '剑.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     },
+    //     {
+    //         id: 'edge',
+    //         name: '客.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     },
+    //     {
+    //         id: 'razars',
+    //         name: '刀.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     },
+    //     {
+    //         id: 'edge',
+    //         name: '锋.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     },
+    //     {
+    //         id: 'razars',
+    //         name: '剑.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     },
+    //     {
+    //         id: 'edge',
+    //         name: '客.png',
+    //         status: 'finished',
+    //         url: "https://picsum.photos/50/50"
+    //     }
+    // ]),
     beforeUpload = (data) => {
         console.log(data)
     },
     fileListUpdate = (fileList) => {
         userFiles.value = fileList
         console.log(userFiles.value)
+    },
+    onFinish = (file, event) => {
+        console.log("finish")
     }
+// todo: 点击上传后,选择文件,最后提交发起请求form-data,等待服务器响应,关闭对话框渲染数据到表格中
 
 onMounted(() => {
     data.value.push(

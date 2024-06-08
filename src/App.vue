@@ -1,16 +1,18 @@
-<template class="first">
-    <n-config-provider
-            :theme="theme.name" :id="theme.title"
-            >
-        <RouterView/>
-    </n-config-provider>
+<template>
+
+        <n-config-provider
+                :theme="theme.name" :id="theme.title"
+        >
+            <n-message-provider>
+                <RouterView/>
+            </n-message-provider>
+        </n-config-provider>
+
 </template>
 <script setup>
 import {onMounted} from 'vue'
 import {storeToRefs} from "pinia";
 import {useDesignSettingStore} from "@/stores/designSetting.js";
-import {darkTheme} from 'naive-ui'
-
 
 const themeStore = useDesignSettingStore()
 const {theme} = storeToRefs(themeStore)

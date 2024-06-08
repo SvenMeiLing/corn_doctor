@@ -1,11 +1,12 @@
 import './assets/main.css'
+import "/mock"
 import {createApp} from 'vue'
 import App from './App.vue'
 import naive from 'naive-ui'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import {createShowTitle, setupRouterGuard} from './router/index.js'
 import router from './router'
-
+import "@/apis/recognition.js"
 // 通用字体
 import 'vfonts/Lato.css'
 // 等宽字体
@@ -19,7 +20,6 @@ import {createPinia} from "pinia"
 setupRouterGuard(router);
 // 标签页title更新
 createShowTitle(router)
-
 //2.执行方法得到示例
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
