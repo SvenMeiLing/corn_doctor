@@ -6,12 +6,11 @@
     *Author: zzy
 */
 import request from '@/utils/http.js'
-import axios from "axios";
 
 export function uploadImg(data) {
-    return request.post("/upload", data, {
+    return request.post("http://127.0.0.1:8000/upload", data, {
         onUploadProgress: function (e) {
             console.log('Upload progress:', e);
-        }
+        },
     });
 }

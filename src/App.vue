@@ -1,12 +1,18 @@
 <template>
 
-        <n-config-provider
-                :theme="theme.name" :id="theme.title"
-        >
+    <n-config-provider
+            :theme="theme.name" :id="theme.title"
+    >
+        <n-loading-bar-provider>
             <n-message-provider>
+
                 <RouterView/>
+
             </n-message-provider>
-        </n-config-provider>
+        </n-loading-bar-provider>
+
+
+    </n-config-provider>
 
 </template>
 <script setup>

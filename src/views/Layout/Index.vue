@@ -1,5 +1,5 @@
 <template>
-
+<n-loading-bar-provider>
     <n-layout class="layout">
         <LayoutHeader class="header"></LayoutHeader>
         <n-layout has-sider class="main">
@@ -7,6 +7,8 @@
         </n-layout>
         <LayoutFooter class="footer"></LayoutFooter>
     </n-layout>
+</n-loading-bar-provider>
+
 
 </template>
 
@@ -38,7 +40,8 @@
 import LayoutHeader from "@/views/Layout/components/LayoutHeader.vue";
 import Home from "@/views/Home/Index.vue"
 import LayoutFooter from "@/views/Layout/components/LayoutFooter.vue";
-import {useMessage} from 'naive-ui'
+import {useMessage, useLoadingBar} from 'naive-ui'
 
 window.$message = useMessage()
+window.$loadingBar = useLoadingBar()
 </script>
