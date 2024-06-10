@@ -3,13 +3,16 @@
     <n-config-provider
             :theme="theme.name" :id="theme.title"
     >
-        <n-loading-bar-provider>
-            <n-message-provider>
 
-                <RouterView/>
+        <n-message-provider>
 
-            </n-message-provider>
-        </n-loading-bar-provider>
+            <RouterView v-slot="{Component}">
+                <keep-alive>
+                    <component :is="Component"></component>
+                </keep-alive>
+            </RouterView>
+
+        </n-message-provider>
 
 
     </n-config-provider>

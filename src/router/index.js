@@ -28,7 +28,7 @@ const router = createRouter({
                 {
                     path: "/recognition",
                     component: () => import('@/views/Recognition/Index.vue'), //
-                    meta: {title: '病害识别'}
+                    meta: {title: '病害识别', keepAlive: true}
                 },
                 {
                     path: "/page3",

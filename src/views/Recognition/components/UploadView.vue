@@ -1,14 +1,15 @@
 <script setup>
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import {
     LightbulbTwotone,
     DriveFolderUploadFilled
 } from '@vicons/material'
 import {uploadImg} from "@/apis/recognition.js";
-import {useLoadingBar} from 'naive-ui'
+import emitter from '@/utils/mitt'
 
-const loadingBar = useLoadingBar()
-const zzy = ref(null)
+const isLoading = ref(false)
+const isSubmitting = ref(false)
+const recognitionData = ref([])
 
 const showModal = ref(false)
 const segmented = {
@@ -19,14 +20,31 @@ const segmented = {
 const userFiles = ref([]),
     uploadRef = ref(),
     handleClick = async () => {
-        window.$loadingBar.start()
+        /**
+         * todo:1.显示进度/全局加载条已实现
+         *      2.如果文件数量<1,点击提交后弹出消息
+         *      3.如果响应成功,弹出提示信息告知(同步和异步弹出消息类型实现差异化)
+         *      4.关闭对话框, 并展示结果到table组件中
+         */
+        // 点击提交时设置为加载状态
+        isLoading.value = true
+        isSubmitting.value = true
+
+        // 把文件打包提交到服务器
         const formData = new FormData()
         userFiles.value.forEach((value, index) => {
             // console.log(value.file)
             formData.append('file', value.file)
         })
-        // const res = await uploadImg(formData)
-        // loadingBar.finish()
+        // 保存响应内容
+        const result = await uploadImg(formData)
+        recognitionData.value = result
+        // 传递数据给组件
+        emitter.emit('recognitionData', recognitionData.value)
+        // 后置操作:1.关闭加载状态和弹出框
+        isLoading.value = false
+        isSubmitting.value = false
+        showModal.value = false
     },
     // defaultFList = reactive([
     //     {
@@ -90,16 +108,21 @@ const userFiles = ref([]),
     }
 // todo: 点击上传后,选择文件,最后提交发起请求form-data,等待服务器响应,关闭对话框渲染数据到表格中
 
+onMounted(() => {
+
+})
 </script>
 
 <template>
-    <n-loading-bar-provider :to="zzy">
-        <n-space :wrap-item="false" :wrap="false">
+    <n-space :wrap-item="false" :wrap="false">
         <n-grid cols="1 s:1 m:2 xl:2" responsive="screen" style="border: 1px solid lightgreen">
             <n-grid-item style="border: 1px solid lightgreen">
                 <n-space vertical align="start">
 
-                    <n-text ref="zzy" class="text-4xl font-thin" tag="div">上传植物相片, 以进行即时分析</n-text>
+                    <n-text class="text-4xl font-thin" tag="div">上传植物相片, 以进行即时分析</n-text>
+
+                    <n-button @click="handleClick">start</n-button>
+
                     <n-button color="#20B2AAFF" class="w-[14rem] h-[2.7rem] rounded-tl-xl rounded-br-xl"
                               size="large"
                               @click="showModal = true"
@@ -117,22 +140,24 @@ const userFiles = ref([]),
                             :bordered="false"
                             :segmented="segmented"
                             content-class="p-0"
+                            @after-leave="isLoading = false"
                     >
                         <template #header>
 
                             <n-space
-
                                     align="center"
                                     class="sp h-full"
                                     size="small"
                                     :wrap-item="false"
                             >
 
-                                <img src="/src/assets/images/smile.png"
+                                <img v-if="!isLoading" src="/src/assets/images/smile.png"
                                      class="h-9" alt="">
+                                <n-spin stroke="#FFD700" v-else size="medium"/>
                                 <n-text class="font-thin">
                                     仅支持图片文件哦!
                                 </n-text>
+
                             </n-space>
 
 
@@ -142,14 +167,15 @@ const userFiles = ref([]),
 
                         <n-upload
                                 ref="uploadRef"
-                                action="http://127.0.0.1:8000/upload"
+                                action="#"
+                                :default-upload="false"
                                 multiple
                                 :file-list="userFiles"
                                 @update:file-list="fileListUpdate"
                                 list-type="image"
                                 file-list-class="file-list flex flex-wrap overflow-auto
                                           max-h-[6rem] bg-rose-100/75 dark:bg-rose-900/50 rounded shadow-md dark:shadow-rose-900/50"
-                                class="flex flex-col "
+                                class="flex flex-col mt-3"
                                 accept="image/*"
                         >
                             <n-button>
@@ -161,7 +187,7 @@ const userFiles = ref([]),
 
                         <template #footer>
                             <n-button
-                                    :disabled="0"
+                                    :disabled="isSubmitting"
                                     style="margin-bottom: 12px"
                                     @click="handleClick"
                             >
@@ -175,10 +201,7 @@ const userFiles = ref([]),
                 </n-space>
             </n-grid-item>
         </n-grid>
-
-
     </n-space>
-    </n-loading-bar-provider>
 
 </template>
 

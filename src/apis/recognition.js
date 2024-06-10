@@ -8,9 +8,8 @@
 import request from '@/utils/http.js'
 
 export function uploadImg(data) {
-    return request.post("http://127.0.0.1:8000/upload", data, {
-        onUploadProgress: function (e) {
-            console.log('Upload progress:', e);
-        },
-    });
+    return request('/upload', {
+        method: "POST",
+        data
+    })
 }

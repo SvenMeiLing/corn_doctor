@@ -11,8 +11,6 @@ import "@/apis/recognition.js"
 import 'vfonts/Lato.css'
 // 等宽字体
 import 'vfonts/FiraCode.css'
-
-
 //1.导入createPinia
 import {createPinia} from "pinia"
 
@@ -23,8 +21,8 @@ createShowTitle(router)
 //2.执行方法得到示例
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
-createApp(App)
-    .use(router)
-    .use(pinia)
+const app = createApp(App).use(router)
+
+app.use(pinia)
     .use(naive)
     .mount('#app')
