@@ -5,12 +5,7 @@
     >
 
         <n-message-provider>
-
-            <RouterView v-slot="{Component}">
-                <keep-alive>
-                    <component :is="Component"></component>
-                </keep-alive>
-            </RouterView>
+            <RouterView />
 
         </n-message-provider>
 

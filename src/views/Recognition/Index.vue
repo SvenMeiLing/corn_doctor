@@ -4,9 +4,8 @@
         <!--标题与模态框合体-->
         <UploadView ref="zzy"></UploadView>
         <!--这个组件需要缓存,切换路由时数据依然是最后一次的-->
-        <keep-alive>
-            <component :is="TableView" :key="$route.path"></component>
-        </keep-alive>
+
+        <TableView></TableView>
 
 
     </n-layout>

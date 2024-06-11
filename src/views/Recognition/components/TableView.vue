@@ -61,6 +61,7 @@ onActivated(() => {
 })
 // 移除
 onUnmounted(() => {
+    console.log("TableView to onUnMounted")
     emitter.off('recognitionData', () => {
     })
 })

@@ -11,7 +11,7 @@ import {h} from "vue";
 import {NIcon, useMessage} from "naive-ui";
 import {RouterLink} from "vue-router";
 import {useRoute} from 'vue-router'
-import {computed, onMounted} from "vue";
+import {onMounted} from "vue";
 import {
     BookOutline as BookIcon,
     PersonOutline as PersonIcon,
@@ -59,7 +59,7 @@ const menuOptions = [
         label: () => h(
             RouterLink,
             {
-                to: '/recognition',
+                to: '/recognition'
             },
             "Recognition"
         ),
