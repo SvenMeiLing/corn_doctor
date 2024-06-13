@@ -7,8 +7,6 @@ from typing import List
 
 from pydantic import BaseModel, ConfigDict, Field
 
-# from app.schemas.plant import Plant
-
 
 class ImpactEnum(enum.Enum):
     HIGH: 1

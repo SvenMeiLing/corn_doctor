@@ -12,13 +12,6 @@ from app.schemas.disease_pest import Disease, Pest
 
 
 class PlantBase(BaseModel):
-    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
-
-    id: int = Field(None)
-    user_id: int = Field(..., description="外键与用户表关联")
-
-
-class Plant(PlantBase):
     class HealthStatus(enum.Enum):
         # 健康状态
         HEALTHY = 1
@@ -47,5 +40,23 @@ class Plant(PlantBase):
         StringConstraints(strip_whitespace=True, max_length=256)
     ] = Field(None, example="这是蓝莓巨峰,酸甜可口", title="描述", description="植物描述信息")
 
+
+class PlantCreate(PlantBase):
+    pass
+
+
+class PlantUpdate(PlantBase):
+    pass
+
+
+class PlantInDBBase(PlantBase):
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+
+    id: int
+    user_id: int
     diseases: List[Disease] = Field([], title="该植株的所有病害")
     pests: List[Pest] = Field([], title="该植株的所有虫害")
+
+
+class Plant(PlantBase):
+    pass

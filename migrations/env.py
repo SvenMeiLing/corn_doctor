@@ -22,8 +22,11 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 # 导入表基类模型
 from app.db.base import BaseOrmTable
+
 # 设置元数据
 target_metadata = BaseOrmTable.metadata
+
+
 # 运行命令:
 # alembic revision --autogenerate -m "create database"
 # alembic upgrade head

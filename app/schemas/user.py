@@ -10,12 +10,10 @@ from app.schemas.plant import Plant
 
 
 class UserBase(BaseModel):
-    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
     username: str = Field(..., max_length=30)
-    tel: str = Field(None, max_length=11)
-    email: EmailStr = Field(None, max_length=30)
-    avatar: FilePath = Field(None, max_length=30)
-    plants: List[Plant] = []
+    tel: str | None = Field(None, max_length=11)
+    email: EmailStr | None = Field(None, max_length=30)
+    avatar: FilePath | None = Field(None, max_length=30)
 
 
 # innerAPI
@@ -23,6 +21,21 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserUpdate(UserBase):
+    pass
+
+
 class UserRegister(UserBase):
     username: str
     password: str
+
+
+class UserInDBBase(UserBase):
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+
+    id: int
+    plants: List[Plant] = []
+
+
+class User(UserInDBBase):
+    pass
