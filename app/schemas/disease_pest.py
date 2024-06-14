@@ -34,3 +34,10 @@ class Pest(BaseModel):
     description: str = Field("暂时不明", max_length=512, title="虫害描述")
     preventive_measure: str = Field("暂无应对策略", max_length=512, title="防治手段")
     plants: List["Plant"] = Field([], description="患此病害的植株")
+
+
+# 延迟导入 Plant 模型
+from app.schemas.plant import Plant
+
+Disease.update_forward_refs()
+Pest.update_forward_refs()

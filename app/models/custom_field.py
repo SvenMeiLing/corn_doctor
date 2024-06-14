@@ -5,9 +5,9 @@
 import datetime
 from dataclasses import dataclass, InitVar
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AfterValidator, WithJsonSchema, PlainSerializer
 
 
 @dataclass
@@ -28,6 +28,35 @@ class FilePath:
             self.file_path = Path(base_path, self.file_path)
 
 
+def after(value: str | FilePath):
+    """
+    执行逻辑：
+    当值传入后立即执行
+    所以在使用 value.属性 或者 序列化 dict(),...方法时，都是获取到的处理后的数据
+    """
+    if isinstance(value, str):
+        fp = FilePath(value)
+        return fp
+    return str(value.file_path)
+
+
+def plain(value: FilePath) -> str:
+    """
+    执行逻辑：
+    只有在使用 model_dump 等序列化方式时，才会执行，使用 .属性 时并不会执行
+    所以如果有数据需要在使用 .属性 或者 序列化时 处理的结果一样，那么请在 after 方法中处理
+    如果 after 方法与 plain 方法处理的是一样的，那么可以在这里直接返回值，或者使用 lambda x: x 匿名函数直接返回
+    """
+    return str(value.file_path)
+
+
+#  自定义的类型
+FilePathStr = Annotated[
+    str | FilePath,
+    AfterValidator(after),
+    PlainSerializer(plain, return_type=str),
+    WithJsonSchema({'type': 'string'}, mode='serialization')
+]
 if __name__ == '__main__':
     class M(BaseModel):
         f: FilePath = Field(
