@@ -15,8 +15,10 @@ from typing import (
 from pydantic import BaseModel
 from sqlalchemy import select, Row, RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.db.base import BaseOrmTable
+from app.models.user import UserOrm
 
 ModelType = TypeVar("ModelType", bound=BaseOrmTable)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -43,6 +45,30 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def get(self, async_session: AsyncSession, _id: Any) -> Optional[ModelType]:
         result = await async_session.execute(select(self.model).where(self.model.id == _id))
+        # 如果是sa2.0的asyncOrm情况下显式指定 -> selectinload(UserOrm.plants)
+        # 可以独立调用此方法selectinload().lazyload(PlantOrm.diseases) -> 仅适用于关系(一对多,多对多)字段
+        return result.scalars().first()
+
+    async def get_with_relations(
+            self,
+            async_session: AsyncSession,
+            _id: int,
+            *relationship_fields: str
+    ) -> Optional[ModelType]:
+        """
+        获取该模型的所有关系字段, 此方法可重载
+        :param async_session: 会话
+        :param _id: 主键
+        :param relationship_fields: 字段名称
+        :return:
+        """
+        result = await async_session.execute(
+            select(self.model)
+            .where(self.model.id == _id)
+            .options(
+                *[selectinload(getattr(self.model, rf)) for rf in relationship_fields]
+            )
+        )
         return result.scalars().first()
 
     async def get_multi(

@@ -10,7 +10,7 @@ from app.apis.deps.get_db import get_db
 from app.crud.disease import disease_crud
 from app.schemas.disease_pest import Disease
 
-router = APIRouter(prefix="/v1/disease")
+router = APIRouter(prefix="/disease")
 
 
 @router.get("/", response_model=Disease)

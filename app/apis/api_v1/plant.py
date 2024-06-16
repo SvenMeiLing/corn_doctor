@@ -10,7 +10,7 @@ from app.apis.deps.get_db import get_db
 from app.crud.plant import plant_crud
 from app.schemas.plant import Plant, PlantCreate
 
-router = APIRouter(prefix="/v1/plant")
+router = APIRouter(prefix="/plant")
 
 
 @router.get("/", response_model=Plant)

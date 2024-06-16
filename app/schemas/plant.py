@@ -22,7 +22,7 @@ HEALTH_STATUS_REVERSE_MAP = {v: k for k, v in HEALTH_STATUS_MAP.items()}
 
 
 class PlantBase(BaseModel):
-    model_config = ConfigDict(use_enum_values=False)
+    model_config = ConfigDict(from_attributes=True, use_enum_values=False)
 
     name: Annotated[
         str,
@@ -75,8 +75,8 @@ class PlantInDBBase(PlantBase):
 
     id: int
     user_id: int
-    diseases: List["Disease"] = Field([], title="该植株的所有病害")
-    pests: List["Pest"] = Field([], title="该植株的所有虫害")
+    # diseases: List["Disease"] = Field([], title="该植株的所有病害")
+    # pests: List["Pest"] = Field([], title="该植株的所有虫害")
 
 
 class Plant(PlantBase):

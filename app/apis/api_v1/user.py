@@ -7,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.apis.deps.get_db import get_db
 from app.crud.user import user_crud
-from app.schemas.user import UserBase, UserCreate, UserRegister
+from app.schemas.user import UserBase, UserRegister, User
 
-router = APIRouter(prefix="/v1/user")
+router = APIRouter(prefix="/user")
 
 
 @router.get("/", response_model=UserBase)
@@ -17,7 +17,14 @@ async def get_user(
         user_id: int, db_session: AsyncSession = Depends(get_db)
 ):
     user = await user_crud.get(db_session, user_id)
-    print(user.to_dict())
+    return user
+
+
+@router.get("/plants", response_model=User)
+async def get_user(
+        user_id: int, db_session: AsyncSession = Depends(get_db)
+):
+    user = await user_crud.get_with_relations(db_session, user_id, "plants")
     return user
 
 

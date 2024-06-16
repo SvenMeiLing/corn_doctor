@@ -34,7 +34,7 @@ class UserInDBBase(UserBase):
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
     id: int
-    plants: List[Plant] = []
+    plants: list[Plant] = []
 
 
 class User(UserInDBBase):
