@@ -2,13 +2,9 @@
 # FileName: session.py
 # Time : 2024/6/12 9:57
 # Author: zzy
-import asyncio
-
 from sqlalchemy.pool import AsyncAdaptedQueuePool
 from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.ext.asyncio.session import async_sessionmaker, AsyncSession
-
-from app.models.user import UserOrm
+from sqlalchemy.ext.asyncio.session import async_sessionmaker
 
 """
 async with async_engine.connect() as conn:  # 仅仅是个连接
@@ -33,4 +29,3 @@ async_engine = create_async_engine(
 )
 # 用于与数据库建立会话(使用场景是ORM, 详细见sa.log)
 AsyncSessionFactory = async_sessionmaker(async_engine, expire_on_commit=False, autoflush=False)
-

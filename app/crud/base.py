@@ -18,7 +18,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.db.base import BaseOrmTable
-from app.models.user import UserOrm
 
 ModelType = TypeVar("ModelType", bound=BaseOrmTable)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
