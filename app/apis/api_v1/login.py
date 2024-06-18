@@ -5,6 +5,8 @@
 from datetime import timedelta
 from typing import Annotated
 
+import jose
+import jwt
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -28,5 +30,5 @@ async def login_access_token(
         raise HTTPException(status_code=400, detail="错误的用户名或密码")
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
-        access_token=security
+        access_token=security.create_access_token(user.id, expires_delta=access_token_expires)
     )

@@ -5,15 +5,16 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.apis.deps.get_current_user import verify_password
 from app.crud.base import CRUDBase
 from app.models.user import UserOrm
+from app.utils.security import verify_password
 
 
 class UserCrud(CRUDBase):
     """
     对用户态操作做一些封装
     """
+
     async def get_user_by_username(self, async_session: AsyncSession, username: str) -> UserOrm | None:
         session_user = await async_session.execute(
             select(self.model).where(self.model.username == username)

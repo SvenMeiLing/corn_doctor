@@ -1,0 +1,30 @@
+mlb:小核盘菌叶斑病
+msv:玉米条纹病毒
+mln:玉米致命性坏死病
+gls:玉米灰斑病
+nlb:玉米北方叶枯病
+nls:玉米北方叶斑病
+
+Maize lethal necrosis
+
+# 未分类:, common rust
+# 未分类2:Corn Smut, Leaf blight, Nitrogen Deficiency, Phosphorus Deficiency
+# 未分类3:Corn_Blight, Corn_Common_Rust, Gray_Leaf_Spot
+# 未分类4:blight, common_rust, gray_leaf_spot, healthy
+
+虫害去重:
+    叶枯病(blight),
+    锈病(rust),
+    叶斑病(spot),
+    健康(healthy),
+    黑粉病(Smut),
+    缺氮(Nitrogen Deficiency),
+    缺磷(Phosphorus Deficiency),
+    玉米致命性坏死病(Maize lethal necrosis)
+https://universe.roboflow.com/fyp2024/maize-disease-detect-hackathon/browse?queryText=class%3AMLN&pageSize=50&startingIndex=0&browseQuery=true
+
+https://universe.roboflow.com/ademnea-jfdwy/achuka/browse?queryText=&pageSize=50&startingIndex=0&browseQuery=true
+
+虫病:
+    玉米螟(FAW)
+
