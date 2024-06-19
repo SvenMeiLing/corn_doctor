@@ -4,8 +4,9 @@
 # Author: zzy
 from typing import List
 
-from pydantic import BaseModel, ConfigDict, Field, EmailStr, FilePath
+from pydantic import BaseModel, ConfigDict, Field, EmailStr
 
+from app.models.custom_field import FilePathStr
 from app.schemas.plant import Plant
 
 
@@ -13,7 +14,7 @@ class UserBase(BaseModel):
     username: str = Field(..., max_length=30)
     tel: str | None = Field(None, max_length=11)
     email: EmailStr | None = Field(None, max_length=30)
-    avatar: FilePath | None = Field(None, max_length=30)
+    avatar: FilePathStr | str | None = Field(None, max_length=30, example="avatar.png")
 
 
 # innerAPI

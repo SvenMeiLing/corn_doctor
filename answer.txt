@@ -20,7 +20,8 @@ Maize lethal necrosis
     黑粉病(Smut),
     缺氮(Nitrogen Deficiency),
     缺磷(Phosphorus Deficiency),
-    玉米致命性坏死病(Maize lethal necrosis)
+    玉米致命性坏死病(Maize lethal necrosis),
+    玉米霜霉病(downy_mildew)
 https://universe.roboflow.com/fyp2024/maize-disease-detect-hackathon/browse?queryText=class%3AMLN&pageSize=50&startingIndex=0&browseQuery=true
 
 https://universe.roboflow.com/ademnea-jfdwy/achuka/browse?queryText=&pageSize=50&startingIndex=0&browseQuery=true

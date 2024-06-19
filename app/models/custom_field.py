@@ -27,6 +27,9 @@ class FilePath:
         if base_path is not None:
             self.file_path = Path(base_path, self.file_path)
 
+    def __len__(self):
+        return len(self.file_path.name)
+
 
 def after(value: str | FilePath):
     """
