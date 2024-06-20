@@ -1,6 +1,6 @@
 <template>
 
-    <n-layout embedded style="border: 1px solid skyblue" class="p-[20px]">
+    <n-layout embedded class="p-[20px] h-full">
         <!--标题与模态框合体-->
         <UploadView ref="zzy"></UploadView>
         <!--这个组件需要缓存,切换路由时数据依然是最后一次的-->

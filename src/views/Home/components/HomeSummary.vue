@@ -5,7 +5,7 @@
         xl:min-h-[27rem]
         2xl:max-h-[39rem]"
     >
-        <n-layout class="h-full" embedded content-class="p-[20px] h-full xl:min-h-[27.5rem]" content-style="border:1px solid red">
+        <n-layout class="h-full" embedded content-class="p-[20px] h-full xl:min-h-[27.5rem]">
             <n-space justify="center" align="start">
                 <n-grid cols="1 s:1 m:2 l:2 xl:2" responsive="screen" x-gap="30"
                         y-gap="20">

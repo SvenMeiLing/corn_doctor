@@ -3,14 +3,12 @@
             @update:value="handleUpdateValue"
             v-model:value="activeKey"
     />
-
 </template>
 
 <script setup>
 import {h} from "vue";
 import {NIcon, useMessage} from "naive-ui";
 import {RouterLink} from "vue-router";
-import {useRoute} from 'vue-router'
 import {onMounted} from "vue";
 import {
     BookOutline as BookIcon,
@@ -20,16 +18,16 @@ import {
     EyeOutline as RecognitionIcon
 } from "@vicons/ionicons5";
 import {useUserProfile} from "@/stores/userProfile.js";
+import drone from '@/components/drone.vue'
 
-const route = useRoute()
 const message = useMessage()
 const userProfile = useUserProfile()
 // 每次重载页面时, 优先使用上一次会话中的路由
 const activeKey = ref(userProfile.profile.lastRoute)
 
 // 读图标
-function renderIcon(icon) {
-    return () => h(NIcon, null, {default: () => h(icon)});
+function renderIcon(icon, props) {
+    return () => h(NIcon, props, {default: () => h(icon)});
 }
 
 const menuOptions = [
@@ -61,20 +59,22 @@ const menuOptions = [
             {
                 to: '/recognition'
             },
-            "Recognition"
+            "图像识别"
         ),
         key: "Recognition",
         icon: renderIcon(RecognitionIcon)
     },
+
     {
-        label: "1973年的弹珠玩具",
+        label: "无人机平台",
         key: "pinball-1973",
-        icon: renderIcon(BookIcon),
-        disabled: true,
+        icon: renderIcon(drone, {size: 30}),
+        disabled: false,
         children: [
             {
-                label: "鼠",
-                key: "rat"
+                label: "监控",
+                key: "rat",
+                icon: renderIcon(BookIcon)
             }
         ]
     },
@@ -85,13 +85,13 @@ const menuOptions = [
         disabled: true
     },
     {
-        label: "舞，舞，舞",
+        label: "农业知识",
         key: "dance-dance-dance",
         icon: renderIcon(BookIcon),
         children: [
             {
                 type: "group",
-                label: "人物",
+                label: "Learn",
                 key: "people",
                 children: [
                     {

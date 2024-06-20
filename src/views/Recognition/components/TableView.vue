@@ -1,10 +1,19 @@
 <template>
-    <n-space class="v-tb mt-2" vertical style="border: 1px solid red">
-        <n-data-table class="shadow-lg rounded-md" :columns="createColumns" :data="data"/>
-        <input type="text">
+    <n-space vertical class="h-4/6" style="border:1px solid red" :wrap-item="false" :wrap="false">
+        <n-data-table bordered class="shadow-lg rounded-md" :columns="createColumns" style="border:1px solid red"
+                      :data="data">
+            <template #empty>
+                <n-empty size="small" class="bg-red-300">
+                    <template #icon>
+                        <n-image class="h-full w-full" src="src/assets/images/table.png"></n-image>
+                    </template>
+                    <template #extra>
+                        哇哦!你还没有上传图片呢?
+                    </template>
+                </n-empty>
+            </template>
+        </n-data-table>
     </n-space>
-
-
 </template>
 
 <script setup>
@@ -32,12 +41,14 @@ const createColumns = computed(() => {
         }
     ]
 })
-const data = ref([{
-    id: 1,
-    name: '...',
-    consuming: "...",
-    desc: "..."
-}])
+const data = ref([
+    // {
+    //     id: 1,
+    //     name: '...',
+    //     consuming: "...",
+    //     desc: "..."
+    // }
+])
 
 onMounted(() => {
     emitter.on('recognitionData', (recognitionData) => {

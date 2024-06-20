@@ -114,14 +114,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <n-space :wrap-item="false" :wrap="false">
-        <n-grid cols="1 s:1 m:2 xl:2" responsive="screen" style="border: 1px solid lightgreen">
-            <n-grid-item style="border: 1px solid lightgreen">
-                <n-space vertical align="start">
+    <n-space :wrap-item="false" :wrap="false" class="h-2/6">
+        <n-grid cols="1 s:1 m:1 xl:1" responsive="screen">
+            <n-grid-item>
+                <n-space vertical align="start" class="gap-4">
 
-                    <n-text class="text-4xl font-thin" tag="div">上传植物相片, 以进行即时分析</n-text>
-
-                    <n-button @click="handleClick">start</n-button>
+                    <n-text class="text-4xl font-thin 2xl:text-5xl" tag="div">上传植物相片, 以进行即时分析</n-text>
 
                     <n-button color="#20B2AAFF" class="w-[14rem] h-[2.7rem] rounded-tl-xl rounded-br-xl"
                               size="large"
