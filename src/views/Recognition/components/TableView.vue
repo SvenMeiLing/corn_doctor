@@ -1,14 +1,14 @@
 <template>
-    <n-space vertical class="h-4/6" style="border:1px solid red" :wrap-item="false" :wrap="false">
-        <n-data-table bordered class="shadow-lg rounded-md" :columns="createColumns" style="border:1px solid red"
-                      :data="data">
+    <n-space vertical class="h-4/6"  :wrap="true" :wrap-item="false">
+        <n-data-table bordered class="shadow-lg rounded-md h-full" :columns="createColumns"
+                      :data="data" :flex-height="true">
             <template #empty>
-                <n-empty size="small" class="bg-red-300">
+                <n-empty size="large">
                     <template #icon>
-                        <n-image class="h-full w-full" src="src/assets/images/table.png"></n-image>
+                        <n-image preview-disabled class="h-full w-full" src="src/assets/images/table.png"></n-image>
                     </template>
                     <template #extra>
-                        哇哦!你还没有上传图片呢?
+                        哦!你还没有上传图片呢?
                     </template>
                 </n-empty>
             </template>

@@ -4,7 +4,6 @@
             :collapsed-width="120"
             :width="240"
             show-trigger="bar"
-            bordered
     >
         <n-space align="center" justify="center" :size="0"
                  vertical class="h-full"

@@ -31,12 +31,15 @@ const router = createRouter({
                     meta: {title: '病害识别', keepAlive: true}
                 },
                 {
-                    path: "/page3",
-                    component: () => import('@/views/Page3/Index.vue'),
+                    path: "/agriculture",
+                    // component: () => import('@/views/agriculture/Index.vue'),
                     children: [
                         {
-                            path: "child1",
-                            component: () => import('@/views/Page3/Child1/Index.vue')
+                            path: "disease",
+                            component: () => import('@/views/Page3/Disease/Index.vue'),
+                            meta: {
+                                title: "病害百科"
+                            }
                         },
                         {
                             path: "child2",

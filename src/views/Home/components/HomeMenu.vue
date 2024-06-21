@@ -19,6 +19,7 @@ import {
 } from "@vicons/ionicons5";
 import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
+import NounBook from '@/components/NounBook.vue'
 
 const message = useMessage()
 const userProfile = useUserProfile()
@@ -86,7 +87,7 @@ const menuOptions = [
     },
     {
         label: "农业知识",
-        key: "dance-dance-dance",
+        key: "agriculture",
         icon: renderIcon(BookIcon),
         children: [
             {
@@ -99,14 +100,14 @@ const menuOptions = [
                         label: () => h(
                             RouterLink,
                             {
-                                to: {path: `/page3/child1`},
+                                to: {path: `/agriculture/disease`},
 
                             }, {
-                                default: () => "child1"
+                                default: () => "病害百科"
                             }
                         ),
-                        key: "narrator",
-                        icon: renderIcon(PersonIcon)
+                        key: "disease",
+                        icon: renderIcon(NounBook)
                     },
                     {
                         label: "羊男",
