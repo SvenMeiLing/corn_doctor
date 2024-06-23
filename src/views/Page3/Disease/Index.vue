@@ -1,29 +1,36 @@
 <template>
     <n-layout embedded class="p-[20px] h-full">
         <n-space vertical class="h-full" :wrap-item="false" :size="20">
-            <n-space align="center" size="small" :wrap-item="false" class="w-full h-1/7">
-                <n-text class="xl:text-4xl font-thin" type="success">
+            <!--header部分-->
+            <n-space align="center" size="small" :wrap-item="false" class="w-full h-1/6">
+                <n-text
+                        class="text-2xl sm:text-2xl lg:text-3xl xl:text-4xl font-thin"
+                        type="success"
+                        tag="q"
+                >
                     病害百科
                 </n-text>
+
                 <n-popover trigger="hover">
                     <template #trigger>
                         <n-button quaternary @click="showSearchBox">
                             <template #icon>
-                                <n-icon :component="MenuBookTwotone" :size="40"></n-icon>
+                                <n-icon class="mb-1" :component="MenuBookTwotone" :size="'200%'"></n-icon>
                             </template>
                         </n-button>
                     </template>
                     点击可查询
                 </n-popover>
-
                 <transition enter-active-class="expand-enter-active"
                             leave-active-class="expand-leave-active"
-                            enter-from-class="w-0"
+                            enter-from-class="w-0 opacity-0"
                             leave-to-class="w-0 opacity-0"
+                            leave-from-class="w-2/4 opacity-1"
                 >
                     <n-select v-if="showBox"
                               class="w-2/4"
                               filterable
+                              clearable
                               placeholder="病害搜索"
                               :options="options"
                               v-model:value="selectedValue"
@@ -34,8 +41,13 @@
                 </transition>
 
             </n-space>
+            <n-divider class="h-px m-0 p-0">
+                Hi
+            </n-divider>
 
-            <n-space class="w-full h-5/6" :wrap-item="false" :wrap="false" :size="30">
+            <!--主体部分-->
+            <n-space class="w-full h-4/6" :wrap-item="false" :wrap="false" :size="30">
+                <!--病害目录-->
                 <n-space :wrap-item="false" :wrap="false" class="w-3/6 h-full" :size="0">
                     <n-scrollbar>
                         <n-collapse @item-header-click="handleItemHeaderClick"
@@ -79,31 +91,31 @@
                         </n-collapse>
                     </n-scrollbar>
                 </n-space>
-
-                <n-image
-                        :src="src"
-                        width="100%"
-                        height="100%"
-                        class="w-3/6 h-full rounded"
-                        object-fit="cover"
-                        :show-toolbar="false"
-                ></n-image>
-
-
+                <!--病害图片-->
+                <n-space :wrap-item="false"
+                         :wrap="false"
+                         class="w-3/6"
+                         justify="center"
+                         align="center"
+                >
+                    <n-image
+                            :src="src"
+                            width="100%"
+                            height="100%"
+                            class="w-auto h-full rounded"
+                            object-fit="contain"
+                            :show-toolbar="false"
+                    ></n-image>
+                </n-space>
             </n-space>
-
-
         </n-space>
-
-
     </n-layout>
 
 
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import {useMessage} from "naive-ui";
+import {ref, reactive} from 'vue'
 import {MenuBookTwotone} from '@vicons/material';
 import 'animate.css'
 
@@ -221,7 +233,7 @@ const showSearchBox = () => {
 
 const selectedValue = ref(null)
 
-const doExpand = ref(void 0)
+const doExpand = ref([])
 const updateValue = () => {
     // 当选项发生变化,切换对应图片
     diseaseDate.forEach(value => {
@@ -229,12 +241,14 @@ const updateValue = () => {
             src.value = value.src
         }
     })
-    // 展开
-    doExpand.value = src.value
+    setTimeout(() => {
+        // 延迟0.5s后展开
+        doExpand.value.push(src.value)
+    }, 500)
 
 }
-
 const options = computed(() =>
+    // 设置可选病害
     diseaseDate.map((value) => {
         console.log(value)
         return {label: value.name, value: value.name}
@@ -247,7 +261,19 @@ const handleItemHeaderClick = ({
                                    name,
                                    expanded
                                }) => {
+    // 切换图片
     src.value = name
+    if (!expanded) {
+        // 这般我也不知道为什么这样写,因为!expanded意思是非展开, 所有应该展开我也不知道为什么要关闭
+        // 与正常逻辑相反
+        const index = doExpand.value.findIndex(el => el === name)
+        if (index > -1) {
+            doExpand.value.splice(index, 1)
+        }
+    } else {
+        doExpand.value.push(name)
+    }
+
 };
 
 const filterableDisease = computed(() => {
