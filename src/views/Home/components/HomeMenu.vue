@@ -12,11 +12,12 @@ import {RouterLink} from "vue-router";
 import {onMounted} from "vue";
 import {
     BookOutline as BookIcon,
-    PersonOutline as PersonIcon,
     WineOutline as WineIcon,
     HomeOutline as HomeIcon,
-    EyeOutline as RecognitionIcon
+    EyeOutline as RecognitionIcon,
 } from "@vicons/ionicons5";
+import {StoreMallDirectoryTwotone as StoreIcon} from '@vicons/material'
+import {Template} from '@vicons/carbon'
 import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
 import NounBook from '@/components/NounBook.vue'
@@ -86,13 +87,13 @@ const menuOptions = [
         disabled: true
     },
     {
-        label: "农业知识",
+        label: "服务平台",
         key: "agriculture",
-        icon: renderIcon(BookIcon),
+        icon: renderIcon(Template),
         children: [
             {
                 type: "group",
-                label: "Learn",
+                label: "Platform",
                 key: "people",
                 children: [
                     {
@@ -110,9 +111,17 @@ const menuOptions = [
                         icon: renderIcon(NounBook)
                     },
                     {
-                        label: "羊男",
-                        key: "sheep-man",
-                        icon: renderIcon(PersonIcon)
+                        label: () => h(
+                            RouterLink,
+                            {
+                                to: {path: `/agriculture/store`},
+
+                            }, {
+                                default: () => "农业商城"
+                            }
+                        ),
+                        key: "store",
+                        icon: renderIcon(StoreIcon)
                     }
                 ]
             },

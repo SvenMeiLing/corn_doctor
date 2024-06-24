@@ -36,18 +36,18 @@ const router = createRouter({
                     children: [
                         {
                             path: "disease",
-                            component: () => import('@/views/Page3/Disease/Index.vue'),
+                            component: () => import('@/views/Agriculture/Disease/Index.vue'),
                             meta: {
                                 title: "病害百科"
                             }
                         },
                         {
-                            path: "child2",
-                            component: () => import('@/views/Page3/Child2/Index.vue')
+                            path: "store",
+                            component: () => import('@/views/Agriculture/Store/Index.vue')
                         },
                         {
                             path: "child3",
-                            component: () => import('@/views/Page3/Child3/Index.vue')
+                            component: () => import('@/views/Agriculture/Child3/Index.vue')
                         },
                     ]
                 }
