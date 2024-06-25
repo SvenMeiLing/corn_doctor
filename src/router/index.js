@@ -32,7 +32,7 @@ const router = createRouter({
                 },
                 {
                     path: "/agriculture",
-                    // component: () => import('@/views/agriculture/Index.vue'),
+                    // component: () => import('@/views/agriculture/Index2.vue'),
                     children: [
                         {
                             path: "disease",

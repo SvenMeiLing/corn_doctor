@@ -1,128 +1,118 @@
 <template>
-    <n-layout embedded class="p-[20px] h-full">
-        <n-grid cols="20">
-            <n-grid-item span="7" class="bg-red-400">
-                1
-            </n-grid-item>
-            <n-grid-item span="7" class="bg-slate-400">
-                2
-            </n-grid-item>
+    <n-layout class="h-full p-[20px]" embedded
+              style="border: 1px solid red">
+        <n-flex class="h-full w-full" :wrap="false">
+            <!--第一部分-->
+            <n-flex vertical class="h-full w-1/3" :wrap="false">
+                <!--商品分类导航-->
+                <n-card class="h-auto w-full xl:w-full " content-class="ps-1 p-0 pb-1">
+                    <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">
+                        <NRLink to="/agriculture/store">
+                            <span class="text-red-400">官方推荐</span>
+                        </NRLink>
+                        /
+                        <NRLink to="/agriculture/store" class-name="text-red-200">
+                            <span>优质种子</span>
+                        </NRLink>
+                    </n-space>
+                    <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">
+                        <NRLink to="/agriculture/store">
+                            <span>土壤调节剂</span>
+                        </NRLink>
+                        /
+                        <NRLink to="/agriculture/store" class-name="text-red-200">
+                            <span>有机化肥</span>
+                        </NRLink>
+                    </n-space>
+                    <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">
+                        <NRLink to="/agriculture/store">
+                            <span>农药</span>
+                        </NRLink>
+                        /
+                        <NRLink to="/agriculture/store" class-name="text-red-200">
+                            <span>杀虫剂</span>
+                        </NRLink>
+                        /
+                        <NRLink to="/agriculture/store" class-name="text-red-200">
+                            <span>植物生长改良剂</span>
+                        </NRLink>
+                    </n-space>
+                </n-card>
 
-        </n-grid>
-        <n-grid cols="20">
-            <n-grid-item span="7" class="bg-zinc-400">4</n-grid-item>
-            <n-grid-item span="7" class="bg-sky-700"> 5</n-grid-item>
-        </n-grid>
-        <!--总体内容-->
-        <!--        <n-space-->
-        <!--                :wrap-item="false"-->
-        <!--                :wrap="false"-->
-        <!--                class="h-full w-full"-->
-        <!--        >-->
-        <!--            <n-grid class="h-full"-->
-        <!--                    cols="1"-->
-        <!--                    responsive="screen"-->
-        <!--                    style="border: 1px solid red"-->
-        <!--            >-->
-        <!--                <n-grid-item span="1">-->
-        <!--                    &lt;!&ndash;一级页面, 商品分类侧边导航+推荐区域 &ndash;&gt;-->
-        <!--                    <n-card class="h-full">-->
-        <!--                        <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">-->
-        <!--                            <NRLink to="/agriculture/store">-->
-        <!--                                <span class="text-red-400">官方推荐</span>-->
-        <!--                            </NRLink>-->
-        <!--                            /-->
-        <!--                            <NRLink to="/agriculture/store" class-name="text-red-200">-->
-        <!--                                <span>优质种子</span>-->
-        <!--                            </NRLink>-->
-        <!--                        </n-space>-->
-        <!--                        <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">-->
-        <!--                            <NRLink to="/agriculture/store">-->
-        <!--                                <span>土壤调节剂</span>-->
-        <!--                            </NRLink>-->
-        <!--                            /-->
-        <!--                            <NRLink to="/agriculture/store" class-name="text-red-200">-->
-        <!--                                <span>有机化肥</span>-->
-        <!--                            </NRLink>-->
-        <!--                        </n-space>-->
-        <!--                        <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">-->
-        <!--                            <NRLink to="/agriculture/store">-->
-        <!--                                <span>农药</span>-->
-        <!--                            </NRLink>-->
-        <!--                            /-->
-        <!--                            <NRLink to="/agriculture/store" class-name="text-red-200">-->
-        <!--                                <span>杀虫剂</span>-->
-        <!--                            </NRLink>-->
-        <!--                            /-->
-        <!--                            <NRLink to="/agriculture/store" class-name="text-red-200">-->
-        <!--                                <span>植物生长改良剂</span>-->
-        <!--                            </NRLink>-->
-        <!--                        </n-space>-->
-        <!--                    </n-card>-->
-        <!--                </n-grid-item>-->
-        <!--                <n-grid-item span="2">-->
-        <!--                    &lt;!&ndash;商品推荐&ndash;&gt;-->
-        <!--                    <n-card :title="item.name"-->
-        <!--                            class="h-2/3"-->
-        <!--                            v-for="item in seeds.slice(0,1)"-->
-        <!--                    >-->
-        <!--                        <template #cover>-->
-        <!--                            <n-image class="w-full h-full" width="100%" height="100%" object-fit="contain"-->
-        <!--                                     :src="item.img_src" alt=""/>-->
-        <!--                        </template>-->
-        <!--                        <n-text>{{ item.desc }}</n-text>-->
-        <!--                    </n-card>-->
-        <!--                </n-grid-item>-->
-        <!--            </n-grid>-->
+                <!--标题-->
+                <n-h6 prefix="bar" type="error" class="m-0">
+                    <n-icon class="text-red-400" :component="HotelClassTwotone"></n-icon>
+                    <n-text type="error">推荐商品</n-text>
+                </n-h6>
 
-        <!--            <n-grid class="h-1/5" cols="1" style="border: 1px solid red">-->
-        <!--                <n-grid-item>-->
-        <!--                    1-->
-        <!--                </n-grid-item>-->
-        <!--            </n-grid>-->
+                <div class="w-full flex gap-x-1  flex-wrap">
+                    <div class="goods-recommend h-2/4 w-2/5">
+                        <div class="card bg-slate-800 rounded-t p-1 h-full flex flex-col items-center">
+                            <img src="/src/assets/seed/京科968.jpg" alt="" class="h-full object-contain">
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded-b w-full flex  items-center">
+                            <n-text class="text-md">京科968</n-text>
+                            <n-icon class="ml-auto" :component="RMB"></n-icon>
+                            <n-text class="text-base" type="error">100</n-text>
+                        </div>
+                    </div>
+                    <div class="goods-recommend h-2/4 w-2/5">
+                        <div class="card bg-slate-800 rounded-t p-1 h-full flex flex-col items-center">
+                            <img src="/src/assets/seed/京科968.jpg" alt="" class="h-full object-contain">
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded-b w-full flex items-center">
+                            <n-text class="text-md">京科968</n-text>
+                            <n-icon class="ml-auto" :component="RMB"></n-icon>
+                            <n-text class="text-base" type="error">100</n-text>
+                        </div>
+                    </div>
 
-        <!--        </n-space>-->
+                    <div class="goods-recommend h-20 w-2/5">
+                        <div class="card bg-slate-800 rounded-t p-1 h-full flex flex-col items-center">
+                            <img src="/src/assets/seed/京科968.jpg" alt="" class="h-full object-contain">
+                        </div>
+                        <div class="bg-slate-700 p-2 rounded-b w-full flex items-center">
+                            <n-text class="text-md">京科968</n-text>
+                            <n-icon class="ml-auto" :component="RMB"></n-icon>
+                            <n-text class="text-base" type="error">100</n-text>
+                        </div>
+                    </div>
+                </div>
 
 
-        <!--一级页面-商品展示等-->
-        <!--            <n-space-->
-        <!--                    :wrap-item="false"-->
-        <!--                    :wrap="false"-->
-        <!--            >-->
-        <!--                <n-carousel show-arrow-->
-        <!--                            class="h-1/2 w-1/4"-->
-        <!--                            :prev-slide-style="{backgroundColor: 'red'}"-->
-        <!--                >-->
-        <!--                    <img v-for="item in pesticide"-->
-        <!--                         class="carousel-img"-->
-        <!--                         :src="item.img_src"-->
-        <!--                    >-->
-        <!--                </n-carousel>-->
-        <!--                <n-list hoverable clickable bordered class="h-1/2 w-1/4">-->
-        <!--                    <n-list-item>-->
-        <!--                        <n-thing title="相见恨晚" content-style="margin-top: 10px;">-->
-        <!--                            <template #description>-->
-        <!--                                <n-space size="small" style="margin-top: 4px">-->
-        <!--                                    <n-tag :bordered="false" type="info" size="small">-->
-        <!--                                        暑夜-->
-        <!--                                    </n-tag>-->
-        <!--                                    <n-tag :bordered="false" type="info" size="small">-->
-        <!--                                        晚春-->
-        <!--                                    </n-tag>-->
-        <!--                                </n-space>-->
-        <!--                            </template>-->
-        <!--                            奋勇呀然后休息呀<br>-->
-        <!--                            完成你伟大的人生-->
-        <!--                        </n-thing>-->
-        <!--                    </n-list-item>-->
-        <!--                </n-list>-->
-        <!--            </n-space>-->
+            </n-flex>
+
+            <!--第二部分-->
+            <n-flex vertical class="w-1/3">
+                <n-card title="限时促销" size="small">
+                    活动期间,优质种子
+                    <n-text type="error">7折</n-text>
+                    促销
+                </n-card>
+                <n-card>
+                    1
+                </n-card>
+            </n-flex>
+
+            <n-flex vertical class="w-1/3">
+                <n-card title="限时促销" size="small">
+                    使用期间,优质种子
+                    <n-text type="error">7折</n-text>
+                    促销
+                </n-card>
+                <n-card>
+                    1
+                </n-card>
+            </n-flex>
+        </n-flex>
     </n-layout>
 </template>
 
 <script setup>
 import {CaretBackOutline, CaretForwardOutline} from '@vicons/ionicons5'
+import {HotelClassTwotone} from '@vicons/material'
 import NRLink from "@/components/NRLink.vue";
+import RMB from "@/components/RMB.vue";
 // 假设这是后端发来的数据/pesticide
 const pesticide = ref([
     {
@@ -213,29 +203,31 @@ const seeds = ref([
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 
 .carousel-img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
 }
 
 :deep(.n-carousel__arrow) {
-    background-color: rgba(58, 58, 58, 0.7);
+  background-color: rgba(58, 58, 58, 0.7);
 }
 
 :deep(.n-carousel__arrow:hover) {
-    background-color: rgba(58, 58, 58, 1);
+  background-color: rgba(58, 58, 58, 1);
 }
 
 :deep(.n-breadcrumb-item__separator) {
-    /*面包屑分隔符左右间距*/
-    margin: 0 !important;
+  /*面包屑分隔符左右间距*/
+  margin: 0 !important;
 }
 
 :deep(.n-breadcrumb-item__link) {
-    color: rgb(255 255 255 / 52%) !important;
+  color: rgb(255 255 255 / 52%) !important;
 }
+
 </style>
+
