@@ -4,77 +4,25 @@
         <n-flex class="h-full w-full" :wrap="false">
             <!--第一部分-->
             <n-flex vertical class="h-full w-1/3" :wrap="false">
-                <!--商品分类导航-->
-                <n-card class="h-auto w-full xl:w-full " content-class="ps-1 p-0 pb-1">
-                    <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">
-                        <NRLink to="/agriculture/store">
-                            <span class="text-red-400">官方推荐</span>
-                        </NRLink>
-                        /
-                        <NRLink to="/agriculture/store" class-name="text-red-200">
-                            <span>优质种子</span>
-                        </NRLink>
-                    </n-space>
-                    <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">
-                        <NRLink to="/agriculture/store">
-                            <span>土壤调节剂</span>
-                        </NRLink>
-                        /
-                        <NRLink to="/agriculture/store" class-name="text-red-200">
-                            <span>有机化肥</span>
-                        </NRLink>
-                    </n-space>
-                    <n-space :wrap-item="false" :wrap="false" class="w-full" :size="1">
-                        <NRLink to="/agriculture/store">
-                            <span>农药</span>
-                        </NRLink>
-                        /
-                        <NRLink to="/agriculture/store" class-name="text-red-200">
-                            <span>杀虫剂</span>
-                        </NRLink>
-                        /
-                        <NRLink to="/agriculture/store" class-name="text-red-200">
-                            <span>植物生长改良剂</span>
-                        </NRLink>
-                    </n-space>
-                </n-card>
 
                 <!--标题-->
                 <n-h6 prefix="bar" type="error" class="m-0">
                     <n-icon class="text-red-400" :component="HotelClassTwotone"></n-icon>
                     <n-text type="error">推荐商品</n-text>
                 </n-h6>
-
-                <div class="w-full flex gap-x-1  flex-wrap">
-                    <div class="goods-recommend h-2/4 w-2/5">
-                        <div class="card bg-slate-800 rounded-t p-1 h-full flex flex-col items-center">
-                            <img src="/src/assets/seed/京科968.jpg" alt="" class="h-full object-contain">
+                <!--商品展示区域-->
+                <div class="w-full h-full flex gap-1 flex-wrap">
+                    <div class="goods-recommend
+                    hover:bg-zinc-400 bg-zinc-200
+                    cursor-pointer
+                    rounded h-min" v-for="item in seeds">
+                        <div class="card  dark:bg-zinc-900  p-1 h-full flex flex-col items-center">
+                            <img :src="item.img_src" alt="" class="w-full h-[100px] object-contain">
                         </div>
-                        <div class="bg-slate-700 p-2 rounded-b w-full flex  items-center">
-                            <n-text class="text-md">京科968</n-text>
-                            <n-icon class="ml-auto" :component="RMB"></n-icon>
-                            <n-text class="text-base" type="error">100</n-text>
-                        </div>
-                    </div>
-                    <div class="goods-recommend h-2/4 w-2/5">
-                        <div class="card bg-slate-800 rounded-t p-1 h-full flex flex-col items-center">
-                            <img src="/src/assets/seed/京科968.jpg" alt="" class="h-full object-contain">
-                        </div>
-                        <div class="bg-slate-700 p-2 rounded-b w-full flex items-center">
-                            <n-text class="text-md">京科968</n-text>
-                            <n-icon class="ml-auto" :component="RMB"></n-icon>
-                            <n-text class="text-base" type="error">100</n-text>
-                        </div>
-                    </div>
-
-                    <div class="goods-recommend h-20 w-2/5">
-                        <div class="card bg-slate-800 rounded-t p-1 h-full flex flex-col items-center">
-                            <img src="/src/assets/seed/京科968.jpg" alt="" class="h-full object-contain">
-                        </div>
-                        <div class="bg-slate-700 p-2 rounded-b w-full flex items-center">
-                            <n-text class="text-md">京科968</n-text>
-                            <n-icon class="ml-auto" :component="RMB"></n-icon>
-                            <n-text class="text-base" type="error">100</n-text>
+                        <div class="bg-zinc-300  dark:bg-zinc-800 p-2  w-full flex items-center">
+                            <n-text class="text-sm" type="default">{{ item.name }}</n-text>
+                            <n-icon class="ml-2 text-red-400" :component="RMB"></n-icon>
+                            <n-text class="text-base" type="error">{{ item.price }}</n-text>
                         </div>
                     </div>
                 </div>
