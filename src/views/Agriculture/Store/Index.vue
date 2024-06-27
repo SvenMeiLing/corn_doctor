@@ -1,83 +1,19 @@
 <template>
     <n-layout class="h-full p-[20px]" embedded
               style="border: 1px solid red">
-        <Search></Search>
-        <n-flex class="h-full w-full flex-wrap xl:flex-nowrap">
-            <!--第一部分-->
-            <n-flex style="border:1px solid red"  vertical class="h-min w-full md:w-1/2 xl:w-1/3">
+        <Search :goods-list="goodsList"></Search>
+        <n-scrollbar>
+            <n-flex class="h-full w-full flex-wrap xl:flex-nowrap">
+                <!--第一部分-->
+                <Recommend :recommend-list="seeds"></Recommend>
 
-                <!--标题-->
-                <n-h6 prefix="bar" type="error" class="m-0">
-                    <n-icon class="text-red-400" :component="HotelClassTwotone"></n-icon>
-                    <n-text type="error">推荐商品</n-text>
-                </n-h6>
-                <!--商品展示区域-->
-                <div class="w-full h-full flex gap-1 flex-wrap">
-                    <div class="goods-recommend
-                    hover:bg-zinc-400 bg-zinc-200
-                    cursor-pointer
-                    rounded h-min" v-for="item in seeds">
-                        <div class="card
-                        dark:bg-zinc-900
-                        hover:dark:bg-zinc-700
-                        p-1 h-full flex flex-col items-center">
-                            <img :src="item.img_src" alt="" class="w-full h-[100px] object-contain">
-                        </div>
-                        <div class="bg-zinc-300  dark:bg-zinc-800 p-2  w-full flex items-center">
-                            <n-text class="text-sm" type="default">{{ item.name }}</n-text>
-                            <n-icon class="ml-2 text-red-400" :component="RMB"></n-icon>
-                            <n-text class="text-base" type="error">{{ item.price }}</n-text>
-                        </div>
-                    </div>
-                </div>
+                <MainGoods :show-goods="pesticide" :slogan="'限时促销'"/>
 
-
+                <!-- 第三部分 -->
+                <Other/>
             </n-flex>
+        </n-scrollbar>
 
-            <!-- 第二部分 -->
-            <n-flex style="border:1px solid red" vertical class="h-min w-full md:w-1/2 xl:w-1/3">
-                <n-card size="small" content-class="p-1 flex flex-wrap">
-                    <template #header>
-                        <n-text type="info" tag="div" class="rounded">限时促销</n-text>
-                        <n-text>环保型农药,活动期间</n-text>
-                        <n-text type="error">7折</n-text>
-                    </template>
-                    <n-card
-                            class="h-30 w-1/2"
-                            content-class="pb-0"
-                            v-for="item in pesticide">
-                        <n-image
-                                :src="item.img_src"
-                                object-fit="contain"
-                                width="100%"
-                        ></n-image>
-                        <template #footer>
-                            <n-ellipsis :line-clamp="2">
-                                <n-text tag="div">{{ item.name }}</n-text>
-                            </n-ellipsis>
-                            <n-text tag="div" class="text-sm" depth="3">包邮</n-text>
-                            <n-text tag="div">
-                                <n-text class="text-sm">￥</n-text>
-                                <n-text class="text-xl" type="error">24.9</n-text>
-                            </n-text>
-
-                            <n-text class="p-1 rounded-lg text-sm bg-zinc-100 dark:bg-zinc-800">玉米医生 进店></n-text>
-                        </template>
-                    </n-card>
-                </n-card>
-            </n-flex>
-            <!-- 第三部分 -->
-            <n-flex style="border:1px solid red" vertical class=" w-full md:w-1/2 xl:w-1/3">
-                <n-card title="限时促销" size="small">
-                    使用期间,优质种子
-                    <n-text type="error">7折</n-text>
-                    促销
-                </n-card>
-                <n-card>
-                    1
-                </n-card>
-            </n-flex>
-        </n-flex>
     </n-layout>
 </template>
 
@@ -87,6 +23,9 @@ import {HotelClassTwotone} from '@vicons/material'
 import NRLink from "@/components/NRLink.vue";
 import RMB from "@/components/RMB.vue";
 import Search from "@/views/Agriculture/Store/components/Search.vue";
+import Recommend from "@/views/Agriculture/Store/components/Recommend.vue";
+import MainGoods from "@/views/Agriculture/Store/components/MainGoods.vue";
+import Other from "@/views/Agriculture/Store/components/Other.vue";
 // 假设这是后端发来的数据/pesticide
 const pesticide = ref([
     {
@@ -131,44 +70,53 @@ const pesticide = ref([
 ])
 
 const seeds = ref([
-        {
-            "id": 1,
-            "name": "京科968",
-            "img_src": "/src/assets/seed/京科968.jpg",
-            "desc": "京科968是一种高产、抗病、适应性强的玉米品种，适合多种土壤和气候条件。",
-            "price": 100
-        },
-        {
-            "id": 2,
-            "name": "先玉335",
-            "img_src": "/src/assets/seed/先玉335.jpg",
-            "desc": "先玉335具有高产稳产、抗逆性强的特点，适合大面积种植，深受农民喜爱。",
-            "price": 120
-        },
-        {
-            "id": 3,
-            "name": "华农101",
-            "img_src": "/src/assets/seed/华农101.jpg",
-            "desc": "华农101是一种优质、高产的玉米品种，生育期适中，适应性广，抗病性强。",
-            "price": 110
-        },
-        {
-            "id": 4,
-            "name": "登海605",
-            "img_src": "/src/assets/seed/登海605.jpg",
-            "desc": "登海605以其出色的抗病性和高产能力闻名，适合多种栽培方式，是农户的理想选择。",
-            "price": 115
-        },
-        {
-            "id": 5,
-            "name": "郑单958",
-            "img_src": "/src/assets/seed/郑单958.jpg",
-            "desc": "郑单958是一种高产、抗病、稳产的玉米品种，具有良好的适应性和广泛的应用前景。",
-            "price": 130
-        }
-    ]
-)
+    {
+        "id": 1,
+        "name": "京科968",
+        "img_src": "/src/assets/seed/京科968.jpg",
+        "desc": "京科968是一种高产、抗病、适应性强的玉米品种，适合多种土壤和气候条件。",
+        "price": 100
+    },
+    {
+        "id": 2,
+        "name": "先玉335",
+        "img_src": "/src/assets/seed/先玉335.jpg",
+        "desc": "先玉335具有高产稳产、抗逆性强的特点，适合大面积种植，深受农民喜爱。",
+        "price": 120
+    },
+    {
+        "id": 3,
+        "name": "华农101",
+        "img_src": "/src/assets/seed/华农101.jpg",
+        "desc": "华农101是一种优质、高产的玉米品种，生育期适中，适应性广，抗病性强。",
+        "price": 110
+    },
+    {
+        "id": 4,
+        "name": "登海605",
+        "img_src": "/src/assets/seed/登海605.jpg",
+        "desc": "登海605以其出色的抗病性和高产能力闻名，适合多种栽培方式，是农户的理想选择。",
+        "price": 115
+    },
+    {
+        "id": 5,
+        "name": "郑单958",
+        "img_src": "/src/assets/seed/郑单958.jpg",
+        "desc": "郑单958是一种高产、抗病、稳产的玉米品种，具有良好的适应性和广泛的应用前景。",
+        "price": 130
+    }
+])
 
+const goodsList = ref([
+    ...pesticide.value.map((value, _) => {
+        return {label: value.name, value: value.name}
+    }), ...seeds.value.map((value, _) => {
+        return {label: value.name, value: value.name}
+    })
+])
+onMounted(() => {
+    console.log(goodsList.value)
+})
 </script>
 
 <style scoped lang="scss">
