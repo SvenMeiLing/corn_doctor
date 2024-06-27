@@ -1,9 +1,10 @@
 <template>
     <n-layout class="h-full p-[20px]" embedded
               style="border: 1px solid red">
-        <n-flex class="h-full w-full" :wrap="false">
+        <Search></Search>
+        <n-flex class="h-full w-full flex-wrap xl:flex-nowrap">
             <!--第一部分-->
-            <n-flex vertical class="h-full w-1/3" :wrap="false">
+            <n-flex style="border:1px solid red"  vertical class="h-min w-full md:w-1/2 xl:w-1/3">
 
                 <!--标题-->
                 <n-h6 prefix="bar" type="error" class="m-0">
@@ -16,7 +17,10 @@
                     hover:bg-zinc-400 bg-zinc-200
                     cursor-pointer
                     rounded h-min" v-for="item in seeds">
-                        <div class="card  dark:bg-zinc-900  p-1 h-full flex flex-col items-center">
+                        <div class="card
+                        dark:bg-zinc-900
+                        hover:dark:bg-zinc-700
+                        p-1 h-full flex flex-col items-center">
                             <img :src="item.img_src" alt="" class="w-full h-[100px] object-contain">
                         </div>
                         <div class="bg-zinc-300  dark:bg-zinc-800 p-2  w-full flex items-center">
@@ -30,19 +34,40 @@
 
             </n-flex>
 
-            <!--第二部分-->
-            <n-flex vertical class="w-1/3">
-                <n-card title="限时促销" size="small">
-                    活动期间,优质种子
-                    <n-text type="error">7折</n-text>
-                    促销
-                </n-card>
-                <n-card>
-                    1
+            <!-- 第二部分 -->
+            <n-flex style="border:1px solid red" vertical class="h-min w-full md:w-1/2 xl:w-1/3">
+                <n-card size="small" content-class="p-1 flex flex-wrap">
+                    <template #header>
+                        <n-text type="info" tag="div" class="rounded">限时促销</n-text>
+                        <n-text>环保型农药,活动期间</n-text>
+                        <n-text type="error">7折</n-text>
+                    </template>
+                    <n-card
+                            class="h-30 w-1/2"
+                            content-class="pb-0"
+                            v-for="item in pesticide">
+                        <n-image
+                                :src="item.img_src"
+                                object-fit="contain"
+                                width="100%"
+                        ></n-image>
+                        <template #footer>
+                            <n-ellipsis :line-clamp="2">
+                                <n-text tag="div">{{ item.name }}</n-text>
+                            </n-ellipsis>
+                            <n-text tag="div" class="text-sm" depth="3">包邮</n-text>
+                            <n-text tag="div">
+                                <n-text class="text-sm">￥</n-text>
+                                <n-text class="text-xl" type="error">24.9</n-text>
+                            </n-text>
+
+                            <n-text class="p-1 rounded-lg text-sm bg-zinc-100 dark:bg-zinc-800">玉米医生 进店></n-text>
+                        </template>
+                    </n-card>
                 </n-card>
             </n-flex>
-
-            <n-flex vertical class="w-1/3">
+            <!-- 第三部分 -->
+            <n-flex style="border:1px solid red" vertical class=" w-full md:w-1/2 xl:w-1/3">
                 <n-card title="限时促销" size="small">
                     使用期间,优质种子
                     <n-text type="error">7折</n-text>
@@ -61,11 +86,12 @@ import {CaretBackOutline, CaretForwardOutline} from '@vicons/ionicons5'
 import {HotelClassTwotone} from '@vicons/material'
 import NRLink from "@/components/NRLink.vue";
 import RMB from "@/components/RMB.vue";
+import Search from "@/views/Agriculture/Store/components/Search.vue";
 // 假设这是后端发来的数据/pesticide
 const pesticide = ref([
     {
         id: 1,
-        name: "三唑酮",
+        name: "玉米医生|三唑酮|含量高于20%",
         desc: "三唑酮是一种广谱性杀菌剂，主要用于防治多种作物的锈病和白粉病。",
         img_src: "/src/assets/pesticide/三唑酮.png",
         usage_method: "通常在发病初期进行喷雾处理，稀释比例为每亩20-30克，每隔7-10天喷施一次，连续喷施2-3次。",
@@ -74,10 +100,12 @@ const pesticide = ref([
             "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
             "避免在有风天气下喷施，以防药液飘移。",
             "按照标签说明安全使用和处置。"
-        ]
+        ],
+        deliver: "包邮",
+        shopName: "玉米医生"
     }, {
         id: 2,
-        name: "丙环唑",
+        name: "丙环唑|治疗叶斑",
         desc: "丙环唑是一种内吸性杀菌剂，对多种真菌性病害如锈病、叶斑病和枯萎病有效。",
         img_src: "/src/assets/pesticide/丙环唑.jpg",
         usage_method: "在病害初现时进行叶面喷雾处理，推荐浓度为每亩10-15克，每隔10-14天重复喷施，根据需要使用。",
@@ -101,15 +129,7 @@ const pesticide = ref([
         ]
     }
 ])
-const recommend = ref([
-    {
-        "id": 1,
-        "name": "京科968",
-        "img_src": "/src/assets/seed/京科968.jpg",
-        "desc": "京科968是一种高产、抗病、适应性强的玉米品种，适合多种土壤和气候条件。",
-        "price": 100
-    }
-])
+
 const seeds = ref([
         {
             "id": 1,
