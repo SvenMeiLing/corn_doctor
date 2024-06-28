@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+# FileName: store.py
+# Time : 2024/6/28 21:17
+# Author: zzy
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.apis.deps.get_db import get_db
+from app.crud.store import store_crud
+from app.schemas.store import Plant, PlantCreate
+
+router = APIRouter(prefix="/plant")
+
+
+@router.get("/", response_model=Plant)
+async def get_plant(
+        plant_id: int, db_session: AsyncSession = Depends(get_db)
+):
+    plant = await plant_crud.get(db_session, plant_id)
+    if not plant:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    return plant
+
+
+@router.post("/", response_model=Plant)
+async def create_plant(
+        plant_in: PlantCreate, db_session: AsyncSession = Depends(get_db)
+):
+    print(plant_in, "<-------------")
+    plant_in = await plant_crud.create(db_session, obj_in=plant_in)
+    return plant_in

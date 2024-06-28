@@ -46,12 +46,13 @@ class PlantOrm(BaseOrmTable, TimestampColumns):
     description: Mapped[str] = mapped_column(String(256), nullable=False, comment='植物的描述信息')
 
     # 设置外键关联, 每个用户对应多种植株
-    user_id: Mapped[int] = mapped_column(ForeignKey('user.id', comment="外键与用户表关联", ondelete='CASCADE'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id', comment="外键与用户表关联", ondelete='CASCADE'),
+                                         nullable=False)
     # 设置关系, 映射到User.plants字段
     user: Mapped['UserOrm'] = relationship('UserOrm', back_populates='plants')
     # 映射到Disease.plants字段
     diseases: Mapped[list['DiseaseOrm']] = relationship('DiseaseOrm', secondary=plant_disease_association_table,
-                                                     back_populates='plants')
+                                                        back_populates='plants')
     # 映射到Pest.plants字段
     pests: Mapped[list['PestOrm']] = relationship('PestOrm', secondary=plant_pest_association_table,
                                                   back_populates='plants')
@@ -74,7 +75,7 @@ class DiseaseOrm(BaseOrmTable):
     preventive_measure: Mapped[str] = mapped_column(String(512), default="暂无应对策略", comment='防治手段')
 
     plants: Mapped[list['PlantOrm']] = relationship('PlantOrm', secondary=plant_disease_association_table,
-                                               back_populates='diseases')
+                                                    back_populates='diseases')
 
     def __str__(self):
         return self.name
@@ -91,7 +92,8 @@ class PestOrm(BaseOrmTable):
     description: Mapped[str] = mapped_column(String(512), nullable=False, comment='虫害描述')
     preventive_measures: Mapped[str] = mapped_column(String(512), default="暂无应对策略", comment='防治手段')
 
-    plants: Mapped[list['PlantOrm']] = relationship('PlantOrm', secondary=plant_pest_association_table, back_populates='pests')
+    plants: Mapped[list['PlantOrm']] = relationship('PlantOrm', secondary=plant_pest_association_table,
+                                                    back_populates='pests')
 
     def __str__(self):
         return self.name

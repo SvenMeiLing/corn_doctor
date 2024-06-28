@@ -2,10 +2,9 @@
 # FileName: plant.py
 # Time : 2024/6/12 13:15
 # Author: zzy
-from typing import List, Literal
+from typing import Literal
 
-from pydantic import BaseModel, StringConstraints, Field, ConfigDict, field_serializer, root_validator, model_validator, \
-    field_validator
+from pydantic import BaseModel, StringConstraints, Field, ConfigDict, field_serializer, field_validator
 from typing_extensions import Annotated
 
 from app.models.custom_field import FilePathStr
@@ -33,7 +32,7 @@ class PlantBase(BaseModel):
         None, example="md5.png", title="图片资源地址",
         description="植株图片存储地址(相对路径)"
     )
-    # 由于模型可能会出现映射所以支持litaral和int
+    # 由于模型可能会出现映射所以支持literal和int
     health: Literal["良好", "一般", "较差"] | int = Field(None, title="健康程度", description="1健康 2轻微 3严重")
     growth: Literal["良好", "一般", "较差"] | int = Field(None, title="生长程度", description="1茂盛 2一般 3枯萎")
     description: Annotated[
