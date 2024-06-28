@@ -8,7 +8,7 @@
                 <n-text type="error">7折</n-text>
             </template>
             <n-card
-                    class="h-30 w-1/3 xl:w-1/2"
+                    class="h-30 w-1/2"
                     content-class="pb-0"
                     v-for="item in props.showGoods">
                 <n-image
@@ -20,13 +20,14 @@
                     <n-ellipsis :line-clamp="1">
                         <n-text tag="div">{{ item.name }}</n-text>
                     </n-ellipsis>
-                    <n-text tag="div" class="text-sm" depth="3">包邮</n-text>
+                    <n-text tag="div" class="text-sm" depth="3">{{item.dliver}}</n-text>
                     <n-text tag="div">
                         <n-text class="text-sm">￥</n-text>
-                        <n-text class="text-xl" type="error">24.9</n-text>
+                        <n-text class="text-xl" type="error">{{item.price}}</n-text>
                     </n-text>
 
-                    <n-text class="p-1 rounded-lg text-sm bg-zinc-100 dark:bg-zinc-800">玉米医生 进店>
+                    <n-text class="p-1 rounded-lg text-sm bg-zinc-100 dark:bg-zinc-800">
+                        {{item.shopName}} 进店>
                     </n-text>
                 </template>
             </n-card>

@@ -8,20 +8,21 @@
             <n-text type="error">推荐商品</n-text>
         </n-h6>
         <!--商品展示区域-->
-        <div class="w-full h-full flex gap-1 flex-wrap">
+        <div class="w-full h-full flex gap-1 flex-wrap  dark:bg-zinc-800 rounded p-2">
 
             <!--渲染每个商品-->
             <div class="goods-recommend
                     hover:bg-zinc-400 bg-zinc-200
                     cursor-pointer
-                    rounded h-min" v-for="item in props.recommendList">
+                    rounded h-min" v-for="item in props.recommendList"
+            >
                 <div class="card
                         dark:bg-zinc-900
                         hover:dark:bg-zinc-700
                         p-1 h-full flex flex-col items-center">
                     <img :src="item.img_src" alt="" class="w-full h-[100px] object-contain">
                 </div>
-                <div class="bg-zinc-300  dark:bg-zinc-800 p-2  w-full flex items-center">
+                <div class="bg-zinc-300  dark:bg-gray-700 p-2  w-full flex items-center">
                     <n-text class="text-sm" type="default">{{ item.name }}</n-text>
                     <n-icon class="ml-2 text-red-400" :component="RMB"></n-icon>
                     <n-text class="text-base" type="error">{{ item.price }}</n-text>
