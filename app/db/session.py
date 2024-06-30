@@ -27,5 +27,5 @@ async_engine = create_async_engine(
     pool_recycle=1800,  # 表示30分钟后回收连接
     poolclass=AsyncAdaptedQueuePool,  # 异步队列复用连接
 )
-# 用于与数据库建立会话(使用场景是ORM, 详细见sa.log)
+# 用于与数据库建立会话(使用场景是ORM, 详细见sa.seven.txt)
 AsyncSessionFactory = async_sessionmaker(async_engine, expire_on_commit=False, autoflush=False)

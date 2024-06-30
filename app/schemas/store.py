@@ -22,7 +22,11 @@ class Store(StoreInDBBase):
     pass
 
 
-class CategoryInDBBase(BaseModel):
+class Category(BaseModel):
+    name: str = Field(..., max_length=32, title="分类名称")
+
+
+class CategoryInDBBase(Category):
     # 商品分类orm
     model_config = ConfigDict(from_attributes=True)
 
@@ -37,11 +41,13 @@ class ProductBase(BaseModel):
     brand: str = Field(..., max_length=64, title='品牌')
     status: str = Field(..., max_length=16, title='状态')
     image_url: str = Field(..., title='商品图片', description='多张图片以逗号分隔')
-    shipping_method: str =
+    shipping_method: str = Field(..., title="发货方式", max_length=12)
 
 
 class ProductInDBBase(BaseModel):
     # 商品orm
     model_config = ConfigDict(from_attributes=True)
 
+    category_id: int
+    store_id: int
     id: int
