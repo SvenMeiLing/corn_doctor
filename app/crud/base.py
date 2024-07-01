@@ -85,7 +85,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         result = await async_session.scalars(
             select(self.model).options(selectinload(self.model.plants))
         )
-
+        # 这边涉及到关系的不能直接返回,而是关系查询后返回,独自更改扩展类即可
         return result.first()
 
     async def update(
