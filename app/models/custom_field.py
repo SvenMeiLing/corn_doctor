@@ -31,7 +31,7 @@ class FilePath:
         return len(self.file_path.name)
 
 
-def after(value: str | FilePath):
+def path_after(value: str | FilePath):
     """
     执行逻辑：
     当值传入后立即执行
@@ -43,22 +43,59 @@ def after(value: str | FilePath):
     return str(value.file_path)
 
 
-def plain(value: FilePath) -> str:
+def path_plain(value: FilePath) -> str:
     """
     执行逻辑：
     只有在使用 model_dump 等序列化方式时，才会执行，使用 .属性 时并不会执行
-    所以如果有数据需要在使用 .属性 或者 序列化时 处理的结果一样，那么请在 after 方法中处理
-    如果 after 方法与 plain 方法处理的是一样的，那么可以在这里直接返回值，或者使用 lambda x: x 匿名函数直接返回
+    所以如果有数据需要在使用 .属性 或者 序列化时 处理的结果一样，那么请在 path_after 方法中处理
+    如果 path_after 方法与 path_plain 方法处理的是一样的，那么可以在这里直接返回值，或者使用 lambda x: x 匿名函数直接返回
     """
     return str(value.file_path)
 
 
-#  自定义的类型
+# ------------------------
+# 定义健康状态的映射
+IMPACT_MAP = {
+    1: "高",
+    2: "中",
+    3: "低"
+}
+
+# 反向映射用于从字符串到整数的转换
+IMPACT_REVERSE_MAP = {v: k for k, v in IMPACT_MAP.items()}
+
+
+def enum_after(key):  # 将此字段的值若为int, 序列化成对于的文字访问, 例如v是从数据库去到的1->映射->良好
+    print("enum_after", key)
+    if key in IMPACT_MAP:
+        return key
+    elif key in IMPACT_REVERSE_MAP:
+        return IMPACT_REVERSE_MAP[key]
+    return 2
+
+
+def enum_plain(key):
+    print("enum_plain", key)
+    if key in IMPACT_MAP:  # 如果key是1返回良好
+        return IMPACT_MAP[key]
+    elif key in IMPACT_REVERSE_MAP:  # 如果key是良好返回1
+        return IMPACT_REVERSE_MAP[key]
+    return None
+
+
+#  自定义的类型, 用于文件路径
 FilePathStr = Annotated[
     str | FilePath,
-    AfterValidator(after),
-    PlainSerializer(plain, return_type=str),
+    AfterValidator(path_after),
+    PlainSerializer(path_plain, return_type=str),
     WithJsonSchema({'type': 'string'}, mode='serialization')
+]
+
+# 用于映射 name <-> value
+EnumConvert = Annotated[
+    str | int,
+    AfterValidator(enum_after),  # 验证
+    PlainSerializer(enum_plain, when_used="json"),  # 序列化
 ]
 if __name__ == '__main__':
     class M(BaseModel):

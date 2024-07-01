@@ -16,7 +16,6 @@ class ProductOrm(BaseOrmTable, TimestampColumns):
     name: Mapped[str] = mapped_column(String(32), nullable=False, comment='商品名称', index=True)
     price: Mapped[float] = mapped_column(Numeric, nullable=False, comment='商品单价')
     stock_quantity: Mapped[int] = mapped_column(Integer, nullable=False, comment="库存数量")
-    category_id: Mapped[int] = mapped_column(Integer, ForeignKey('category.id'), nullable=False, comment='类别ID')
     brand: Mapped[str] = mapped_column(String(64), nullable=True, comment='品牌')
     status: Mapped[str] = mapped_column(String(16), nullable=False, default='available', comment='状态')
     image_url: Mapped[str] = mapped_column(
@@ -26,15 +25,18 @@ class ProductOrm(BaseOrmTable, TimestampColumns):
     shipping_method: Mapped[str] = mapped_column(
         String(12), nullable=True, default='包邮', comment='发货方式'
     )
-    category: Mapped['CategoryOrm'] = relationship('CategoryOrm', back_populates='products')
-    store: Mapped['StoreOrm'] = relationship('StoreOrm', back_populates='products')
+    category_id: Mapped[int] = mapped_column(Integer, ForeignKey('category.id'), nullable=False, comment='类别ID')
+    store_id: Mapped[int] = mapped_column(Integer, ForeignKey('store.id'), nullable=False, comment='店铺ID')
+
+    category: Mapped['CategoryOrm'] = relationship('CategoryOrm', back_populates='products', lazy="selectin")
+    store: Mapped['StoreOrm'] = relationship('StoreOrm', back_populates='products', lazy="selectin")
 
 
 class CategoryOrm(BaseOrmTable, TimestampColumns):
     __tablename__ = 'category'
     name: Mapped[str] = mapped_column(String(32), nullable=False, unique=True, comment='商品分类名称')
 
-    products: Mapped[list['ProductOrm']] = relationship('ProductOrm', back_populates='category')
+    products: Mapped[list['ProductOrm']] = relationship('ProductOrm', back_populates='category', lazy="selectin")
 
 
 class StoreOrm(BaseOrmTable, TimestampColumns):
@@ -46,4 +48,4 @@ class StoreOrm(BaseOrmTable, TimestampColumns):
     logo_img: Mapped[str] = mapped_column(String(32), comment='logo图片地址')
 
     products: Mapped[list['ProductOrm']] = relationship('ProductOrm', back_populates='store',
-                                                        cascade='all, delete-orphan')
+                                                        cascade='all, delete-orphan', lazy="selectin")

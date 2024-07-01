@@ -3,6 +3,12 @@
 # Time : 2024/6/17 8:13
 # Author: zzy
 import os
+from pathlib import Path
+
+# 项目根路径
+PROJECT_PATH = Path(__file__).parent.parent.parent
+# 应用程序路径
+APP_PATH = PROJECT_PATH / "app"
 
 
 def getenv_boolean(var_name, default_value=False):
@@ -60,6 +66,15 @@ EMAILS_FROM_NAME = PROJECT_NAME
 EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
 EMAIL_TEMPLATES_DIR = "/app/app/email-templates/build"
 EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
+
+# vision 配置
+MODEL_NAME = r"b2000_c15.pt"
+MODEL_PATH = APP_PATH / "vision" / MODEL_NAME
+PREDICT_CONFIG = {
+    "conf": 0.7,
+    "imgsz": 640,
+
+}
 
 # 初始化超级用户
 FIRST_SUPERUSER = os.getenv("FIRST_SUPERUSER")

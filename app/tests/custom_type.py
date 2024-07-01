@@ -19,7 +19,7 @@ def after(value: str | FilePath):
     当值传入后立即执行
     所以在使用 .属性 或者 序列化方法时，都是获取到的处理后的数据
     """
-    print("after")
+    print("path_after")
     if isinstance(value, str):
         fp = FilePath(value)
         return fp
@@ -30,10 +30,10 @@ def plain(value: FilePath) -> str:
     """
     执行逻辑：
     只有在使用 model_dump 等序列化方式时，才会执行，使用 .属性 时并不会执行
-    所以如果有数据需要在使用 .属性 或者 序列化时 处理的结果一样，那么请在 after 方法中处理
-    如果 after 方法与 plain 方法处理的是一样的，那么可以在这里直接返回值，或者使用 lambda x: x 匿名函数直接返回
+    所以如果有数据需要在使用 .属性 或者 序列化时 处理的结果一样，那么请在 path_after 方法中处理
+    如果 path_after 方法与 path_plain 方法处理的是一样的，那么可以在这里直接返回值，或者使用 lambda x: x 匿名函数直接返回
     """
-    print("plain 方法执行了", value)
+    print("path_plain 方法执行了", value)
     return str(value.file_path)
 
 

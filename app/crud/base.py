@@ -79,10 +79,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result.scalars().all()
 
     async def create(self, async_session: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
-        async with async_session.begin():
-            db_obj = self.model(**obj_in.dict())
-            async_session.add(db_obj)
-            return db_obj
+        db_obj = self.model(**obj_in.dict())
+        async_session.add(db_obj)
+        await async_session.commit()
+        result = await async_session.scalars(
+            select(self.model).options(selectinload(self.model.plants))
+        )
+
+        return result.first()
 
     async def update(
             self,

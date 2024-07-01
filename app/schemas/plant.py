@@ -2,7 +2,7 @@
 # FileName: plant.py
 # Time : 2024/6/12 13:15
 # Author: zzy
-from typing import Literal
+from typing import Literal, List
 
 from pydantic import BaseModel, StringConstraints, Field, ConfigDict, field_serializer, field_validator
 from typing_extensions import Annotated
@@ -74,15 +74,15 @@ class PlantInDBBase(PlantBase):
 
     id: int
     user_id: int
-    # diseases: List["Disease"] = Field([], title="该植株的所有病害")
-    # pests: List["Pest"] = Field([], title="该植株的所有虫害")
+    diseases: List["DiseaseBase"] = Field([], title="该植株的所有病害")
+    pests: List["Pest"] = Field([], title="该植株的所有虫害")
 
 
 class Plant(PlantBase):
     pass
 
 
-from app.schemas.disease_pest import Disease, Pest  # type: ignore
+from app.schemas.disease_pest import DiseaseBase, Pest  # type: ignore
 
 PlantInDBBase.update_forward_refs()
 

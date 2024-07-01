@@ -15,7 +15,7 @@ v1 = APIRouter(prefix=API_VERSION)
 v1.include_router(user_router, tags=["user"])
 v1.include_router(disease_router, tags=["disease"])
 v1.include_router(plant_router, tags=["plant"])
-v1.include_router()
+
 app.include_router(v1)
 
 if __name__ == '__main__':
