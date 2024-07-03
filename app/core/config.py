@@ -73,8 +73,15 @@ MODEL_PATH = APP_PATH / "vision" / MODEL_NAME
 PREDICT_CONFIG = {
     "conf": 0.7,
     "imgsz": 640,
-
 }
+# 用户上传图片保存地址
+ORIGIN_IMG_PATH = APP_PATH / "vision" / "origin_imgs"
+
+# 预测后图片物理路径
+PREDICT_PATH = APP_PATH / "vision" / "predict"
+
+# 图片访问URL
+MEDIA_ROOT = "http://127.0.0.1:8000/predict/"
 
 # 初始化超级用户
 FIRST_SUPERUSER = os.getenv("FIRST_SUPERUSER")

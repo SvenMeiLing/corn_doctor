@@ -81,6 +81,8 @@ class DiseaseOrm(BaseOrmTable):
         return self.name
 
 
+
+
 class PestOrm(BaseOrmTable):
     __tablename__ = 'pest'
     __table_args__ = {'comment': '存储玉米相关虫害'}

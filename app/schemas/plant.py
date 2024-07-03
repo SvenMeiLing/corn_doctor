@@ -28,7 +28,7 @@ class PlantBase(BaseModel):
         StringConstraints(strip_whitespace=True, max_length=24)  # type: ignore
     ] = Field(None, example="葡萄", title="名称", description="植物名称")
     planting_location: Annotated[str, StringConstraints(strip_whitespace=True, max_length=32)]  # type: ignore
-    media_url: FilePathStr | str = Field(
+    media_url: str = Field(
         None, example="md5.png", title="图片资源地址",
         description="植株图片存储地址(相对路径)"
     )
@@ -64,6 +64,9 @@ class PlantBase(BaseModel):
 class PlantCreate(PlantBase):
     user_id: int
 
+    diseases: List["DiseaseBase"] | List[str] = Field([], title="该植株的所有病害")
+    pests: List["Pest"] | List[str] = Field([], title="该植株的所有虫害")
+
 
 class PlantUpdate(PlantBase):
     pass
@@ -78,7 +81,7 @@ class PlantInDBBase(PlantBase):
     pests: List["Pest"] = Field([], title="该植株的所有虫害")
 
 
-class Plant(PlantBase):
+class Plant(PlantInDBBase):
     pass
 
 
@@ -87,7 +90,8 @@ from app.schemas.disease_pest import DiseaseBase, Pest  # type: ignore
 PlantInDBBase.update_forward_refs()
 
 if __name__ == '__main__':
-    p = PlantBase(name="pt", planting_location='xy', media_url='xxx.png', health=HealthEnum.一般,  # type: ignore
-                  growth=GrowthEnum.一般, description='xxx')  # type: ignore
+    p = PlantBase(
+        name="pt", planting_location='xy', media_url='xxx.png', health=HealthEnum.一般,  # type: ignore
+        growth=GrowthEnum.一般, description='xxx')  # type: ignore
     print(p.dict())
     # print(p.dict())

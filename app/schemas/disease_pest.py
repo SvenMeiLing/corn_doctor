@@ -31,7 +31,7 @@ class DiseaseInDBBase(DiseaseBase):
     plants: List["Plant"] = []
 
 
-class Disease(DiseaseInDBBase):
+class Disease(DiseaseBase):
     pass
 
 

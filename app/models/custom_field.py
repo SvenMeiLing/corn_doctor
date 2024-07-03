@@ -9,12 +9,14 @@ from typing import Optional, Annotated
 
 from pydantic import BaseModel, Field, AfterValidator, WithJsonSchema, PlainSerializer
 
+from app.core.config import PREDICT_PATH
+
 
 @dataclass
 class FilePath:
-    # todo: 输入home/media/2023/12/5/e322c5c4dd094bcde15d5dee44975a5a.jpg的地址后, 帮我校验前缀是否是home/media
+    # todo: 输入home/media/2023/12/7/e322c5c4dd094bcde15d5dee44975a5a.jpg的地址后, 帮我校验前缀是否是home/media
     file_path: Path | str  # 文件名称
-    base_path: InitVar[Optional[str]] = "/home/media"
+    base_path: InitVar[Optional[str]] = PREDICT_PATH
 
     def __post_init__(self, base_path):
         """
@@ -23,7 +25,9 @@ class FilePath:
         :return: None
         """
         today = datetime.date.today()
-        self.file_path = Path(str(today.year), str(today.month), str(today.day), self.file_path).as_posix().lstrip("/")
+        self.file_path = Path(
+            str(today.year), str(today.month), str(today.day), self.file_path
+        ).as_posix().lstrip("/")
         if base_path is not None:
             self.file_path = Path(base_path, self.file_path)
 
@@ -105,5 +109,7 @@ if __name__ == '__main__':
         )
 
 
-    m = M(f=FilePath("1.jpg"))
+    #
+
+    m = M(f=FilePath("x.png"))
     print(m.dict())

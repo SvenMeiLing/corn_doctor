@@ -15,13 +15,13 @@ async with async_engine.begin() as conn:  # 这是一个事务, 在一个事务�
     await conn.execute(
         text("insert into table (x, y, z) values (1, 2, 3)")
     )
-    await conn.execute(text("my_special_procedure(5)"))
+    await conn.execute(text("my_special_procedure(7)"))
 """
 # 用于连接数据库(当调用时直接启动一个数据库连接,用于直接操作例如建表,改表结构,而非ORM)
 async_engine = create_async_engine(
     "mysql+aiomysql://root:168168956@127.0.0.1:3306/fast_corn",
-    echo=True,  # 打印日志
-    echo_pool=True,
+    echo=False,  # 打印日志
+    echo_pool=False,
     pool_size=10,  # 在连接池中保持打开的连接数
     max_overflow=10,  # 最大连接数
     pool_recycle=1800,  # 表示30分钟后回收连接

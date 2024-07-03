@@ -82,11 +82,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db_obj = self.model(**obj_in.dict())
         async_session.add(db_obj)
         await async_session.commit()
-        result = await async_session.scalars(
-            select(self.model).options(selectinload(self.model.plants))
-        )
-        # 这边涉及到关系的不能直接返回,而是关系查询后返回,独自更改扩展类即可
-        return result.first()
+        return db_obj
+        # result = await async_session.scalars(
+        #     select(self.model).options(selectinload(self.model.plants))
+        # )
+        # # 这边涉及到关系的不能直接返回,而是关系查询后返回,独自更改扩展类即可
+        # return result.first()
 
     async def update(
             self,
