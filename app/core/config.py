@@ -5,10 +5,14 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # 项目根路径
 PROJECT_PATH = Path(__file__).parent.parent.parent
 # 应用程序路径
 APP_PATH = PROJECT_PATH / "app"
+
+load_dotenv()
 
 
 def getenv_boolean(var_name, default_value=False):
@@ -31,6 +35,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 8  # 60 minutes * 24 hours * 8 days = 8 
 # 服务器的配置
 SERVER_NAME = os.getenv("SERVER_NAME")
 SERVER_HOST = os.getenv("SERVER_HOST")
+SERVER_PORT = os.getenv("SERVER_PORT")
 
 # 支持的域(设置跨域),str->不同域以逗号分隔
 BACKEND_CORS_ORIGINS = os.getenv(
@@ -67,9 +72,12 @@ EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
 EMAIL_TEMPLATES_DIR = "/app/app/email-templates/build"
 EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
 
-# vision 配置
+# --------------------------vision 配置--------------------------------
+# 模型名称
 MODEL_NAME = r"b2000_c15.pt"
 MODEL_PATH = APP_PATH / "vision" / MODEL_NAME
+
+# yolo.predict配置
 PREDICT_CONFIG = {
     "conf": 0.7,
     "imgsz": 640,
@@ -80,7 +88,7 @@ ORIGIN_IMG_PATH = APP_PATH / "vision" / "origin_imgs"
 # 预测后图片物理路径
 PREDICT_PATH = APP_PATH / "vision" / "predict"
 
-# 图片访问URL
+# 图片访问URL, predict设置为了静态目录
 MEDIA_ROOT = "http://127.0.0.1:8000/predict/"
 
 # 初始化超级用户

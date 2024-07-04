@@ -7,8 +7,6 @@ import hashlib
 from os import PathLike
 from pathlib import Path
 
-from app.core.config import PREDICT_PATH
-
 
 def gen_hashed(file_byt: bytes):
     md5 = hashlib.md5(file_byt)
