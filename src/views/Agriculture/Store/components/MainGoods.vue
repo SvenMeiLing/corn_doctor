@@ -15,6 +15,7 @@
                         :src="item.img_src"
                         object-fit="contain"
                         width="100%"
+                        class="max-h-40"
                 ></n-image>
                 <template #footer>
                     <n-ellipsis :line-clamp="1">

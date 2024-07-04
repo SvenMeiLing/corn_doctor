@@ -6,27 +6,14 @@
                 新品速推
             </template>
             <template #default>
-                <n-list hoverable clickable>
-                    <n-list-item>
-                        <n-thing title="代森锰锌" content-style="margin-top: 10px;">
-                            <template #description>
-                                <n-space size="small" style="margin-top: 4px">
-                                    <n-tag :bordered="false" type="info" size="small">
-                                        进口
-                                    </n-tag>
-                                    <n-tag :bordered="false" type="info" size="small">
-                                        联合研发
-                                    </n-tag>
-                                </n-space>
-                            </template>
-                            <template #default>
-                                <n-image src="/">
+                <n-carousel show-arrow class="w-72 h-72">
+                    <img
+                            v-for="item in props.newProduct"
+                            class="w-full h-full object-contain"
+                            :src="item.img_src"
+                    >
 
-                                </n-image>
-                            </template>
-                        </n-thing>
-                    </n-list-item>
-                </n-list>
+                </n-carousel>
             </template>
         </n-card>
     </n-flex>
@@ -35,8 +22,18 @@
 <script setup>
 import DJI from '@/components/DJI.vue'
 import iFlytek from '@/components/iFlytek.vue'
+
+const props = defineProps({
+    newProduct: {
+        default: [],
+        type: Array
+    }
+})
 </script>
 
 <style scoped>
-
+.carousel-img {
+    width: auto;
+    height: 300px;
+}
 </style>

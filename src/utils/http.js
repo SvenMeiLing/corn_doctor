@@ -22,8 +22,8 @@ NProgress.configure({
 
 })
 export const httpInstance = axios.create({
-    baseURL: "http://127.0.0.1:8000",
-    timeout: 2500,
+    baseURL: "http://127.0.0.1:8000/api/v1",
+    timeout: 15000,
 })
 
 

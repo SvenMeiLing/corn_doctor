@@ -8,7 +8,7 @@
 import request from '@/utils/http.js'
 
 export function uploadImg(data) {
-    return request('/upload', {
+    return request('/plant/yolo_identify', {
         method: "POST",
         data
     })

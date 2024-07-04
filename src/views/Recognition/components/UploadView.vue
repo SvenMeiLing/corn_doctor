@@ -34,10 +34,16 @@ const userFiles = ref([]),
         const formData = new FormData()
         userFiles.value.forEach((value, index) => {
             // console.log(value.file)
-            formData.append('file', value.file)
+            formData.append(`files`, value.file)
         })
         // 保存响应内容
         const result = await uploadImg(formData)
+        if (!result) {
+            // 后置操作:1.关闭加载状态和弹出框
+            isLoading.value = false
+            isSubmitting.value = false
+            showModal.value = false
+        }
         recognitionData.value = result
         // 传递数据给组件
         emitter.emit('recognitionData', recognitionData.value)

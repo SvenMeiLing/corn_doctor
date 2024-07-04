@@ -10,7 +10,7 @@
                 <MainGoods :show-goods="pesticide" :slogan="'限时促销'"/>
 
                 <!-- 第三部分 -->
-                <Other/>
+                <Other :new-product="pesticide.slice(0,4)"/>
             </n-flex>
         </n-scrollbar>
 
@@ -18,6 +18,7 @@
 </template>
 
 <script setup>
+// 代森锰锌,克草金,吡虫啉,唑醚-氟环唑,噻吗嗪,氟虫腈,氯虫苯甲酰胺,百菌清,阿维菌素
 import {CaretBackOutline, CaretForwardOutline} from '@vicons/ionicons5'
 import {HotelClassTwotone} from '@vicons/material'
 import NRLink from "@/components/NRLink.vue";
@@ -43,7 +44,8 @@ const pesticide = ref([
         deliver: "包邮",
         shopName: "玉米医生",
         price: 17.3
-    }, {
+    },
+    {
         id: 2,
         name: "丙环唑|治疗叶斑",
         desc: "丙环唑是一种内吸性杀菌剂，对多种真菌性病害如锈病、叶斑病和枯萎病有效。",
@@ -58,7 +60,8 @@ const pesticide = ref([
         deliver: "包邮",
         shopName: "清风映绿",
         price: 27.3
-    }, {
+    },
+    {
         id: 3,
         name: "欣锐|甲基硫菌灵|抗真菌",
         desc: "甲基硫菌灵是一种广谱性杀菌剂，用于防治多种真菌性病害如叶斑病、枯萎病和白粉病。",
@@ -73,6 +76,150 @@ const pesticide = ref([
         deliver: "包邮",
         shopName: "麦田生物",
         price: 30
+    },
+    {
+        id: 4,
+        name: "农田守护|代森锰锌|含量高于50%",
+        desc: "代森锰锌是一种广谱保护性杀菌剂，广泛用于防治多种作物的病害。",
+        img_src: "/src/assets/pesticide/代森锰锌.png",
+        usage_method: "在作物发病初期进行喷雾处理，稀释比例为每亩50-100克，每隔10-14天喷施一次。",
+        precautions: [
+            "避免与强酸或强碱混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "农田守护",
+        price: 25.5
+    },
+    {
+        id: 5,
+        name: "田园卫士|克草金|含量高于95%",
+        desc: "克草金是一种高效除草剂，主要用于防治多种禾本科和阔叶杂草。",
+        img_src: "/src/assets/pesticide/克草金.png",
+        usage_method: "在杂草生长初期进行喷雾处理，稀释比例为每亩50-100毫升，每隔20天喷施一次。",
+        precautions: [
+            "避免与其他药剂混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "田园卫士",
+        price: 40.0
+    },
+    {
+        id: 6,
+        name: "庄稼卫士|吡虫啉|含量高于70%",
+        desc: "吡虫啉是一种高效内吸性杀虫剂，广泛用于防治多种刺吸式害虫。",
+        img_src: "/src/assets/pesticide/吡虫啉.png",
+        usage_method: "在害虫初发期进行喷雾处理，稀释比例为每亩10-15克，每隔7-10天喷施一次。",
+        precautions: [
+            "避免与碱性物质混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "庄稼卫士",
+        price: 18.0
+    },
+    {
+        id: 7,
+        name: "丰收卫士|唑醚-氟环唑|含量高于25%",
+        desc: "唑醚-氟环唑是一种混合型广谱杀菌剂，用于防治多种真菌病害。",
+        img_src: "/src/assets/pesticide/唑醚-氟环唑.png",
+        usage_method: "在病害初发期进行喷雾处理，稀释比例为每亩30-50毫升，每隔10-14天喷施一次。",
+        precautions: [
+            "避免与碱性物质混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "丰收卫士",
+        price: 32.0
+    },
+    {
+        id: 8,
+        name: "植保先锋|噻吗嗪|含量高于95%",
+        desc: "噻吗嗪是一种选择性除草剂，适用于防治多种阔叶杂草。",
+        img_src: "/src/assets/pesticide/噻吗嗪.jpg",
+        usage_method: "在杂草生长初期进行喷雾处理，稀释比例为每亩20-30克，每隔14-21天喷施一次。",
+        precautions: [
+            "避免与其他除草剂混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "植保先锋",
+        price: 28.0
+    },
+    {
+        id: 9,
+        name: "田园守护|氟虫腈|含量高于95%",
+        desc: "氟虫腈是一种高效广谱杀虫剂，适用于防治多种咀嚼式害虫。",
+        img_src: "/src/assets/pesticide/氟虫腈.jpg",
+        usage_method: "在害虫初发期进行喷雾处理，稀释比例为每亩10-20克，每隔7-10天喷施一次。",
+        precautions: [
+            "避免与碱性物质混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "田园守护",
+        price: 35.0
+    },
+    {
+        id: 10,
+        name: "绿色农场|氯虫苯甲酰胺|含量高于20%",
+        desc: "氯虫苯甲酰胺是一种新型杀虫剂，对多种害虫具有高效防治效果。",
+        img_src: "/src/assets/pesticide/氯虫苯甲酰胺.jpg",
+        usage_method: "在害虫初发期进行喷雾处理，稀释比例为每亩15-25克，每隔10-14天喷施一次。",
+        precautions: [
+            "避免与其他杀虫剂混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "绿色农场",
+        price: 42.0
+    },
+    {
+        id: 11,
+        name: "作物卫士|百菌清|含量高于50%",
+        desc: "百菌清是一种广谱保护性杀菌剂，广泛用于防治多种作物的真菌病害。",
+        img_src: "/src/assets/pesticide/百菌清.png",
+        usage_method: "在病害初发期进行喷雾处理，稀释比例为每亩50-75克，每隔7-10天喷施一次。",
+        precautions: [
+            "避免与其他杀菌剂混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "作物卫士",
+        price: 30.0
+    },
+    {
+        id: 12,
+        name: "虫害克星|阿维菌素|含量高于5%",
+        desc: "阿维菌素是一种生物源杀虫剂，对多种害虫具有高效防治效果。",
+        img_src: "/src/assets/pesticide/阿维菌素.png",
+        usage_method: "在害虫初发期进行喷雾处理，稀释比例为每亩10-15毫升，每隔7-10天喷施一次。",
+        precautions: [
+            "避免与其他杀虫剂混用。",
+            "使用时需佩戴防护装备，避免药液接触皮肤和眼睛。",
+            "避免在有风天气下喷施，以防药液飘移。",
+            "按照标签说明安全使用和处置。"
+        ],
+        deliver: "包邮",
+        shopName: "虫害克星",
+        price: 20.0
     }
 ])
 

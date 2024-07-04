@@ -205,13 +205,6 @@ const seeds = ref([
 
 <style scoped>
 
-
-.carousel-img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-}
-
 :deep(.n-carousel__arrow) {
     background-color: rgba(58, 58, 58, 0.7);
 }

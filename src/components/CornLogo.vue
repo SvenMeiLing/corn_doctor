@@ -3,8 +3,17 @@
          width="553.000000pt" height="553.000000pt" viewBox="0 0 553.000000 553.000000"
          preserveAspectRatio="xMidYMid meet">
 
+        <!-- 定义线性渐变 -->
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="10%" style="stop-color:#3AA6B9;stop-opacity:1"/>
+                <stop offset="10%" style="stop-color:#379777;stop-opacity:1"/>
+                <stop offset="80%" style="stop-color:#E9C46A;stop-opacity:1"/>
+            </linearGradient>
+        </defs>
+
         <g transform="translate(0.000000,553.000000) scale(0.100000,-0.100000)"
-           stroke="none">
+           fill="url(#grad1)" stroke="none">
             <path d="M3335 4825 c-439 -70 -881 -308 -1254 -674 -260 -254 -476 -569 -613
 -891 -22 -52 -44 -97 -49 -100 -5 -3 -11 -21 -13 -40 -3 -19 -15 -62 -27 -95
 -46 -128 -88 -349 -104 -545 -8 -100 10 -324 35 -435 40 -181 66 -252 137
@@ -33,6 +42,7 @@
 -4 48 28 c221 127 486 376 590 550 44 75 134 276 134 299 0 18 -3 18 -55 -2z"/>
         </g>
     </svg>
+
 
 </template>
 
