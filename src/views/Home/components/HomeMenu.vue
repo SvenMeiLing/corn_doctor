@@ -16,7 +16,10 @@ import {
     HomeOutline as HomeIcon,
     EyeOutline as RecognitionIcon,
 } from "@vicons/ionicons5";
-import {StoreMallDirectoryTwotone as StoreIcon} from '@vicons/material'
+import {
+    StoreMallDirectoryTwotone as StoreIcon,
+    BubbleChartTwotone as Chart
+} from '@vicons/material'
 import {Template} from '@vicons/carbon'
 import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
@@ -126,15 +129,17 @@ const menuOptions = [
                 ]
             },
             {
-                label: "饮品",
-                key: "beverage",
-                icon: renderIcon(WineIcon),
-                children: [
+                label: () => h(
+                    RouterLink,
                     {
-                        label: "威士忌",
-                        key: "whisky"
+                        to: {path: `/agriculture/ai-chat`},
+
+                    }, {
+                        default: () => "智能助理"
                     }
-                ]
+                ),
+                key: "aiChat",
+                icon: renderIcon(Chart),
             },
             {
                 label: "食物",

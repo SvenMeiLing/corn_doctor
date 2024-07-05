@@ -46,8 +46,8 @@ const router = createRouter({
                             component: () => import('@/views/Agriculture/Store/Index.vue')
                         },
                         {
-                            path: "child3",
-                            component: () => import('@/views/Agriculture/Child3/Index.vue')
+                            path: "ai-chat",
+                            component: () => import('@/views/Agriculture/AIChat/Index.vue')
                         },
                     ]
                 }

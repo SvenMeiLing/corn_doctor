@@ -1,6 +1,7 @@
 <template>
 
     <n-layout-sider
+            :class="{'collapsed': collapsed}"
             bordered
             collapse-mode="width"
             :collapsed-width="64"
@@ -31,6 +32,8 @@ const collapsed = ref(userProfile.profile.collapsed)
 watch(collapsed, (newValue) => {
     // 当用户切换菜单收缩时, 在会话中保存设置
     userProfile.setUserProfile('collapsed', newValue)
+    // 也会添加一个类名
+    console.log(collapsed.value)
 })
 onMounted(() => {
     // collapsed.value = userProfile.profile.collapsed
