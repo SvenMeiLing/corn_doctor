@@ -50,6 +50,10 @@ const router = createRouter({
                             component: () => import('@/views/Agriculture/AIChat/Index.vue')
                         },
                     ]
+                },
+                {
+                    path: "/page5",
+                    component: () => import('@/views/Page5/Index.vue')
                 }
             ]
         }

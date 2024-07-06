@@ -4,7 +4,7 @@
             <n-space :size="0" justify="center" align="center" :wrap-item="false" :wrap="false">
                 <!--                <n-image src="/src/assets/images/corn.png" height="30" preview-disabled></n-image>-->
                 <n-icon :component="CornLogo" :size="40" class="text-yellow-600"></n-icon>
-                <n-text class="font-thin text-xl">
+                <n-text class="font-thin text-xl text-[#E9C46A]">
                     智慧农业
                 </n-text>
                 <n-icon :component="X" size="15"></n-icon>

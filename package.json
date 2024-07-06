@@ -13,6 +13,7 @@
     "animate.css": "^4.1.1",
     "axios": "^1.7.2",
     "gsap": "^3.12.5",
+    "markdown-it-vue": "^1.1.7",
     "mitt": "^3.0.1",
     "mockjs": "^1.1.0",
     "nprogress": "^0.2.0",
