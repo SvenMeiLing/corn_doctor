@@ -42,6 +42,7 @@ httpInstance.interceptors.request.use(
 httpInstance.interceptors.response.use(res => {
         NProgress.done(); // 隐藏进度条
         console.log("===>", res)
+        console.log(res.data.getReader());
         return res.data
     },
     e => {
