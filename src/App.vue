@@ -6,7 +6,6 @@
 
         <n-message-provider>
             <RouterView />
-
         </n-message-provider>
 
 

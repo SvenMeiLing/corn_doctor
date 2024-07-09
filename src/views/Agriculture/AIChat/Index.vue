@@ -18,35 +18,38 @@
             <!--聊天框容器-->
 
             <n-scrollbar content-class="p-2">
-                <!--每条消息-->
-                <n-card
-                        bordered
-                        embedded
-                        title=""
-                        class="w-fit even:ms-auto m-2"
-                        size="small"
-                        v-for="item in chatHistory"
-                >
-                    <template #header>
-                        <n-avatar
-                                class="me-auto"
-                                size="medium"
-                                color="none "
-                                :src="item.avatar"
-                        >
-                            <template #default v-if="item.role==='user' && !item.avatar">
-                                <n-icon class="text-black dark:text-white"
-                                        :component="UserAvatarFilled"></n-icon>
-                            </template>
-                        </n-avatar>
-                        <n-flex align="center" justify="center" :size="0">
+                <transition-group enter-active-class="animate__animated animate__fadeIn">
+                    <!--每条消息-->
+                    <n-card
+                            bordered
+                            embedded
+                            title=""
+                            class="w-fit even:ms-auto m-2"
+                            size="small"
+                            v-for="item in chatHistory"
+                    >
+                        <template #header>
+                            <n-avatar
+                                    class="me-auto"
+                                    size="medium"
+                                    color="none "
+                                    :src="item.avatar"
+                            >
+                                <template #default v-if="item.role==='user' && !item.avatar">
+                                    <n-icon class="text-black dark:text-white"
+                                            :component="UserAvatarFilled"></n-icon>
+                                </template>
+                            </n-avatar>
+                            <n-flex align="center" justify="center" :size="0">
 
-                            <n-text tag="div">
-                                {{ item.message }}
-                            </n-text>
-                        </n-flex>
-                    </template>
-                </n-card>
+                                <n-text tag="div">
+                                    {{ item.message }}
+                                </n-text>
+                            </n-flex>
+                        </template>
+                    </n-card>
+                </transition-group>
+
 
             </n-scrollbar>
             <n-flex
@@ -76,12 +79,18 @@
 
 <script setup>
 import {UserAvatarFilled} from '@vicons/carbon'
-import {ref, reactive} from "vue";
-import {getAIAnswer} from "@/apis/chatAI.js";
-import axios from "axios";
+import {ref, onMounted} from "vue";
+import {storeToRefs} from 'pinia'
+import {useChatStore} from "@/stores/chatHistory.js"
 
-const chatHistory = reactive([
+import 'animate.css'
+
+const chatStore = useChatStore()
+// 将 store 的 state 转换为 ref
+const {localChatHistory} = storeToRefs(chatStore);
+const chatHistory = ref([
     {
+        id: 1,
         role: "spark",
         message: "您好, 我是基于讯飞星火的玉米医生,可为您解答有关农业相关的一切问题.",
         avatar: '/public/corn-logo.svg'
@@ -105,35 +114,67 @@ const chatHistory = reactive([
 
 // 输入框双向绑定
 const message = ref("")
-
-const streamMsg = ref("")
 const chatAI = async () => {
     // 发起请求前, 新增用户消息
-    chatHistory.push({
+    chatHistory.value.push({
+        id: chatHistory.value.length + 1,
         role: "user",
         message: message.value,
         avatar: ""
     })
-    const res = await getAIAnswer({question: message.value})
-    const reader = res.data.getReader();
-    const decoder = new TextDecoder();
-    while (true) {
-        const {done, value} = await reader.read();
-        console.log(value, ",,,,,,,____")
-        if (done) break;
 
-        const chunk = decoder.decode(value, {stream: true});
-        streamMsg.value += chunk;
-    }
+    let response = await fetch('http://127.0.0.1:8000/api/v1/ai-chat', {
+        method: "POST",
+        body: JSON.stringify({question: message.value}),
+        headers: {
+            'Content-Type': 'application/json' // 请求头，指定发送的数据类型为 JSON
+            // 如果有其他请求头需要设置，可以在这里添加
+        },
+    });
     // 请求结束新增恢复信息
-    // chatHistory.push({
-    //     role: "spark",
-    //     message: res,
-    //     avatar: "/public/corn-logo.svg"
-    // })
-    // console.log(message.value)
-    // console.log(res)
+    chatHistory.value.push({
+        id: chatHistory.value.length + 1,
+        role: "spark",
+        message: "",
+        avatar: "/public/corn-logo.svg"
+    })
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    const reader = response.body.getReader();
+    const textDecoder = new TextDecoder();
+    let result = true;
+
+    while (result) {
+        const {done, value} = await reader.read();
+
+        if (done) {
+            // 流式接收结束
+            result = false;
+
+            chatStore.setLocalChatHistory(chatHistory)
+            break;
+        }
+
+        const chunkText = textDecoder.decode(value);
+        // 每次接收多少, 向消息中加入多少
+        chatHistory.value[chatHistory.value.length - 1].message += chunkText
+    }
 }
+
+
+onMounted(() => {
+    // 每次进入取出用户历史会话记录
+    console.log(chatHistory.value.length)
+    console.log(chatStore.getLocalChatHistory().value)
+    if (chatHistory.value.length === 1 && chatStore.getLocalChatHistory().value.length > 1) {
+        console.log("manxu")
+        chatHistory.value = chatStore.getLocalChatHistory().value
+    }
+})
+
 </script>
 
 <style scoped>

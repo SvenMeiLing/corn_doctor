@@ -38,22 +38,25 @@ const router = createRouter({
                             path: "disease",
                             component: () => import('@/views/Agriculture/Disease/Index.vue'),
                             meta: {
-                                title: "病害百科"
+                                title: "病害百科", keepAlive: true
                             }
                         },
                         {
                             path: "store",
-                            component: () => import('@/views/Agriculture/Store/Index.vue')
+                            component: () => import('@/views/Agriculture/Store/Index.vue'),
+                            meta: {title: "农业商城", keepAlive: true}
                         },
                         {
                             path: "ai-chat",
-                            component: () => import('@/views/Agriculture/AIChat/Index.vue')
+                            component: () => import('@/views/Agriculture/AIChat/Index.vue'),
+                            meta: {title: "AI服务"}
                         },
                     ]
                 },
                 {
                     path: "/page5",
-                    component: () => import('@/views/Page5/Index.vue')
+                    component: () => import('@/views/Page5/Index.vue'),
+                    meta: {title: "日记簿"}
                 }
             ]
         }
