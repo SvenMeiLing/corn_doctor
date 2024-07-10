@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import {ref} from 'vue'
 
 export const useChatStore = defineStore(
     'chatStore',
@@ -19,9 +20,6 @@ export const useChatStore = defineStore(
         }
     },
     {
-        persist: {
-            storage: localStorage,
-            paths: ["localChatHistory"]
-        }
+        persist: true
     }
 )
