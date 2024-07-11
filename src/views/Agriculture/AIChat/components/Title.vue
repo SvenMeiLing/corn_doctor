@@ -8,20 +8,20 @@
                 <n-text tag="q" type="info">讯飞星火</n-text>
                 赞助播出
             </n-text>
-
+            <n-divider vertical class="dark:bg-zinc-500"/>
+            <MessageGroup />
             <n-popover>
                 <template #trigger>
                     <n-icon @click="activate" :component="ArrowAnnotation" class="ms-auto cursor-pointer"
                             size="30"></n-icon>
                 </template>
                 <n-text>放大</n-text>
-
             </n-popover>
             <n-drawer
                     class="h-full"
                     v-model:show="activeRef"
                     :placement="placementRef"
-                    resizable
+                    to=".n-config-provider"
             >
                 <n-drawer-content closable :native-scrollbar="false"
                                   class="h-full"
@@ -49,6 +49,7 @@
 import {ArrowAnnotation} from "@vicons/carbon";
 import {ref} from "vue";
 import Chat from "@/views/Agriculture/AIChat/components/Chat.vue";
+import MessageGroup from "@/views/Agriculture/AIChat/components/MessageGroup.vue";
 
 const activeRef = ref(false)
 const placementRef = ref("bottom")

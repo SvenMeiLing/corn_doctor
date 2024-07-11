@@ -13,6 +13,7 @@
     "animate.css": "^4.1.1",
     "axios": "^1.7.2",
     "gsap": "^3.12.5",
+    "localforage": "^1.10.0",
     "markdown-it": "^14.1.0",
     "markdown-it-imsize": "^2.0.1",
     "md-editor-v3": "^4.17.3",
@@ -23,6 +24,7 @@
     "pinia-plugin-persistedstate": "^3.2.1",
     "unplugin-auto-import": "^0.17.6",
     "unplugin-vue-components": "^0.27.0",
+    "uuid": "^10.0.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.2"
   },

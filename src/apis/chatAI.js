@@ -6,21 +6,15 @@
     *Author: zzy
 */
 import request from '@/utils/http.js'
-import axios from "axios";
 
-export function getAIAnswer(data) {
-    return request('/ai-chat', {
+
+export function chatAI(question) {
+    return fetch(`${request.defaults.baseURL}/ai-chat`, {
         method: "POST",
-        responseType: 'stream',  // 响应类型设置为流
-        data,
-    })
-}
-
-export function getStreamAIAnswer(data) {
-    return axios({
-        method: 'post',
-        url: 'http://127.0.0.1:8000/api/v1/ai-chat', // 替换为你的流式接口URL
-        responseType: 'stream',
-        data: data
+        body: JSON.stringify({question: question}),
+        headers: {
+            'Content-Type': 'application/json' // 请求头，指定发送的数据类型为 JSON
+            // 如果有其他请求头需要设置，可以在这里添加
+        },
     });
 }

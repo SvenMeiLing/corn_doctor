@@ -3,7 +3,6 @@
              :wrap-item="false" :wrap="false"
     >
         <!--聊天框容器-->
-
         <n-scrollbar content-class="p-2" ref="containerRef">
             <transition-group enter-active-class="animate__animated animate__fadeIn animate__slower">
                 <!--每条消息-->
@@ -30,9 +29,11 @@
                         </n-avatar>
                         <n-flex align="center" justify="center" :size="0">
 
-                            <n-text tag="div">
-                                {{ item.message }}
-                            </n-text>
+                            <!--                            <n-text tag="div">-->
+                            <!--                                {{ item.message }}-->
+                            <!--
+                                            </n-text>-->
+                            <Marked :mark-down-text="item.message"/>
                         </n-flex>
                     </template>
                 </n-card>
@@ -51,6 +52,7 @@
                             maxRows: 5
                          }"
                     v-model:value="message"
+                    @keydown.enter="chatAI"
             ></n-input>
             <n-button class="h-full" @click="chatAI">发送</n-button>
         </n-flex>
@@ -63,6 +65,7 @@ import {ref, onMounted, watch, nextTick} from "vue";
 import {storeToRefs} from 'pinia'
 import {useChatStore} from "@/stores/chatHistory.js"
 
+import Marked from "@/views/Agriculture/AIChat/components/Marked.vue"
 import 'animate.css'
 
 const props = defineProps({
@@ -106,27 +109,30 @@ const containerRef = ref(null);
 
 
 const scrollBottom = () => {
+    // 使其消息容器滚动到底部
     containerRef.value.scrollbarInstRef.containerRef.scrollTop = containerRef.value.scrollbarInstRef.containerRef.scrollHeight;
 }
 // 输入框双向绑定
 const message = ref("")
+// 封装发送消息的函数
+const sendQuestion = async () => {
+    // 禁用输入框, 设置加载状态
+
+    // 发起请求
+    await chatAI()
+
+    // 接触输入框禁用, 取消加载状态
+}
 const chatAI = async () => {
-    // 发起请求前, 新增用户消息
+    // 发起请求前, 向会话中新增用户消息
     chatHistory.value.push({
         id: chatHistory.value.length + 1,
         role: "user",
         message: message.value,
         avatar: ""
     })
-
-    let response = await fetch('http://127.0.0.1:8000/api/v1/ai-chat', {
-        method: "POST",
-        body: JSON.stringify({question: message.value}),
-        headers: {
-            'Content-Type': 'application/json' // 请求头，指定发送的数据类型为 JSON
-            // 如果有其他请求头需要设置，可以在这里添加
-        },
-    });
+    // 发起请求, 获取流式响应对象
+    let response = await chatAI(message.value)
     // 请求结束新增恢复信息
     chatHistory.value.push({
         id: chatHistory.value.length + 1,
@@ -136,6 +142,8 @@ const chatAI = async () => {
     })
 
     if (!response.ok) {
+        // 如果请求失败, 消息内容将变成提示信息
+        chatHistory.value[chatHistory.value.length - 1].message = "网络错误, 请重新试试呢!🤣"
         throw new Error('Network response was not ok');
     }
 
@@ -149,8 +157,12 @@ const chatAI = async () => {
         if (done) {
             // 流式接收结束
             result = false;
+            // 使其再次规整消息到底部, 偶尔bug导致,最后结尾预防一下没有滚动到底部的情况
+            scrollBottom()
 
+            // 结束会话后, 持久化最新消息到客户端
             chatStore.setLocalChatHistory(chatHistory.value)
+
             break;
         }
 
@@ -165,15 +177,18 @@ const chatAI = async () => {
 
 
 onMounted(() => {
-    // 每次进入取出用户历史会话记录
-    console.log(chatHistory.value)
-    console.log(localChatHistory)
+    // 若用户有历史消息记录, 每次进入取出用户历史会话记录
     if (chatHistory.value.length === 1 && localChatHistory.value.length > 1) {
-        console.log("manxu")
+        console.log("内存中存在历史消息记录")
         chatHistory.value = localChatHistory.value
+        nextTick(() => {
+            // 等待dom加载完毕, 把滚动条恢复到消息的底部
+            scrollBottom();
+        })
     }
+    // 监听消息变化, 实时触发滚动到底部的函数
     watch(() => chatHistory.value.length, () => {
-        console.log("chathistory变化了")
+        // 每当消息变化则触发更新滚动条使其滑动到底部
         nextTick(() => {
             console.log(containerRef.value.scrollbarInstRef)
             scrollBottom();
