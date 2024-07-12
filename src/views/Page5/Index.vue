@@ -1,11 +1,7 @@
 <template>
     <n-layout embedded class="p-[20px] h-full">
-        <div class="hhh">1</div>
-        <ul role="list" class="hhh">
-            <button class="[&:nth-child(3)]:underline focus:bg-red-300">{item}</button>
-            <button class="[&:nth-child(3)]:underline focus:bg-red-300">{item}</button>
-            <button class='[&:nth-child(3)]:underline focus:bg-red-300'>{item}</button>
-        </ul>
+        <Child :list="list"></Child>
+        <button @click="list.push(1)">加</button>
         <MdPreview
                 class="dark:bg-zinc-900 rounded"
                 :showCodeRowNumber="true"
@@ -24,9 +20,11 @@ import {useDesignSettingStore} from "@/stores/designSetting.js";
 import {ref, onMounted, toRefs} from 'vue'
 import localforage from 'localforage'
 import {v4 as uuid4} from "uuid"
+import Child from "@/views/Page5/Child.vue";
 
 const themeStore = useDesignSettingStore()
 const {theme} = storeToRefs(themeStore)
+const list = ref([2])
 
 const markDownText = ref(
     "# 玉米日记 \n\n  " +
@@ -55,7 +53,8 @@ onMounted(async () => {
                     "dateTime": "2024/7/9 10:59:35",  // 消息时间
                     "text": "大概10多种" // 用户消息内容
                 },
-            ]
+            ],
+            lastSession: false
         },
         {
             uuid: uuid4(),
@@ -68,7 +67,7 @@ onMounted(async () => {
                     "dateTime": "2024/7/9 10:59:35",  // 消息时间
                     "text": "有十几种大类" // 用户消息内容
                 },
-            ]
+            ], lastSession: true
         },
         {
             uuid: uuid4(),
@@ -81,7 +80,7 @@ onMounted(async () => {
                     "dateTime": "2024/7/9 10:59:35",  // 消息时间
                     "text": "京玉非常良好" // 用户消息内容
                 },
-            ]
+            ], lastSession: false
         },
         {
             uuid: uuid4(),
@@ -94,7 +93,7 @@ onMounted(async () => {
                     "dateTime": "2024/7/9 10:59:35",  // 消息时间
                     "text": "多喷药,多使用玉米医生系统" // 用户消息内容
                 },
-            ]
+            ], lastSession: false
         },
     ]
     console.log(msgGroup.value)

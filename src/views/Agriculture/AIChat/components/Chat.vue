@@ -5,6 +5,28 @@
         <!--聊天框容器-->
         <n-scrollbar content-class="p-2" ref="containerRef">
             <transition-group enter-active-class="animate__animated animate__fadeIn animate__slower">
+                <!--系统消息-->
+                <n-card
+                        bordered
+                        embedded
+                        title=""
+                        class="w-fit me-auto m-2"
+                        size="small"
+                >
+                    <template #header>
+                        <n-avatar
+                                class="me-auto"
+                                size="medium"
+                                color="none "
+                                src="/public/corn-logo.svg"
+                        >
+                        </n-avatar>
+                        <n-flex align="center" justify="center" :size="0">
+                            <Marked :mark-down-text="'🌽我是玉米医生智能AI客服,为您解答与农业相关的问题'"/>
+                        </n-flex>
+                    </template>
+                </n-card>
+
                 <!--每条消息-->
                 <n-card
                         bordered
@@ -12,7 +34,8 @@
                         title=""
                         class="w-fit even:ms-auto m-2"
                         size="small"
-                        v-for="(item, index) in chatHistory"
+                        v-for="(item, index) in chatHistory.data"
+                        v-if="chatHistory"
                         :key="index"
                 >
                     <template #header>
@@ -20,20 +43,15 @@
                                 class="me-auto"
                                 size="medium"
                                 color="none "
-                                :src="item.avatar"
+                                src="/public/corn-logo.svg"
                         >
-                            <template #default v-if="item.role==='user' && !item.avatar">
+                            <template #default v-if="index % 2 === 0">
                                 <n-icon class="text-black dark:text-white"
                                         :component="UserAvatarFilled"></n-icon>
                             </template>
                         </n-avatar>
                         <n-flex align="center" justify="center" :size="0">
-
-                            <!--                            <n-text tag="div">-->
-                            <!--                                {{ item.message }}-->
-                            <!--
-                                            </n-text>-->
-                            <Marked :mark-down-text="item.message"/>
+                            <Marked :mark-down-text="item.text"/>
                         </n-flex>
                     </template>
                 </n-card>
@@ -61,52 +79,75 @@
 
 <script setup>
 import {UserAvatarFilled} from '@vicons/carbon'
-import {ref, onMounted, watch, nextTick} from "vue";
+import {ref, onMounted, watch, nextTick, toRefs} from "vue";
 import {storeToRefs} from 'pinia'
 import {useChatStore} from "@/stores/chatHistory.js"
 
 import Marked from "@/views/Agriculture/AIChat/components/Marked.vue"
 import 'animate.css'
+import {genDateTime} from "@/utils/genDateTime.js";
 
-const props = defineProps({
-    strClass: {
-        // 用于title组件传递
-        default: "mt-2 w-full h-5/6 rounded dark:bg-zinc-800",
-        type: String
-    }
-})
 
 const chatStore = useChatStore()
 // 将 store 的 state 转换为 ref
 const {localChatHistory} = storeToRefs(chatStore);
 
 
-const chatHistory = ref([
-    {
-        id: 1,
-        role: "spark",
-        message: "您好, 我是基于讯飞星火的玉米医生,可为您解答有关农业相关的一切问题.",
-        avatar: '/public/corn-logo.svg'
+// const chatHistory = ref([
+//     {
+//         id: 1,
+//         role: "spark",
+//         message: "您好, 我是基于讯飞星火的玉米医生,可为您解答有关农业相关的一切问题.",
+//         avatar: '/public/corn-logo.svg'
+//     },
+//     // {
+//     //     role: "user",
+//     //     message: "请问玉米叶斑病会自愈吗?",
+//     //     avatar: ""
+//     // },
+//     // {
+//     //     role: "spark",
+//     //     message: "玉米叶斑病是由真菌引起的病害，通常不会自愈。一旦玉米植株受到叶斑病的感染，如果不采取控制措施，病情往往会继续恶化，可能导致叶片凋萎、减少光合作用，影响玉米的生长和产量。",
+//     //     avatar: '/public/corn-logo.svg'
+//     // },
+//     // {
+//     //     role: "user",
+//     //     message: "好吧,谢谢",
+//     //     avatar: ""
+//     // }
+// ])
+const props = defineProps({
+    strClass: {
+        // 用于title组件传递
+        default: "mt-2 w-full h-5/6 rounded dark:bg-zinc-800",
+        type: String
     },
-    // {
-    //     role: "user",
-    //     message: "请问玉米叶斑病会自愈吗?",
-    //     avatar: ""
-    // },
-    // {
-    //     role: "spark",
-    //     message: "玉米叶斑病是由真菌引起的病害，通常不会自愈。一旦玉米植株受到叶斑病的感染，如果不采取控制措施，病情往往会继续恶化，可能导致叶片凋萎、减少光合作用，影响玉米的生长和产量。",
-    //     avatar: '/public/corn-logo.svg'
-    // },
-    // {
-    //     role: "user",
-    //     message: "好吧,谢谢",
-    //     avatar: ""
-    // }
-])
+    chatHistory: {
+        default: [
+            {
+                data: [
+                    {
+                        "dateTime": "2024/7/9 10:56:35",  // 消息时间
+                        "text": "我国现有多少玉米品种" // 用户消息内容
+                    },
+                    {
+                        "dateTime": "2024/7/9 10:59:35",  // 消息时间
+                        "text": "大概10多种" // 用户消息内容
+                    },
+                ],
+                lastSession: false
+            },
+        ],
+        type: Array
+    },
+    list: {
+        default: [],
+        type: Array
+    }
+})
 
+const {chatHistory} = toRefs(props)
 const containerRef = ref(null);
-
 
 const scrollBottom = () => {
     // 使其消息容器滚动到底部
@@ -125,20 +166,16 @@ const sendQuestion = async () => {
 }
 const chatAI = async () => {
     // 发起请求前, 向会话中新增用户消息
-    chatHistory.value.push({
-        id: chatHistory.value.length + 1,
-        role: "user",
-        message: message.value,
-        avatar: ""
+    chatHistory.value.data.push({
+        dateTime: genDateTime(),
+        text: ""
     })
     // 发起请求, 获取流式响应对象
     let response = await chatAI(message.value)
     // 请求结束新增恢复信息
-    chatHistory.value.push({
-        id: chatHistory.value.length + 1,
-        role: "spark",
-        message: "",
-        avatar: "/public/corn-logo.svg"
+    chatHistory.value.data.push({
+        dateTime: genDateTime(),
+        text: "",
     })
 
     if (!response.ok) {
@@ -193,6 +230,9 @@ onMounted(() => {
             console.log(containerRef.value.scrollbarInstRef)
             scrollBottom();
         });
+    })
+    watch(chatHistory, (newVal) => {
+        console.log(newVal)
     })
 })
 

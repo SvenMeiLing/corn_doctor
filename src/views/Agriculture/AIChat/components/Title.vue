@@ -9,7 +9,7 @@
                 赞助播出
             </n-text>
             <n-divider vertical class="dark:bg-zinc-500"/>
-            <MessageGroup />
+            <MessageGroup @chatHistory="handHistory"/>
             <n-popover>
                 <template #trigger>
                     <n-icon @click="activate" :component="ArrowAnnotation" class="ms-auto cursor-pointer"
@@ -27,10 +27,15 @@
                                   class="h-full"
                                   body-content-class="h-full"
                 >
-                    <Chat :str-class="'h-full rounded dark:bg-zinc-800'"/>
+                    <Chat
+                        :str-class="'h-full rounded dark:bg-zinc-800'"
+                        :chat-history="chatHistory"
+                    />
                     <template #header>
-                        <n-flex align="center" class="w-full">
+                        <n-flex align="center" :wrap="false" class="w-full">
                             <n-text>玉米医生@AI智能助理</n-text>
+                            <n-divider vertical/>
+                            <MessageGroup @chatHistory="handHistory"/>
                         </n-flex>
                     </template>
                 </n-drawer-content>
@@ -43,6 +48,7 @@
         <div class="aline mt-1"></div>
 
     </n-space>
+    <Chat :chat-history="chatHistory"/>
 </template>
 
 <script setup>
@@ -53,12 +59,24 @@ import MessageGroup from "@/views/Agriculture/AIChat/components/MessageGroup.vue
 
 const activeRef = ref(false)
 const placementRef = ref("bottom")
+const chatHistory = ref([])
 const activate = () => {
     activeRef.value = true;
+}
+const handHistory = (msgGroup) => {
+    // 处理发送过来的值
+    const lastMsgGroup = msgGroup.value.filter(item => item.lastSession)
+    chatHistory.value = lastMsgGroup[0]
+    console.log("收到了父组件", lastMsgGroup)
 }
 </script>
 
 <style scoped>
+:deep(.n-drawer-header__main) {
+    /*设置抽屉空间头部大小*/
+    width: 100%;
+}
+
 .aline {
     width: 0;
     background-color: #3AA6B9;

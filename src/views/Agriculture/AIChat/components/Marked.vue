@@ -11,6 +11,7 @@
 <script setup>
 import {MdPreview} from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
+import {toRefs} from 'vue'
 import {storeToRefs} from "pinia";
 import {useDesignSettingStore} from "@/stores/designSetting.js";
 
@@ -29,7 +30,8 @@ const props = defineProps({
 const themeStore = useDesignSettingStore()
 const {theme} = storeToRefs(themeStore)
 
-const markDownText = ref(props.markDownText)
+// bug: props传递两层出现不响应, 手动用toRefs使其变为响应式
+const {markDownText} = toRefs(props)
 
 </script>
 <style scoped>
