@@ -22,10 +22,14 @@
                        checkable
                        bordered
                        v-model:checked="item.lastSession"
-                       @click="changeChecked(item)"
+                       @click="changeChecked(item.uuid)"
+                       class="ms-1"
                 >
-                    <n-ellipsis class="w-24">
+                    <n-ellipsis class="max-w-24" v-if="item?.data?.length">
                         {{ item.data[0].text }}
+                    </n-ellipsis>
+                    <n-ellipsis class="max-w-24" v-else>
+                        {{ index}}
                     </n-ellipsis>
                 </n-tag>
             </n-scrollbar>
@@ -39,10 +43,11 @@ import {ref, onMounted, toRaw} from "vue";
 import {defineEmits} from 'vue'
 import localforage from "localforage";
 import {v4 as uuid4} from 'uuid'
-import {genDateTime} from "@/utils/genDateTime.js";
 
-const emit = defineEmits(['chatHistory'])
+
 const fakeMsgGroup = ref([])
+const emit = defineEmits(['chatHistory'])
+
 
 function sendCHToParent() {
     emit('chatHistory', fakeMsgGroup)
@@ -50,45 +55,54 @@ function sendCHToParent() {
 
 const myIndexedDB = localforage.createInstance({name: 'cornIndexedDB',})
 
-async function addSession() {
-    // 添加一个消息组到indexedDB, 也加入到
-    const oneMsgGroup = {
-        uuid: uuid4(),
-        data: [
-            {
-                dateTime: genDateTime(),
-                text: "这是一个新的会话"
-            }
-        ],
-        lastSession: true,
-
-    }
-    fakeMsgGroup.value.unshift(oneMsgGroup)
-    console.log(toRaw(fakeMsgGroup))
-    // 设置一个最后一次会话的索引值
-    await myIndexedDB.setItem("chatHistory", toRaw(fakeMsgGroup))
-    await changeChecked(oneMsgGroup)
-}
-
-
-const changeChecked = async (item) => {
+const changeChecked = async (uuid) => {
+    // 本来是{{data:[]}, {data:[]}}, 结果变成了[{data:[]}]
     // 把列表所有值变成false后再把当前索引变成true
-    const newMsgGroup = fakeMsgGroup.value.map(value => {
-        if (value === item) {
-            return {...value, lastSession: true, data: toRaw(value.data)}
+    const newMsgGroup = fakeMsgGroup.value.map(group => {
+        if (group.uuid === uuid) {
+            console.log(group.uuid, "<---->", uuid)
+            return {...group, lastSession: true, data: toRaw(group.data)}
         }
-        return {...value, lastSession: false, data: toRaw(value.data)}
+        return {...group, lastSession: false, data: toRaw(group.data)}
     })
-    fakeMsgGroup.value = newMsgGroup
+    console.log(newMsgGroup, "<---newMsgGroup")
+    fakeMsgGroup.value = newMsgGroup  // 向数组中添加一个消息组
     // 设置一个最后一次会话的索引值
-    await myIndexedDB.setItem("chatHistory", newMsgGroup)
+    await myIndexedDB.setItem("chatHistory", toRaw(fakeMsgGroup.value))
     sendCHToParent()
 
 }
+
+async function addSession() {
+    // 添加一个消息组到indexedDB, 也加入到消息组变量中
+    const oneMsgGroup = {
+        uuid: uuid4(),
+        data: [],
+        lastSession: true,
+    }
+    fakeMsgGroup.value.unshift(oneMsgGroup)
+    console.log(toRaw(fakeMsgGroup.value), "<---插入后的数组")
+    // 设置一个最后一次会话的索引值
+    await myIndexedDB.setItem("chatHistory", toRaw(fakeMsgGroup.value))
+    // 设置高亮为当前创建的会话
+    await changeChecked(oneMsgGroup.uuid)
+}
+
+
 onMounted(async () => {
-    const myIndexedDB = localforage.createInstance({name: 'cornIndexedDB',})
+    // 先获取一次indexedDB中的数据
     const chatHistory = await myIndexedDB.getItem('chatHistory');
-    fakeMsgGroup.value = chatHistory
+    if (!chatHistory) {
+        // 如果没有历史消息记录就新建一个tag
+        await addSession()
+        console.log('已新建')
+    }
+    // 新建完成后再次获取最新的值
+    const newChatHistory = await myIndexedDB.getItem('chatHistory');
+    fakeMsgGroup.value = newChatHistory
+    console.log(newChatHistory, "<---newChatHistory")
+    console.log(fakeMsgGroup.value, "<---fakeMsgGroup")
+    // 传递值给父组件
     sendCHToParent()
 })
 </script>

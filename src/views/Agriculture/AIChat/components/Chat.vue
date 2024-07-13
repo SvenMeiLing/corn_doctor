@@ -70,29 +70,30 @@
                             maxRows: 5
                          }"
                     v-model:value="message"
-                    @keydown.enter="chatAI"
+                    @keydown.enter="sendQuestion"
             ></n-input>
-            <n-button class="h-full" @click="chatAI">发送</n-button>
+            <n-button class="h-full" @click="sendQuestion">发送</n-button>
         </n-flex>
     </n-space>
 </template>
 
 <script setup>
 import {UserAvatarFilled} from '@vicons/carbon'
-import {ref, onMounted, watch, nextTick, toRefs} from "vue";
+import {ref, onMounted, watch, nextTick, toRefs, toRaw} from "vue";
 import {storeToRefs} from 'pinia'
 import {useChatStore} from "@/stores/chatHistory.js"
 
 import Marked from "@/views/Agriculture/AIChat/components/Marked.vue"
 import 'animate.css'
 import {genDateTime} from "@/utils/genDateTime.js";
-
+import {chatAI} from "@/apis/chatAI.js";
+import localforage from "localforage";
 
 const chatStore = useChatStore()
 // 将 store 的 state 转换为 ref
 const {localChatHistory} = storeToRefs(chatStore);
 
-
+const myIndexedDB = localforage.createInstance({name: 'cornIndexedDB',})
 // const chatHistory = ref([
 //     {
 //         id: 1,
@@ -156,23 +157,24 @@ const scrollBottom = () => {
 // 输入框双向绑定
 const message = ref("")
 // 封装发送消息的函数
+
 const sendQuestion = async () => {
-    // 禁用输入框, 设置加载状态
-
-    // 发起请求
-    await chatAI()
-
-    // 接触输入框禁用, 取消加载状态
-}
-const chatAI = async () => {
-    // 发起请求前, 向会话中新增用户消息
+    // todo:发送消息时, 如果该消息组data为null, 则更改标题为此消息的text字段
+    // 发起请求前, 向会话中新增用户提问消息
     chatHistory.value.data.push({
         dateTime: genDateTime(),
-        text: ""
+        text: message.value
     })
+    // 用户发送消息后滚动到底部
+    scrollBottom()
+
     // 发起请求, 获取流式响应对象
     let response = await chatAI(message.value)
-    // 请求结束新增恢复信息
+
+    // 清空输入框值
+    message.value = ""
+
+    // 新增ai恢复, 在流式请求中逐渐更新text的值
     chatHistory.value.data.push({
         dateTime: genDateTime(),
         text: "",
@@ -180,7 +182,7 @@ const chatAI = async () => {
 
     if (!response.ok) {
         // 如果请求失败, 消息内容将变成提示信息
-        chatHistory.value[chatHistory.value.length - 1].message = "网络错误, 请重新试试呢!🤣"
+        chatHistory.value.data[chatHistory.value.data.length - 1].text = "网络错误, 请重新试试呢!🤣"
         throw new Error('Network response was not ok');
     }
 
@@ -198,14 +200,23 @@ const chatAI = async () => {
             scrollBottom()
 
             // 结束会话后, 持久化最新消息到客户端
-            chatStore.setLocalChatHistory(chatHistory.value)
 
+            // 先获取原有消息组中的消息
+            const oldMsgGroup = await myIndexedDB.getItem("chatHistory")
+            const newMsgGroup = oldMsgGroup.map(group => {
+                if (group.uuid === chatHistory.value.uuid) {
+                    return toRaw(chatHistory.value)
+                }
+                return toRaw(group)
+            })
+            console.log(newMsgGroup, "<*******")
+            await myIndexedDB.setItem("chatHistory", newMsgGroup)
             break;
         }
 
         const chunkText = textDecoder.decode(value);
         // 每次接收多少, 向消息中加入多少
-        chatHistory.value[chatHistory.value.length - 1].message += chunkText
+        chatHistory.value.data[chatHistory.value.data.length - 1].text += chunkText
 
         // 滚动到指定内容
         scrollBottom();
@@ -215,14 +226,14 @@ const chatAI = async () => {
 
 onMounted(() => {
     // 若用户有历史消息记录, 每次进入取出用户历史会话记录
-    if (chatHistory.value.length === 1 && localChatHistory.value.length > 1) {
-        console.log("内存中存在历史消息记录")
-        chatHistory.value = localChatHistory.value
-        nextTick(() => {
-            // 等待dom加载完毕, 把滚动条恢复到消息的底部
-            scrollBottom();
-        })
-    }
+    // if (chatHistory.value.length === 1 && localChatHistory.value.length > 1) {
+    //     console.log("内存中存在历史消息记录")
+    //     chatHistory.value = localChatHistory.value
+    //     nextTick(() => {
+    //         // 等待dom加载完毕, 把滚动条恢复到消息的底部
+    //         scrollBottom();
+    //     })
+    // }
     // 监听消息变化, 实时触发滚动到底部的函数
     watch(() => chatHistory.value.length, () => {
         // 每当消息变化则触发更新滚动条使其滑动到底部
@@ -231,9 +242,9 @@ onMounted(() => {
             scrollBottom();
         });
     })
-    watch(chatHistory, (newVal) => {
-        console.log(newVal)
-    })
+    // watch(chatHistory, (newVal) => {
+    //     console.log(newVal)
+    // })
 })
 
 </script>

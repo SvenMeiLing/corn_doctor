@@ -28,8 +28,8 @@
                                   body-content-class="h-full"
                 >
                     <Chat
-                        :str-class="'h-full rounded dark:bg-zinc-800'"
-                        :chat-history="chatHistory"
+                            :str-class="'h-full rounded dark:bg-zinc-800'"
+                            :chat-history="chatHistory"
                     />
                     <template #header>
                         <n-flex align="center" :wrap="false" class="w-full">
@@ -64,6 +64,7 @@ const activate = () => {
     activeRef.value = true;
 }
 const handHistory = (msgGroup) => {
+    console.log("接收到子组件的值-->", msgGroup)
     // 处理发送过来的值
     const lastMsgGroup = msgGroup.value.filter(item => item.lastSession)
     chatHistory.value = lastMsgGroup[0]
