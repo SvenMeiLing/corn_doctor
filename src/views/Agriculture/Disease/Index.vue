@@ -2,16 +2,18 @@
     <n-layout embedded class="p-[20px] h-full">
         <n-space vertical class="h-full" :wrap-item="false" :size="20">
             <!--header部分-->
-            <n-space align="center" size="small" :wrap-item="false" class="w-full h-1/6">
+            <n-space align="center" size="small" :wrap-item="false"
+                     :wrap="false"
+                     class="w-full h-[10%] xl:h-1/6">
                 <n-text
-                        class="text-2xl sm:text-2xl lg:text-3xl xl:text-4xl font-thin"
+                        class="min-w-20 text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-thin"
                         type="success"
-                        tag="q"
+                        tag="div"
                 >
                     病害百科
                 </n-text>
 
-                <n-popover trigger="hover">
+                <n-popover class="w-fit" trigger="hover">
                     <template #trigger>
                         <n-button quaternary @click="showSearchBox">
                             <template #icon>
@@ -28,7 +30,7 @@
                             leave-from-class="w-2/4 opacity-1"
                 >
                     <n-select v-if="showBox"
-                              class="w-2/4"
+                              class="w-max md:w-4/6 xl:w-2/4"
                               filterable
                               clearable
                               placeholder="病害搜索"
@@ -44,9 +46,8 @@
             <n-divider class="h-px m-0 p-0">
                 Hi
             </n-divider>
-
             <!--主体部分-->
-            <n-space class="w-full h-4/6" :wrap-item="false" :wrap="false" :size="30">
+            <n-space class="w-full h-[81%] xl:h-4/6" :wrap-item="false" :wrap="false" :size="30">
                 <!--病害目录-->
                 <n-space :wrap-item="false" :wrap="false" class="w-3/6 h-full" :size="0">
                     <n-scrollbar>
@@ -91,10 +92,11 @@
                         </n-collapse>
                     </n-scrollbar>
                 </n-space>
+
                 <!--病害图片-->
                 <n-space :wrap-item="false"
                          :wrap="false"
-                         class="w-3/6"
+                         class="w-3/6 h-[90%]"
                          justify="center"
                          align="center"
                 >

@@ -2,15 +2,21 @@
     <n-space vertical :wrap-item="false" :wrap="false"
              class="h-1/6"
     >
-        <n-flex align="center">
-            <n-text tag="div" class="sm:text-xl md:text-2xl xl:text-3xl">
+        <!--标题主体部分-->
+        <n-flex>
+            <!--左部分-->
+            <n-text tag="div" class="text-xl sm:text-xl md:text-2xl xl:text-3xl">
                 本页面由
                 <n-text tag="q" type="info">讯飞星火</n-text>
                 赞助播出
             </n-text>
-            <n-divider vertical class="dark:bg-zinc-500"/>
+            <n-divider vertical class="hidden md:flex dark:bg-zinc-500"/>
+
+            <!--右部分-->
             <MessageGroup @chatHistory="handHistory"/>
-            <n-popover>
+
+            <!--放大按钮-->
+            <n-popover class="ms-auto">
                 <template #trigger>
                     <n-icon @click="activate" :component="ArrowAnnotation" class="ms-auto cursor-pointer"
                             size="30"></n-icon>

@@ -10,7 +10,7 @@
                         bordered
                         embedded
                         title=""
-                        class="w-fit me-auto m-2"
+                        class="max-w-60 xl:w-fit me-auto m-2"
                         size="small"
                 >
                     <template #header>
@@ -32,17 +32,18 @@
                         bordered
                         embedded
                         title=""
-                        class="w-fit even:ms-auto m-2"
+                        class="max-w-60 xl:w-fit even:ms-auto m-2"
                         size="small"
                         v-for="(item, index) in chatHistory.data"
                         v-if="chatHistory"
                         :key="index"
                 >
                     <template #header>
+
                         <n-avatar
                                 class="me-auto"
                                 size="medium"
-                                color="none "
+                                color="none"
                                 src="/public/corn-logo.svg"
                         >
                             <template #default v-if="index % 2 === 0">
@@ -50,8 +51,10 @@
                                         :component="UserAvatarFilled"></n-icon>
                             </template>
                         </n-avatar>
+
                         <n-flex align="center" justify="center" :size="0">
                             <Marked :mark-down-text="item.text"/>
+                            <n-text depth="3" class="ms-auto">{{ item.dateTime }}</n-text>
                         </n-flex>
                     </template>
                 </n-card>

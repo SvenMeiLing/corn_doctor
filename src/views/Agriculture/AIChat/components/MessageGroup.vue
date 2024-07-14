@@ -1,8 +1,8 @@
 <template>
-    <n-flex align="center" :wrap="false" class="w-1/2">
+    <n-flex align="center" :wrap="false" class="w-3/4 xl:w-1/2">
         <n-text tag="b">历史会话:</n-text>
 
-        <n-flex class="w-5/6 h-7" :wrap="false">
+        <n-flex class="w-4/6 xl:w-5/6 h-7" :wrap="false">
             <n-scrollbar>
                 <!--系统预制-->
                 <n-tag
@@ -29,11 +29,12 @@
                         {{ item.data[0].text }}
                     </n-ellipsis>
                     <n-ellipsis class="max-w-24" v-else>
-                        {{ index}}
+                        {{ "会话" + (index + 1) }}
                     </n-ellipsis>
                 </n-tag>
             </n-scrollbar>
         </n-flex>
+
     </n-flex>
 
 </template>
@@ -43,6 +44,7 @@ import {ref, onMounted, toRaw} from "vue";
 import {defineEmits} from 'vue'
 import localforage from "localforage";
 import {v4 as uuid4} from 'uuid'
+import {ArrowAnnotation} from "@vicons/carbon";
 
 
 const fakeMsgGroup = ref([])

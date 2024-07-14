@@ -17,9 +17,9 @@
 
   width: 100%;
 
-  .header {
-    flex: 1 0 0;
-  }
+    //.header {
+    //    flex: 1 0 0;
+    //}
 
   .main {
     flex: 7 0 0;

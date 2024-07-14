@@ -1,7 +1,7 @@
 <template>
 
     <n-layout-sider
-            :class="{'collapsed': collapsed}"
+            class="hidden md:flex"
             bordered
             collapse-mode="width"
             :collapsed-width="64"
