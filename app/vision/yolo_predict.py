@@ -15,7 +15,6 @@ def yolo_identify(
         save_to: str | Path,
         source: str | PathLike, model: str | PathLike = None
 ) -> list:
-
     """
     通过一个模型路径和图片路径返回识别结果
     :param save_to: 文件保存目录
@@ -33,7 +32,7 @@ def yolo_identify(
     )
     if not save_to.parent.exists():
         save_to.parent.mkdir(parents=True)
-        outputs[0].save(save_to)
+    outputs[0].save(save_to)
     return outputs
 
 

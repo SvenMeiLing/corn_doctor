@@ -18,6 +18,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.db.base import BaseOrmTable
+from app.schemas.user import UserCreate
+from app.utils.security import hash_password
 
 ModelType = TypeVar("ModelType", bound=BaseOrmTable)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -79,7 +81,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result.scalars().all()
 
     async def create(self, async_session: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
-        db_obj = self.model(**obj_in.dict())
+        updated_obj = obj_in.model_copy(update={"password": hash_password(obj_in.password)})
+        db_obj = self.model(**updated_obj.dict())
         async_session.add(db_obj)
         await async_session.commit()
         return db_obj

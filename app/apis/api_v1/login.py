@@ -8,6 +8,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
+from app.apis.deps.get_db import get_db
 from app.core import config
 from app.crud.user import user_crud
 from app.schemas.user import Token
@@ -20,10 +21,11 @@ router = APIRouter()
 
 @router.post("/login/access-token")
 async def login_access_token(
-        async_session: AsyncSession,
+        async_session: AsyncSession = Depends(get_db),
+        *,
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
-    user = user_crud.authenticate(async_session, form_data.username, form_data.password)
+    user = await user_crud.authenticate(async_session, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="错误的用户名或密码")
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)

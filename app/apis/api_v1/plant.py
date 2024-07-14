@@ -38,7 +38,7 @@ async def create_plant(
 
 @router.post("/yolo_identify", response_model=list[Plant])
 async def yolo_identify(
-        plant_imgs: list[UploadFile], db_session: AsyncSession = Depends(get_db)
+        files: list[UploadFile], db_session: AsyncSession = Depends(get_db)
 ):
     """
     todo:用户上传多张图片, 存储原图并且识别后保存预测结果图片, 存储到数据库,
@@ -49,7 +49,7 @@ async def yolo_identify(
     """
     result = []
     # 拿到多张图片, 进行保存并生成hash名称, 识别
-    for img in plant_imgs:
+    for img in files:
         # 读取文件内容并生成hash
         content = await img.read()
         # 哈希后的文件名称

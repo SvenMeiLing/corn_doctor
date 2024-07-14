@@ -19,7 +19,7 @@ class UserCrud(CRUDBase):
         session_user = await async_session.execute(
             select(self.model).where(self.model.username == username)
         )
-        return session_user.first()
+        return session_user.scalars().first()
 
     async def authenticate(self, async_session: AsyncSession, username: str, password: str) -> UserOrm | None:
         db_user = await self.get_user_by_username(async_session=async_session, username=username)

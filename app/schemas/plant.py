@@ -75,7 +75,7 @@ class PlantUpdate(PlantBase):
 class PlantInDBBase(PlantBase):
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
-    id: int
+    # id: int
     user_id: int
     diseases: List["DiseaseBase"] = Field([], title="该植株的所有病害")
     pests: List["Pest"] = Field([], title="该植株的所有虫害")
