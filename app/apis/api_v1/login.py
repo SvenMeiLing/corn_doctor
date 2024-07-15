@@ -25,6 +25,12 @@ async def login_access_token(
         *,
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
+    """
+    校验用户登录请求,并响应token
+    :param async_session:
+    :param form_data:
+    :return:
+    """
     user = await user_crud.authenticate(async_session, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="错误的用户名或密码")
