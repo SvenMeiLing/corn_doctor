@@ -2,7 +2,7 @@
     <n-layout class="layout">
         <LayoutHeader class="header"></LayoutHeader>
         <n-layout has-sider class="main">
-            <Home></Home>
+            <Home/>
         </n-layout>
         <LayoutFooter class="footer"></LayoutFooter>
     </n-layout>
@@ -17,19 +17,15 @@
 
   width: 100%;
 
-    //.header {
-    //    flex: 1 0 0;
-    //}
+  //.header {
+  //    flex: 1 0 0;
+  //}
 
   .main {
     flex: 7 0 0;
 
   }
 
-  .footer {
-    flex: 1 0 0;
-
-  }
 }
 
 

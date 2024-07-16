@@ -1,12 +1,12 @@
 <template>
-    <n-layout-header style="padding: 0 20px;" bordered class="w-full h-16 md:h-24">
+    <n-layout-header bordered class="w-full h-16 md:h-24 lg:h-14 p-2">
         <n-space class="h-full w-full" :wrap="false" :wrap-item="false">
             <n-space :size="0"
                      class="justify-center w-full "
                      align="center"
                      :wrap-item="false" :wrap="false">
 
-                <n-icon :component="CornLogo" :size="40" class="text-yellow-600"></n-icon>
+                <n-icon :component="CornLogo" :size="40"></n-icon>
                 <n-text class="font-thin text-xl text-[#E9C46A]">
                     智慧农业
                 </n-text>

@@ -1,14 +1,16 @@
 <template>
     <n-layout-footer
+            bordered
+            class="lg:h-12 xl:h-14"
             collapse-mode="transform"
             :collapsed-width="120"
             :width="240"
-            show-trigger="bar"
     >
-        <n-space align="center" justify="center" :size="0"
-                 vertical class="h-full"
+        <n-space align="center" justify="center"
+                 :size="0"
+                 vertical class="h-full text-xs"
         >
-            <!--			style="padding:0;margin:0;border: 1px solid red;height: 100%"-->
+            <!--style="padding:0;margin:0;border: 1px solid red;height: 100%"-->
             <n-text>
                 Released under the MIT License.
             </n-text>
