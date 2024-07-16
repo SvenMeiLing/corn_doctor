@@ -5,7 +5,9 @@
     >
 
         <n-message-provider>
-            <RouterView />
+            <RouterView/>
+            <!-- 特定的登录页面视图 -->
+            <router-view name="login"></router-view>
         </n-message-provider>
 
 

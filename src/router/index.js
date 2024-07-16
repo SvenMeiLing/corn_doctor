@@ -57,8 +57,14 @@ const router = createRouter({
                     path: "/page5",
                     component: () => import('@/views/Page5/Index.vue'),
                     meta: {title: "日记簿"}
-                }
+                },
             ]
+        },
+        {
+            path: "/login",
+            component: () => import('@/views/Login/Index.vue'),
+            meta: {title: "登录", layout: 'empty'},
+            name: "login",
         }
     ],
     // 路由滚动行为定制(路由切换时, 自动滚到顶部)
