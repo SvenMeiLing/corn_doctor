@@ -8,7 +8,7 @@
     >
         <n-space align="center" justify="center"
                  :size="0"
-                 vertical class="h-full text-xs"
+                 vertical class="h-full text-xs p-1"
         >
             <!--style="padding:0;margin:0;border: 1px solid red;height: 100%"-->
             <n-text>

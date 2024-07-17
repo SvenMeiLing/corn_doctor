@@ -6,10 +6,10 @@
 </template>
 
 <script setup>
-import {h} from "vue";
+import {watch, ref, h} from "vue";
 import {NIcon, useMessage} from "naive-ui";
 import {RouterLink} from "vue-router";
-import {onMounted} from "vue";
+
 import {
     BookOutline as BookIcon,
     WineOutline as WineIcon,
@@ -158,9 +158,13 @@ const menuOptions = [
         ]
     }
 ];
+const emit = defineEmits(["drawerShow"])
+
 const handleUpdateValue = (key, item) => {
-    message.info("[onUpdate:value]: " + JSON.stringify(key));
-    message.info("[onUpdate:value]: " + JSON.stringify(item));
+    // 菜单路由切换时触发, 收纳抽屉
+    emit("drawerShow", false)
+    // message.info("[onUpdate:value]: " + JSON.stringify(key));
+    // message.info("[onUpdate:value]: " + JSON.stringify(item));
 }
 
 
@@ -168,9 +172,7 @@ watch(activeKey, (newRoute) => {
     // 当路由发生改变就去记录一次
     userProfile.setUserProfile("lastRoute", newRoute)
 })
-onMounted(() => {
 
-})
 </script>
 
 <style scoped>

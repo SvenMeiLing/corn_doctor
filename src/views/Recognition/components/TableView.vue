@@ -1,5 +1,5 @@
 <template>
-    <n-space vertical class="h-4/6" :wrap="true" :wrap-item="false">
+    <n-space vertical class="h-5/6 lg:h-4/6" :wrap="true" :wrap-item="false">
         <n-data-table bordered class="shadow-lg rounded-md h-full" :columns="createColumns"
                       :data="data" :flex-height="true">
             <template #empty>
@@ -9,6 +9,13 @@
                     </template>
                     <template #extra>
                         哦!你还没有上传图片呢?
+                        <div class="
+                        bg-white
+                        sm:bg-red-100
+                        md:bg-yellow-100
+                        lg:bg-sky-100">
+                            111111
+                        </div>
                     </template>
                 </n-empty>
             </template>

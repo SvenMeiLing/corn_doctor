@@ -120,31 +120,36 @@ onMounted(() => {
 </script>
 
 <template>
-    <n-space :wrap-item="false" :wrap="false" class="h-2/6">
+    <n-space
+            :wrap-item="false"
+            :wrap="false"
+            class="h-1/6 lg:h-2/6 ">
         <n-grid cols="1 s:1 m:1 xl:1" responsive="screen">
             <n-grid-item>
                 <n-space vertical align="start" class="xl:gap-1 2xl:gap-3">
 
-                    <n-text class="text-4xl font-thin 2xl:text-5xl" tag="div">上传植物相片, 以进行即时分析</n-text>
+                    <n-text class="text-lg lg:text-4xl font-thin 2xl:text-5xl" tag="div">上传植物相片, 以进行即时分析
+                    </n-text>
 
-                    <n-button color="#20B2AAFF" class="w-[14rem] h-[2.7rem] rounded-tl-xl rounded-br-xl"
+                    <n-button color="#20B2AAFF" class="xl:w-[14rem] xl:h-[2.7rem] rounded-tl-xl rounded-br-xl"
                               size="large"
                               @click="showModal = true"
                     >
-                        <n-text class="text-2xl font-extralight  dark:text-black ">尝试一下</n-text>
+                        <n-text class="text-lg lg:text-2xl font-extralight  dark:text-black ">尝试一下</n-text>
                         <n-icon :component="LightbulbTwotone" size="30" class="bulb"></n-icon>
                     </n-button>
 
                     <n-modal
                             to=".n-config-provider"
                             v-model:show="showModal"
-                            class="custom-card w-96 sm:w-96 md:w-4/6 xl:w-1/2"
+                            class="custom-card w-72 sm:w-96 md:w-4/6 xl:w-1/2"
                             preset="card"
                             size="huge"
                             :bordered="false"
                             :segmented="segmented"
                             content-class="p-0"
                             @after-leave="isLoading = false"
+                            header-class="h-20"
                     >
                         <template #header>
 
@@ -158,7 +163,7 @@ onMounted(() => {
                                 <img v-if="!isLoading" src="/src/assets/images/smile.png"
                                      class="h-9" alt="">
                                 <n-spin stroke="#FFD700" v-else size="medium"/>
-                                <n-text class="font-thin">
+                                <n-text class="text-base font-thin">
                                     仅支持图片文件哦!
                                 </n-text>
 

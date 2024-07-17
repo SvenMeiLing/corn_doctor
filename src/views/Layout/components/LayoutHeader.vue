@@ -1,26 +1,27 @@
 <template>
-    <n-layout-header bordered class="w-full h-16 md:h-24 lg:h-14 p-2">
+    <n-layout-header bordered class="w-full h-14 md:h-24 lg:h-14 p-2">
         <n-space class="h-full w-full" :wrap="false" :wrap-item="false">
 
             <n-space :size="0"
-                     class="justify-center w-full "
+                     class="w-full"
                      align="center"
                      :wrap-item="false" :wrap="false">
                 <!--当屏幕尺寸小于sm时出现菜单按钮-->
                 <n-button class="lg:hidden p-1"
-                          :bordered="false"
+                          :bordered="true"
                           @click="activate('left')"
                 >
                     <n-icon :component="Menu" :size="30"></n-icon>
                 </n-button>
 
                 <!--logo+标题-->
-                <n-icon :component="CornLogo" :size="40" class="ms-auto md:ms-0"></n-icon>
-                <n-text class="font-thin text-xl text-[#E9C46A]">
+                <n-icon :component="CornLogo" :size="40" class="text-3xl ms-auto sm:ms-0"></n-icon>
+                <n-text class="font-thin text-lg md:text-xl text-[#E9C46A]">
                     智慧农业
                 </n-text>
                 <n-icon :component="X" size="15"></n-icon>
-                <n-text type="success" class="font-thin text-xl">
+                <!--通过margin来保持双向居中-->
+                <n-text type="success" class="font-thin text-lg md:text-xl">
                     玉米医生
                 </n-text>
 
@@ -33,15 +34,17 @@
         </n-space>
 
         <n-drawer
+                to="#dark"
                 v-model:show="activeRef"
                 :placement="placementRef"
                 resizable
-                class="w-60"
+                class="w-1/2"
         >
             <n-drawer-content
                     title="菜单选项"
+                    body-content-class="p-1"
                     :native-scrollbar="false">
-                <HomeMenu/>
+                <HomeMenu @drawer-show="handleDrawerShow"/>
             </n-drawer-content>
         </n-drawer>
 
@@ -69,6 +72,10 @@ const activate = (place) => {
     activeRef.value = true;
     placementRef.value = place;
 };
+const handleDrawerShow = (show) => {
+    // 接收子组件(菜单组件)的菜单切换回调, 如若切换则自动关闭drawer组件
+    activeRef.value = show
+}
 </script>
 
 <style scoped>
