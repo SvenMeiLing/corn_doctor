@@ -38,6 +38,7 @@ const userFiles = ref([]),
         })
         // 保存响应内容
         const result = await uploadImg(formData)
+        alert(result)
         if (!result) {
             // 后置操作:1.关闭加载状态和弹出框
             isLoading.value = false
@@ -142,14 +143,14 @@ onMounted(() => {
                     <n-modal
                             to=".n-config-provider"
                             v-model:show="showModal"
-                            class="custom-card w-72 sm:w-96 md:w-4/6 xl:w-1/2"
+                            class="custom-card w-80 sm:w-96 md:w-4/6 xl:w-1/2"
                             preset="card"
                             size="huge"
                             :bordered="false"
                             :segmented="segmented"
                             content-class="p-0"
                             @after-leave="isLoading = false"
-                            header-class="h-20"
+                            header-class="h-16 md:h-20"
                     >
                         <template #header>
 
@@ -161,9 +162,9 @@ onMounted(() => {
                             >
 
                                 <img v-if="!isLoading" src="/src/assets/images/smile.png"
-                                     class="h-9" alt="">
+                                     class="h-7 md:h-9" alt="">
                                 <n-spin stroke="#FFD700" v-else size="medium"/>
-                                <n-text class="text-base font-thin">
+                                <n-text class="text-md font-thin">
                                     仅支持图片文件哦!
                                 </n-text>
 

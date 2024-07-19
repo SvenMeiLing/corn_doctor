@@ -9,13 +9,6 @@
                     </template>
                     <template #extra>
                         哦!你还没有上传图片呢?
-                        <div class="
-                        bg-white
-                        sm:bg-red-100
-                        md:bg-yellow-100
-                        lg:bg-sky-100">
-                            111111
-                        </div>
                     </template>
                 </n-empty>
             </template>
@@ -24,7 +17,7 @@
 </template>
 
 <script setup>
-import {onMounted, computed, ref, onUnmounted} from "vue";
+import {onMounted, computed, ref, onUnmounted, onActivated} from "vue";
 import emitter from "@/utils/mitt.js";
 import {NImage, NTag, NPopover} from "naive-ui";
 
