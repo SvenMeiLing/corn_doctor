@@ -20,7 +20,7 @@ import {
     StoreMallDirectoryTwotone as StoreIcon,
     BubbleChartTwotone as Chart
 } from '@vicons/material'
-import {Template} from '@vicons/carbon'
+import {Template, FlowStreamReference} from '@vicons/carbon'
 import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
 import NounBook from '@/components/NounBook.vue'
@@ -125,37 +125,35 @@ const menuOptions = [
                         ),
                         key: "store",
                         icon: renderIcon(StoreIcon)
-                    }
-                ]
-            },
-            {
-                label: () => h(
-                    RouterLink,
+                    },
                     {
-                        to: {path: `/agriculture/ai-chat`},
+                        label: () => h(
+                            RouterLink,
+                            {
+                                to: {path: `/agriculture/ai-chat`},
 
-                    }, {
-                        default: () => "智能助理"
-                    }
-                ),
-                key: "aiChat",
-                icon: renderIcon(Chart),
-            },
-            {
-                label: "食物",
-                key: "food",
-                children: [
-                    {
-                        label: "三明治",
-                        key: "sandwich"
-                    }
+                            }, {
+                                default: () => "智能助理"
+                            }
+                        ),
+                        key: "aiChat",
+                        icon: renderIcon(Chart),
+                    },
                 ]
             },
-            {
-                label: "过去增多，未来减少",
-                key: "the-past-increases-the-future-recedes"
-            }
+
         ]
+    },
+    {
+        label: () => h(
+            RouterLink,
+            {
+                to: '/flow-recognition'
+            },
+            "流式识别"
+        ),
+        key: "flow-recognition",
+        icon: renderIcon(FlowStreamReference)
     }
 ];
 const emit = defineEmits(["drawerShow"])

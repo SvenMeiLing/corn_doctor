@@ -58,6 +58,11 @@ const router = createRouter({
                     component: () => import('@/views/Page5/Index.vue'),
                     meta: {title: "日记簿"}
                 },
+                {
+                    path: "/flow-recognition",
+                    component: () => import('@/views/flow-recognition/Index.vue'),
+                    meta: {title: "流式识别"}
+                }
             ]
         },
         {
