@@ -11,6 +11,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Layout from '@/views/Layout/Index.vue'
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import {useUserProfile} from "@/stores/userProfile.js";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,7 +24,7 @@ const router = createRouter({
                 {
                     path: "",
                     component: () => import('@/views/Home/components/HomeSummary.vue'), // 主页,
-                    meta: {title: '玉米医生'}
+                    meta: {title: '玉米医生', requireAuth: false}
                 },
                 {
                     path: "/recognition",
@@ -68,7 +69,7 @@ const router = createRouter({
         {
             path: "/login",
             component: () => import('@/views/Login/Index.vue'),
-            meta: {title: "登录", layout: 'empty'},
+            meta: {title: "登录", layout: 'empty', requireAuth: false},
             name: "login",
         }
     ],
@@ -117,6 +118,23 @@ export function createShowTitle(router) {
         if (to.meta.title) document.title = to.meta.title
         // 跳转指定路由
         next()
+    })
+}
+
+/*
+校验路由是否可以访问
+ */
+export function requireAuth(router) {
+    router.beforeEach((to, from, next) => {
+        // 如果当前访问的路由需要验证, 且处于未登陆状态
+        const userProfile = useUserProfile()
+        if (to.meta.requireAuth !== false && !userProfile.profile.isLoggedIn) {
+            // 跳转到登录页
+            console.log("跳转到登录页", "登陆状态为-->", userProfile.profile.isLoggedIn)
+            next("/login")
+        } else {
+            next()
+        }
     })
 }
 
