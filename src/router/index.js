@@ -63,15 +63,15 @@ const router = createRouter({
                     path: "/flow-recognition",
                     component: () => import('@/views/flow-recognition/Index.vue'),
                     meta: {title: "流式识别"}
+                },
+                {
+                    path: "/login",
+                    component: () => import('@/views/Login/Index.vue'),
+                    meta: {title: "登录", requireAuth: false},
+                    name: "login",
                 }
             ]
         },
-        {
-            path: "/login",
-            component: () => import('@/views/Login/Index.vue'),
-            meta: {title: "登录", layout: 'empty', requireAuth: false},
-            name: "login",
-        }
     ],
     // 路由滚动行为定制(路由切换时, 自动滚到顶部)
     scrollBehavior() {

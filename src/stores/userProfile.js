@@ -19,7 +19,7 @@ export const useUserProfile = defineStore(
             // 存储用户上一次设置的菜单伸缩
             collapsed: false,
             // 登陆状态, 默认未登录
-            isLoggedIn: false
+            isLoggedIn: true
         })
 
         const setUserProfile = (key, value) => {

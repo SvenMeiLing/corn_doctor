@@ -7,7 +7,8 @@
 
 <script setup>
 import {watch, ref, h} from "vue";
-import {NIcon, useMessage} from "naive-ui";
+import {useRoute} from 'vue-router'
+import {NIcon} from "naive-ui";
 import {RouterLink} from "vue-router";
 
 import {
@@ -25,7 +26,7 @@ import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
 import NounBook from '@/components/NounBook.vue'
 
-const message = useMessage()
+const route = useRoute()
 const userProfile = useUserProfile()
 // 每次重载页面时, 优先使用上一次会话中的路由
 const activeKey = ref(userProfile.profile.lastRoute)
@@ -168,6 +169,7 @@ const handleUpdateValue = (key, item) => {
 
 watch(activeKey, (newRoute) => {
     // 当路由发生改变就去记录一次
+    console.log(route.path)
     userProfile.setUserProfile("lastRoute", newRoute)
 })
 
