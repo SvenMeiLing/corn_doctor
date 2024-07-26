@@ -5,6 +5,7 @@
 from fastapi import FastAPI, APIRouter, Body
 from fastapi.responses import StreamingResponse
 from starlette.staticfiles import StaticFiles
+from starlette.websockets import WebSocket
 
 from app.apis.api_v1.login import router as login_router
 from app.apis.api_v1.user import router as user_router
@@ -14,6 +15,7 @@ from app.apis.api_v1.plant import router as plant_router
 from app.chat.spark_chat import chat
 from app.core.config import PREDICT_PATH
 from app.middleware.cors_midd import setup_cors
+from app.vision.yolo_predict import yolo
 
 API_VERSION = "/api/v1"
 
@@ -40,9 +42,22 @@ async def ai_chat(question: str = Body(..., embed=True)):
     return StreamingResponse(ext_gen(question), media_type="text/event-stream")
 
 
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_bytes()
+        from app.vision.yolo_predict import yolo_identify
+        import numpy as np
+
+        array_data = np.frombuffer(data, dtype=np.uint8)
+        print(data, "<------------")
+        await websocket.send_text(f"Message text was: {data}")
+
+
 # 挂载静态文件目录到 /predict 路由
 app.mount("/predict", StaticFiles(directory=PREDICT_PATH), name="predict")
 if __name__ == '__main__':
     import uvicorn
 
-    uvicorn.run(app)
+    uvicorn.run(app, host='0.0.0.0')
