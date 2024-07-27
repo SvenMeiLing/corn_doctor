@@ -2,6 +2,8 @@
 # FileName: main.py
 # Time : 2024/6/13 20:01
 # Author: zzy
+import cv2
+import numpy as np
 from fastapi import FastAPI, APIRouter, Body
 from fastapi.responses import StreamingResponse
 from starlette.staticfiles import StaticFiles
@@ -15,7 +17,7 @@ from app.apis.api_v1.plant import router as plant_router
 from app.chat.spark_chat import chat
 from app.core.config import PREDICT_PATH
 from app.middleware.cors_midd import setup_cors
-from app.vision.yolo_predict import yolo
+from app.vision.yolo_predict import yolo, frame_predict
 
 API_VERSION = "/api/v1"
 
@@ -46,13 +48,14 @@ async def ai_chat(question: str = Body(..., embed=True)):
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
-        data = await websocket.receive_bytes()
-        from app.vision.yolo_predict import yolo_identify
-        import numpy as np
+        frame_bytes = await websocket.receive_bytes()
 
-        array_data = np.frombuffer(data, dtype=np.uint8)
-        print(data, "<------------")
-        await websocket.send_text(f"Message text was: {data}")
+        # 从 bytes 数据中读取图像
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+
+        # 解码成图像数组
+        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        await frame_predict(websocket, image)
 
 
 # 挂载静态文件目录到 /predict 路由
