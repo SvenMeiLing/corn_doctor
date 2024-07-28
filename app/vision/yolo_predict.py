@@ -2,18 +2,16 @@
 # FileName: yolo_predict.py
 # Time : 2024/6/30 22:51
 # Author: zzy
-import base64
 import io
 import time
 from os import PathLike
 from pathlib import Path
 
-import numpy as np
+import cv2
 from PIL import Image
 from starlette.websockets import WebSocket
 from ultralytics import YOLO
 
-from app.core.config import APP_PATH, PREDICT_PATH
 from app.vision.handler_count import tensor_counter
 
 
@@ -65,14 +63,12 @@ def yolo(save_to, source: str | PathLike):
     return res
 
 
-async def frame_predict(websocket: WebSocket, source):
-    model = YOLO("b2000_c15.pt")
-
+async def frame_predict(websocket: WebSocket, source, model):
     # 进行预测
     outputs = model.predict(
         source,
         imgsz=320, conf=0.5,
-        show_boxes=True, stream=True, show=True
+        show_boxes=True, stream=True
     )
     # 获取第一个预测结果的图像
     for output in outputs:
@@ -84,14 +80,15 @@ async def frame_predict(websocket: WebSocket, source):
         io_bytes = io.BytesIO()
         # 保存图像到内存中
         im.save(io_bytes, format="JPEG")
-        io_bytes.seek(0)
-        # 生成base64的图像链接
-        res = f"data:image/jpeg;base64,{base64.b64encode(io_bytes.read()).decode('utf-8')}"
-        await websocket.send_text(res)
+        # io_bytes.seek(0)
+        # # 生成base64的图像链接
+        # res = f"data:image/jpeg;base64,{base64.b64encode(io_bytes.read()).decode('utf-8')}"
+        await websocket.send_bytes(io_bytes.getvalue())
+        print("发送了一帧", time.time())
 
 
 if __name__ == '__main__':
-    import cv2
+    ...
 
     # 假设 bboxes 是 YOLO 预测得到的边界框列表，包含类别、置信度和坐标
     # bboxes 的格式可以是 [(class_id, confidence, (x, y, width, height)), ...]
