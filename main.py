@@ -2,10 +2,13 @@
 # FileName: main.py
 # Time : 2024/6/13 20:01
 # Author: zzy
+import base64
 from contextlib import asynccontextmanager
+from io import BytesIO
 
 import cv2
 import numpy as np
+from PIL import Image
 from fastapi import FastAPI, APIRouter, Body
 from fastapi.responses import StreamingResponse
 from starlette.staticfiles import StaticFiles
@@ -64,7 +67,7 @@ async def ai_chat(question: str = Body(..., embed=True)):
     return StreamingResponse(ext_gen(question), media_type="text/event-stream")
 
 
-@app.websocket("/ws")
+@app.websocket("/wss")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
@@ -77,13 +80,33 @@ async def websocket_endpoint(websocket: WebSocket):
         await frame_predict(websocket, image, model)
 
 
-@app.websocket("/wss")
+@app.websocket("/wsss")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         msg = await websocket.receive_text()
         print(msg)
         await websocket.send_text("222")
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            image_data = base64.b64decode(data.split(",")[1])
+            image = Image.open(BytesIO(image_data))
+
+            # 在这里可以对图像进行处理，例如添加水印、滤镜等
+
+            buffered = BytesIO()
+            image.save(buffered, format="JPEG")
+            img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+            data_url = f"data:image/jpeg;base64,{img_str}"
+            await websocket.send_text(data_url)
+    except Exception as e:
+        await websocket.close()
 
 
 # 挂载静态文件目录到 /predict 路由

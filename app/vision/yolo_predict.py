@@ -2,6 +2,7 @@
 # FileName: yolo_predict.py
 # Time : 2024/6/30 22:51
 # Author: zzy
+import base64
 import io
 import time
 from os import PathLike
@@ -80,10 +81,10 @@ async def frame_predict(websocket: WebSocket, source, model):
         io_bytes = io.BytesIO()
         # 保存图像到内存中
         im.save(io_bytes, format="JPEG")
-        # io_bytes.seek(0)
-        # # 生成base64的图像链接
-        # res = f"data:image/jpeg;base64,{base64.b64encode(io_bytes.read()).decode('utf-8')}"
-        await websocket.send_bytes(io_bytes.getvalue())
+        io_bytes.seek(0)
+        # 生成base64的图像链接
+        res = f"data:image/jpeg;base64,{base64.b64encode(io_bytes.read()).decode('utf-8')}"
+        await websocket.send_text(res)
         print("发送了一帧", time.time())
 
 
