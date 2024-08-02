@@ -12,3 +12,4 @@ for i in range(len(nums)):
         flag += 1
 
 print(nums)
+re
