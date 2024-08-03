@@ -12,7 +12,3 @@ class ListNode(object):
 
 head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
 
-cur_node = head.next
-while cur_node:
-
-
