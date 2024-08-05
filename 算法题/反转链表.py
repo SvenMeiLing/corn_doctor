@@ -10,5 +10,13 @@ class ListNode(object):
         self.next = next
 
 
-head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+print([lambda x: i * x for i in range(4)])
 
+head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+def cl(l):
+    l = []
+
+ll = [1,2,3]
+cl(ll)
+print(ll)
+BaseException
