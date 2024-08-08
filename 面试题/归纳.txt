@@ -1,0 +1,50 @@
+
+--基础部分-----------------------------------------------
+1.内存管理
+2.垃圾回收
+3.元类
+4.设计模式(单例, ...)
+5.装饰器(无参,有参,类装饰器)
+6.基础类型的原理(str, int, list, tuple, dict, set)
+7.异步(asyncio)
+8.迭代器,生成器(iterator, generator, yield, yield from)
+9.面向对象(staticmethod, classmethod, property)
+9.抽象类, mixin, 多继承(MRO), 鸭子类型
+--框架---
+1.ORM是什么?优劣势
+2.django请求生命周期
+3.django重定向如何实现,用的什么状态码
+4.csrf实现机制
+5.什么是wsgi?
+6.为什么pycharm可以直接运行django,flask项目呢?
+7.中间件的作用, 使用场景
+8.orm的优化操作
+9.django中如何实现orm表中添加数据时创建一条日志记录？（非常重要）
+10.MVT和MVC模式
+11.django中如何执行原生SQL
+12.使用orm批量创建数据
+13.跨域请求Django是如何处理的
+14.Django的HttpRequest对象是在什么时候创建的？
+15.简述Django对http请求的执行流程（初级）
+16.什么是信号量？
+17.谈谈你对restful规范的认识
+18.Django缓存系统类型有哪些？
+19.请简述Django下的（内建）缓存机制
+20.什么是ASGI，简述WSGI和ASGI的关系与区别？(重点)
+
+--数据库
+1.外键有什么用，什么时候合适使用外键 ，外键一定需要索引吗？
+2.Primary Key和Unique Key的区别？
+
+--缓存
+redis
+
+--消息队列---
+
+
+--ops--
+docker
+nginx
+
+--os---
+进程线程, 命令, shell, 目录解析,
