@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Video Recording</title>
+    <style>
+        #container {
+            display: flex;
+            gap: 10px;
+        }
+        video {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <video id="liveVideo" autoplay></video>
+        <video id="recordedVideo" autoplay controls></video>
+    </div>
+    <button id="startButton">Start Recording</button>
+    <button id="stopButton">Stop Recording</button>
+    <a id="downloadLink" style="display: none;">Download Video</a>
+
+    <script>
+        const liveVideo = document.getElementById('liveVideo');
+        const recordedVideo = document.getElementById('recordedVideo');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const downloadLink = document.getElementById('downloadLink');
+
+        let mediaRecorder;
+        let chunks = [];
+        let stream;
+        let recordedStream = new MediaStream();
+
+        // Start recording
+        startButton.addEventListener('click', () => {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(mediaStream => {
+                    stream = mediaStream;
+                    liveVideo.srcObject = stream;
+
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+                        downloadLink.href = url;
+                        downloadLink.download = 'recording.webm';
+                        downloadLink.style.display = 'inline'; // Show the download link
+                        downloadLink.textContent = 'Download Video';
+                        chunks = []; // Clear chunks for the next recording
+                    };
+
+                    // Create a new video track for the recorded video
+                    const recordedVideoTrack = stream.getVideoTracks()[0].clone();
+                    recordedStream.addTrack(recordedVideoTrack);
+                    recordedVideo.srcObject = recordedStream;
+
+                    mediaRecorder.start();
+                })
+                .catch(error => console.error('Error accessing webcam: ', error));
+        });
+
+        // Stop recording
+        stopButton.addEventListener('click', () => {
+            if (mediaRecorder) {
+                mediaRecorder.stop();
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+            }
+        });
+    </script>
+</body>
+</html>

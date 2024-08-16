@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<video ref="videoEle"
+       style="width: 240px;height: 180px"
+       autoplay
+></video>
+<div ref="wrapCanvas"></div>
+<img ref="wrapImg" class="w-72 h-auto" alt="" src=""/>
+</body>
+<script>
+    let lastTime = 0
+    let rafId = null
+    const ws = new WebSocket("ws://localhost:8000/ws")
+
+    ws.onopen = function () {
+        console.log("ws连接已经建立")
+    }
+
+    window.onload = async function () {
+        // const canvas = document.querySelector("canvas")
+        // const context = canvas.getContext("2d")
+        const videoEle = document.querySelector("video")
+        console.log("页面加载完毕")
+        let stream;
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({video: true})
+            videoEle.srcObject = stream
+        } catch (e) {
+            console.log(e)
+        }
+
+
+        videoEle.addEventListener("play", function () {
+            // 创建canvas
+            const canvas = document.createElement("canvas")
+            canvas.width = videoEle.offsetWidth
+            canvas.height = videoEle.offsetHeight
+            console.log(videoEle.offsetWidth, videoEle.offsetHeight)
+            //拿到 canvas 上下文对象
+            const context = canvas.getContext("2d");
+            // 绘制图像
+            context?.drawImage(videoEle, 0, 0, canvas.width, canvas.height)
+            // 加入到指定容器中
+            const wrapCanvas = document.querySelector("div")
+            wrapCanvas.appendChild(canvas);//将 canvas 投到页面上
+
+            function animate(currentTime) {
+                const delta = currentTime - lastTime;
+
+                // 控制绘制的频率，每秒绘制 60 次
+                if (delta > 1000 / 24) {
+                    // context.drawImage(videoEle, 0, 0, 240, 180);
+
+                    context.drawImage(videoEle, 0, 0, 240, 180);
+                    // console.log(canvas.value?.toDataURL('image/jpeg'))
+                    canvas.toBlob((blob) => {
+                        // console.log(blob) 不断发起请求websocket
+                        if (ws.readyState === WebSocket.OPEN) {
+                            ws.send(blob);
+                            console.log("sent")
+                            // ws.send("111")
+                        }
+
+                    }, "image/jpeg")
+                    lastTime = currentTime;
+                }
+
+                // 请求下一帧动画
+                rafId.value = requestAnimationFrame(animate);
+            }
+
+            ws.onmessage = function (ev) {
+                // 当接收到消息时触发的回调
+                // console.log(ev.data)
+                console.log("onmessage")
+                let img = new Image()
+                img.onload = function () {
+                    console.log(img, "onload")
+                    rafId = requestAnimationFrame(() => animate(_, img))
+                }
+                img.src = ev.data
+            }
+            rafId = requestAnimationFrame(animate)
+        })
+    }
+
+
+    /**
+     * 截屏
+     */
+
+
+</script>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Video Stream</title>
+</head>
+<body>
+<h1>WebSocket Video Stream</h1>
+<video id="video" width="240" height="180" autoplay></video>
+<img id="output" width="240" height="180">
+
+<script>
+    const video = document.getElementById('video');
+    const output = document.getElementById('output');
+
+    // 获取摄像头视频流
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: {exact: "environment"}
+        }
+    })
+        .then(stream => {
+            alert("已经同意了")
+            video.srcObject = stream;
+            video.play();
+            startWebSocket(stream);
+        })
+        .catch(err => alert("Error accessing the camera: " + err));
+
+    function startWebSocket(stream) {
+        const socket = new WebSocket("ws://192.168.43.102:8000/ws");
+        socket.onopen = () => {
+            alert("已连接")
+            console.log("WebSocket connection established");
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.width;
+            canvas.height = video.height;
+
+            setInterval(() => {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const frame = canvas.toDataURL('image/jpeg');
+                if (socket.readyState === socket.OPEN) {
+                    socket.send(frame);
+                } else if (socket.readyState === socket.CLOSED) {
+                    console.log("连接已经关闭");
+                }
+            }, 100); // 每 100 毫秒发送一帧
+        };
+
+        socket.onmessage = (event) => {
+            console.log("收到了图像帧")
+            output.src = event.data;
+        };
+
+        socket.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
+
+        socket.onerror = (error) => {
+            console.error("WebSocket error: ", error);
+        };
+    }
+</script>
+</body>
+</html>

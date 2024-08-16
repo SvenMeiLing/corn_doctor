@@ -4,137 +4,102 @@
             class="p-[20px]"
             ref="containerRef"
     >
-        <n-text>视频流式识别</n-text>
-        <n-button @click="switchRAF">停止</n-button>
-        <n-space>
-            <video ref="videoEle" class="w-72 h-auto"
-                   @loadedmetadata="videoLoaded"
-                   autoplay
-            ></video>
-            <div ref="wrapCanvas" class="w-72 h-auto"></div>
+        <n-text tag="div" class="text-2xl">这是一个实验性功能,你可以先试试试试!🧐</n-text>
+        <n-space class="mt-2">
+            <n-button @click="flowRecognition" type="primary">开始</n-button>
+            <n-button @click="socket.close()" type="error">停止</n-button>
         </n-space>
+
+        <hr>
+        <div class="w-64 h-48 rounded-md bg-zinc-800 flex items-center justify-center">
+            <CameraAction class="w-32"/>
+        </div>
+        <video ref="videoRef" id="video" class="hidden" width="240" height="180" autoplay></video>
+        <img ref="imgRef" v-show="isShow" id="output" width="240" height="180" alt="">
 
     </n-layout>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, nextTick} from 'vue'
+import {onMounted, ref, computed} from 'vue'
+import {CameraAction} from '@vicons/carbon'
 
-const videoEle = ref<HTMLVideoElement | null>(null)
-const wrapCanvas = ref<HTMLDivElement | null>(null)
-const canvas = ref<HTMLCanvasElement | null>(null)
-const context = ref<CanvasRenderingContext2D | null>(null)
-const rafId = ref()
-/**
- * 截屏
- */
-const shot = () => {
-    // 创建canvas
-    canvas.value = document.createElement("canvas")
-    canvas.value.width = videoEle.value.offsetWidth
-    canvas.value.height = videoEle.value.offsetHeight
-    //拿到 canvas 上下文对象
-    context.value = canvas.value.getContext("2d");
-    // 绘制图像
-    context.value?.drawImage(videoEle.value, 0, 0, canvas.value.width, canvas.value.height)
-    // 加入到指定容器中
-    wrapCanvas.value.appendChild(canvas.value);//将 canvas 投到页面上
+const isShow = ref<Boolean>(false)
+const videoRef = ref<HTMLVideoElement | null>(null)
+const imgRef = ref<HTMLImageElement | null>(null)
+let socket: WebSocket;
+let stream: MediaStream;
+const startWebSocket = () => {
+    socket = new WebSocket("ws://127.0.0.1:8000/ws");
+    socket.onopen = () => {
+        console.log("WebSocket connection established");
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = videoRef.value.width;
+        canvas.height = videoRef.value.height;
+        const timeId = setInterval(() => {
+            // 间隔100ms 发送一帧摄像机画面给后端
+            ctx?.drawImage(videoRef.value, 0, 0, canvas.width, canvas.height);
+            const frame = canvas.toDataURL('image/jpeg');
+            if (socket.readyState === socket.OPEN) {
+                socket.send(frame);
+            } else if (socket.readyState === socket.CLOSED) {
+                // 当链接关闭,停止向后端发送帧, 并关闭摄像头, 同时屏蔽画面
+                clearInterval(timeId)
+                if (stream) {
+                    // 遍历所有的轨道，停止每一个视频轨道
+                    stream.getTracks().forEach(track => {
+                        if (track.kind === 'video') {
+                            track.stop();
+                        }
+                    });
+                }
+                isShow.value = false
+                console.log("连接已经关闭");
+            }
+        }, 100); // 每 100 毫秒发送一帧
+    };
+
+    socket.onmessage = (event) => {
+        console.log("收到了图像帧")
+        isShow.value = true
+        console.log(imgRef.value)
+        imgRef.value.src = event.data;
+
+    };
+
+    socket.onclose = () => {
+        console.log("WebSocket connection closed");
+    };
+
+    socket.onerror = (error) => {
+        console.error("WebSocket error: ", error);
+    };
 }
 
-/**
- * 当video标签加载完成时调用初始截屏
- */
-const videoLoaded = () => {
-    shot()
-    rafId.value = requestAnimationFrame(animate);
-}
-
-// 使用 requestAnimationFrame 控制每秒绘制 60 次
-let lastTime = 0;
-// 现在目前问题是如何使其发送消息给后端
-const ws = ref<WebSocket>(new WebSocket("ws://localhost:8000/ws"))
-console.log("监听中...", ws.value)
-ws.value.onopen = function () {
-    console.log("建立了一个链接")
-    ws.value.send(new Blob())
-}
-
-ws.value.onmessage = function (ev) {
-    console.log(ev.data, "<---接收到消息")
-}
-
-function animate(currentTime) {
-    const delta: Number = currentTime - lastTime;
-
-    // 控制绘制的频率，每秒绘制 60 次
-    if (delta > 1000 / 60) {
-        context.value?.drawImage(videoEle.value, 0, 0, canvas.value.width, canvas.value.height);
-        // xyxy 数据（假设从后端获取到的）
-        const boxes = [
-            [213.33, 231.95, 439.68, 325.68],
-            [0.0821, 4.3731, 65.067, 84.469],
-            [96.574, 394.24, 360.03, 509.88],
-            [9.9315, 321.58, 158.29, 405.19]
-        ];
-
-        // 设置绘制矩形框的样式
-        context.value.strokeStyle = 'green';
-        context.value.lineWidth = 2;
-
-        // 遍历并绘制所有的框
-        boxes.forEach(box => {
-            const [x_min, y_min, x_max, y_max] = box;
-            const width = x_max - x_min;
-            const height = y_max - y_min;
-            context.value?.strokeRect(x_min, y_min, width, height);
-            // // 绘制标签
-            context.value.font = '16px Arial';
-            context.value.fillStyle = 'red';
-            context.value.fillText("xxx", x_min, y_min); // 在框上方显示标签
-        });
-
-
-        // console.log(canvas.value?.toDataURL('image/jpeg'))
-        canvas.value?.toBlob((blob) => {
-            // console.log(blob) 不断发起请求websocket
-            ws.value.send(blob)
-        }, "image/jpeg")
-        lastTime = currentTime;
+const getMediaStream = async() => {
+    // 获取摄像头视频流
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: {exact: "user"}
+            }
+        })
+        videoRef.value.srcObject = stream;
+        await videoRef.value.play();
+    } catch (err) {
+        console.log(err)
     }
-
-    // 请求下一帧动画
-    rafId.value = requestAnimationFrame(animate);
 }
 
-const paused = ref(false)
-const switchRAF = () => {
-    if (paused.value) {
-        rafId.value = requestAnimationFrame(animate);
-        paused.value = false
-    } else {
-        console.log("停止了", rafId.value)
-        paused.value = true
-        cancelAnimationFrame(rafId.value)
-    }
-
+const flowRecognition = async () => {
+    // 获取摄像头并建立ws链接
+    await getMediaStream()
+    startWebSocket()
 }
 onMounted(async () => {
 
-    // 开始动画循环
-
-    // rafId.value = requestAnimationFrame(animate);
-
-    console.log(videoEle)
-    let stream;
-    try {
-        stream = await navigator.mediaDevices.getUserMedia({video: true})
-        videoEle.value.srcObject = stream;
-    } catch (e) {
-        console.log(e)
-    }
-
 })
-// todo: 前端向服务端实时不断传输视频帧, 后端接收并不断返回视频帧, 前端每次接收一帧就播放一帧画面
 </script>
 
 <style scoped>
