@@ -2,12 +2,11 @@
 # FileName: plant.py
 # Time : 2024/6/12 13:15
 # Author: zzy
+import datetime
 from typing import Literal, List
-
-from pydantic import BaseModel, StringConstraints, Field, ConfigDict, field_serializer, field_validator
+from pydantic import BaseModel, StringConstraints, Field, ConfigDict, field_serializer, field_validator, root_validator, \
+    model_validator
 from typing_extensions import Annotated
-
-from app.models.custom_field import FilePathStr
 
 # 定义健康状态的映射
 HEALTH_STATUS_MAP = {
@@ -85,13 +84,28 @@ class Plant(PlantInDBBase):
     pass
 
 
-from app.schemas.disease_pest import DiseaseBase, Pest  # type: ignore
+class PlantDiseaseTotal(BaseModel):
+    """用于做病害信息可视化,只提供name date字段"""
+    name: str
+    created_at: datetime.datetime | datetime.date
+    diseases: List['DiseaseName']  # 使用字典类型来表示列表中的每个对象
+
+    @field_validator("created_at")
+    @classmethod
+    def convert_datetime_to_date(cls, created_at):
+        return created_at.date()
+
+
+from app.schemas.disease_pest import DiseaseBase, DiseaseName, Pest  # type: ignore
 
 PlantInDBBase.update_forward_refs()
 
 if __name__ == '__main__':
-    p = PlantBase(
-        name="pt", planting_location='xy', media_url='xxx.png', health=HealthEnum.一般,  # type: ignore
-        growth=GrowthEnum.一般, description='xxx')  # type: ignore
-    print(p.dict())
+    p = PlantDiseaseTotal(
+        **{"name": "xx", "created_at": "2024-08-32", "diseases": [{"name": "xxx"}]}
+    )
+    # p = PlantBase(
+    #     name="pt", planting_location='xy', media_url='xxx.png', health=HealthEnum.一般,  # type: ignore
+    #     growth=GrowthEnum.一般, description='xxx')  # type: ignore
+    # print(p.dict())
     # print(p.dict())

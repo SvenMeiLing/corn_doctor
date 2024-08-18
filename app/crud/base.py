@@ -6,6 +6,7 @@
 # FileName: base.py
 # Time : 2023/8/3 16:32
 # Author: zzy
+import asyncio
 from typing import (
     Any, Dict,
     Generic, Optional, Type,
@@ -13,11 +14,14 @@ from typing import (
 )
 
 from pydantic import BaseModel
-from sqlalchemy import select, Row, RowMapping
+from sqlalchemy import select, Row, RowMapping, extract, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, load_only, joinedload, defer
 
+from app.apis.deps.get_db import get_db
 from app.db.base import BaseOrmTable
+from app.db.session import async_engine
+from app.models.plant import DiseaseOrm, PlantOrm
 from app.schemas.user import UserCreate
 from app.utils.security import hash_password
 
@@ -71,6 +75,35 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             )
         )
         return result.scalars().first()
+
+    async def get_multi_with_relations(
+            self,
+            async_session: AsyncSession,
+            *relationship_fields: str
+    ) -> Sequence[Row[Any] | RowMapping | Any]:
+        """
+        获取该模型的所有关系字段, 此方法可重载
+        :param async_session: 会话
+        :param relationship_fields: 字段名称
+        :return:
+        """
+        stmt = select(self.model).options(
+            selectinload(self.model.diseases).load_only(DiseaseOrm.name)
+        ).options(load_only(self.model.name, self.model.created_at)).group_by(self.model.created_at)
+        # --------------------------------------------------------------
+        result = await async_session.execute(stmt)
+        data = result.scalars().all()
+        # 确保所有属性在此处都已经加载，避免在打印时触发延迟加载
+        loaded_data = [
+            {
+                "name": item.name,
+                "diseases": [disease.name for disease in item.diseases]
+            }
+            for item in data
+        ]
+
+        print(loaded_data)
+        return data
 
     async def get_multi(
             self, async_session: AsyncSession, *, skip: int = 0, limit: int = 100
@@ -128,3 +161,22 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         )
         await async_session.flush()
         await async_session.commit()
+
+
+async def main():
+    from app.db.session import AsyncSessionFactory
+
+    from app.db.session import async_engine
+
+    async with AsyncSessionFactory() as session:
+        crud_plant = CRUDBase(PlantOrm)
+        data = await crud_plant.get_multi_with_relations(session, 'x')
+        print(data)
+
+    #     crud_plant = CRUDBase(PlantOrm)
+    #     data = await crud_plant.get_multi_with_relations(session, 'x')
+    #     return data
+
+
+if __name__ == '__main__':
+    asyncio.run(main())

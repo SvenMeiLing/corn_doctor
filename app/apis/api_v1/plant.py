@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.apis.deps.get_db import get_db
 from app.core.config import ORIGIN_IMG_PATH, MEDIA_ROOT, PREDICT_PATH
 from app.crud.plant import plant_crud
-from app.schemas.plant import Plant, PlantCreate
+from app.schemas.plant import Plant, PlantCreate, PlantDiseaseTotal
 from app.utils.hasher import gen_hashed, gen_file_path
 from app.vision.yolo_predict import yolo
 
@@ -34,6 +34,32 @@ async def create_plant(
     print(plant_in, "<-------------")
     plant_in = await plant_crud.create(db_session, obj_in=plant_in)
     return plant_in
+
+
+# todo: (当日,月度,季度,年度病害排行)
+#  /plant/disease_visualization
+"""
+data: [
+    玉米叶斑病:[
+        2024-07-18, 
+    ]
+]
+"""
+
+
+@router.get("/disease_visualization", response_model=list[PlantDiseaseTotal])
+async def disease_visualization(
+        db_session: AsyncSession = Depends(get_db)
+):
+    plant = await plant_crud.get_multi_with_relations(db_session, "diseases")
+    if not plant:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    """
+    data = [
+        {name: 叶斑病, year: [2024, 2025, 2026], total: [22, 445, 355]},
+        {name: 叶枯病, year: [2024, 2025, 2026], total: [22, 445, 355]},
+    ]"""
+    return plant
 
 
 @router.post("/yolo_identify", response_model=list[Plant])

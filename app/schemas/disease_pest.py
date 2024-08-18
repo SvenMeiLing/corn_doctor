@@ -18,6 +18,10 @@ class DiseaseBase(BaseModel):
     preventive_measure: str = Field("暂无应对策略", max_length=512, title="防治手段")
 
 
+class DiseaseName(BaseModel):
+    name: str = Field(..., max_length=24, title="病害名称")
+
+
 class DiseaseInDBBase(DiseaseBase):
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 

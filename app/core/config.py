@@ -57,6 +57,11 @@ SQLALCHEMY_DATABASE_URI = (
     f"mysql+aiomysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_SERVER}/{MYSQL_DB}"
 )
 
+# Redis缓存配置
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
+REDIS_PORT = os.getenv("REDIS_PORT", 6379)
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+
 # smtp 配置 ----可忽略-----
 SMTP_TLS = getenv_boolean("SMTP_TLS", True)
 SMTP_PORT = None
@@ -74,7 +79,7 @@ EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
 
 # --------------------------vision 配置--------------------------------
 # 模型名称
-MODEL_NAME = r"b2000_c15.pt"
+MODEL_NAME = r"b2000_c15_int8_openvino_model"
 MODEL_PATH = APP_PATH / "vision" / MODEL_NAME
 
 # yolo.predict配置
