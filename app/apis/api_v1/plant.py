@@ -3,6 +3,7 @@
 # Time : 2024/6/13 21:06
 # Author: zzy
 from pathlib import Path
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -49,16 +50,14 @@ data: [
 
 @router.get("/disease_visualization", response_model=list[PlantDiseaseTotal])
 async def disease_visualization(
-        db_session: AsyncSession = Depends(get_db)
+        db_session: AsyncSession = Depends(get_db),
+        *,
+        mode: Literal["year", "month", "week", "day"]
 ):
-    plant = await plant_crud.get_multi_with_relations(db_session, "diseases")
+    plant = await plant_crud.get_multi_with_relations(db_session, mode)
     if not plant:
         raise HTTPException(status_code=404, detail="Plant not found")
-    """
-    data = [
-        {name: 叶斑病, year: [2024, 2025, 2026], total: [22, 445, 355]},
-        {name: 叶枯病, year: [2024, 2025, 2026], total: [22, 445, 355]},
-    ]"""
+
     return plant
 
 

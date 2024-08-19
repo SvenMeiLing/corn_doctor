@@ -22,6 +22,9 @@ async with async_engine.begin() as conn:  # 这是一个事务, 在一个事务�
 # 用于连接数据库(当调用时直接启动一个数据库连接,用于直接操作例如建表,改表结构,而非ORM)
 async_engine = create_async_engine(
     SQLALCHEMY_DATABASE_URI,
+    # connect_args={
+    #     'timezone': 'Asia/Shanghai'  # 在连接时设置时区
+    # },
     echo=False,  # 打印日志
     echo_pool=False,
     pool_size=10,  # 在连接池中保持打开的连接数
