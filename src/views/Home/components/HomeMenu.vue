@@ -13,7 +13,6 @@ import {RouterLink} from "vue-router";
 
 import {
     BookOutline as BookIcon,
-    WineOutline as WineIcon,
     HomeOutline as HomeIcon,
     EyeOutline as RecognitionIcon,
 } from "@vicons/ionicons5";
@@ -21,7 +20,7 @@ import {
     StoreMallDirectoryTwotone as StoreIcon,
     BubbleChartTwotone as Chart
 } from '@vicons/material'
-import {Template, FlowStreamReference} from '@vicons/carbon'
+import {Template, FlowStreamReference, ChartMultitype} from '@vicons/carbon'
 import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
 import NounBook from '@/components/NounBook.vue'
@@ -140,6 +139,18 @@ const menuOptions = [
                         key: "aiChat",
                         icon: renderIcon(Chart),
                     },
+                    {
+                        label: () => h(
+                            RouterLink,
+                            {
+                                to: {path: '/agriculture/visualization'}
+                            },
+                            {
+                                default: () => "数据展板"
+                            },
+                        ), key: "visualization",
+                        icon: renderIcon(ChartMultitype)
+                    }
                 ]
             },
 

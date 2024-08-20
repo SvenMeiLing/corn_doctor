@@ -52,6 +52,11 @@ const router = createRouter({
                             component: () => import('@/views/Agriculture/AIChat/Index.vue'),
                             meta: {title: "AI服务"}
                         },
+                        {
+                            path: "visualization",
+                            component: () => import('@/views/Agriculture/DiseaseVisual/Index.vue'),
+                            meta: {title: "数据展板"}
+                        }
                     ]
                 },
                 {

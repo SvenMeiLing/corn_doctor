@@ -18,6 +18,17 @@ let data = [
         ]
     },
     {
+        "created_at": "2025-07-01",
+        "diseases": [
+            {
+                "name": "玉米条纹病毒"
+            },
+            {
+                "name": "玉米锈病"
+            }
+        ]
+    },
+    {
         "created_at": "2024-07-04",
         "diseases": [
             {
@@ -32,62 +43,80 @@ let data = [
                 "name": "玉米灰斑病"
             }
         ]
-    }
+    },
+    {
+        "created_at": "2024-07-05",
+        "diseases": [
+            {
+                "name": "玉米灰斑病"
+            }
+        ]
+    },
+    {
+        "created_at": "2024-07-06",
+        "diseases": [
+            {
+                "name": "玉米灰斑病"
+            }
+        ]
+    },
+    {
+        "created_at": "2024-07-07",
+        "diseases": [
+            {
+                "name": "玉米灰斑病"
+            }
+        ]
+    },
 ]
-const getWeekNumber = (date) => {
-    const start = new Date(date.getFullYear(), 0, 1);
-    const diff = date - start + ((start.getDay() + 1) * 24 * 60 * 60 * 1000);
-    const oneWeek = 7 * 24 * 60 * 60 * 1000;
-    return Math.ceil(diff / oneWeek);
+const getWeekRange = (date) => {
+    const start = new Date(date);
+    const day = start.getDay();
+    const diff = start.getDate() - day - 6; // Get the previous week
+    start.setDate(diff);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+
+    return { start, end };
 };
 
-const groupBy = (data, type) => {
+export const groupBy = (data, type) => {
     const result = {};
     const now = new Date();
-    const currentYear = now.getFullYear();
-    const startDate = new Date(now.setDate(now.getDate() - 7)); // Default start date for weeks
 
-    for (const item of data) {
-        const date = new Date(item.created_at);
-        let key;
+    if (type === 'week') {
+        const { start, end } = getWeekRange(now);
 
-        switch (type) {
-            case 'year':
-                key = date.getFullYear();
-                break;
-            case 'month':
-                key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-                break;
-            case 'week':
-                if (date >= startDate) {
-                    const year = date.getFullYear();
-                    const week = getWeekNumber(date);
-                    key = `${year}-W${week}`;
+        for (const item of data) {
+            const date = new Date(item.created_at);
+            if (date >= start && date <= end) {
+                const day = date.toISOString().slice(0, 10); // Format date as YYYY-MM-DD
+
+                if (!result[day]) {
+                    result[day] = [];
                 }
-                break;
-            default:
-                throw new Error('Invalid type. Use "year", "month", or "week".');
-        }
 
-        if (key) {
-            if (!result[key]) {
-                result[key] = [];
-            }
-
-            for (const disease of item.diseases) {
-                const existingDisease = result[key].find(d => d.name === disease.name);
-                if (existingDisease) {
-                    existingDisease.total += 1;
-                } else {
-                    result[key].push({ name: disease.name, total: 1 });
+                for (const disease of item.diseases) {
+                    const existingDisease = result[day].find(d => d.name === disease.name);
+                    if (existingDisease) {
+                        existingDisease.total += 1;
+                    } else {
+                        result[day].push({ name: disease.name, total: 1 });
+                    }
                 }
             }
         }
+
+        // Transform result into an array of objects
+        return Object.entries(result).map(([key, value]) => ({
+            [key]: value
+        }));
+    } else {
+        throw new Error('Invalid type. Use "week" for current week\'s previous week daily breakdown.');
     }
-
-    return Object.entries(result).map(([key, value]) => ({
-        [key]: value
-    }));
 };
 
 console.log(JSON.stringify(groupBy(data, "week")))
