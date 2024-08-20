@@ -7,6 +7,7 @@
 # Time : 2023/8/3 16:32
 # Author: zzy
 import asyncio
+from datetime import timedelta, datetime
 from typing import (
     Any, Dict,
     Generic, Optional, Type,
@@ -14,7 +15,7 @@ from typing import (
 )
 
 from pydantic import BaseModel
-from sqlalchemy import select, Row, RowMapping, extract, func
+from sqlalchemy import select, Row, RowMapping, extract, func, and_, case, true
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, load_only
 
@@ -88,80 +89,120 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             selectinload(self.model.diseases).load_only(DiseaseOrm.name)
         ).options(load_only(self.model.name, self.model.created_at)).group_by(self.model.created_at)
         # --------------------------------------------------------------
-        stmt2 = select(
-            extract(mode, PlantOrm.created_at).label(mode),
-            DiseaseOrm.name.label('dis_name'),
-            func.count(PlantOrm.id).label('total')
-        ).join(plant_disease_association_table, PlantOrm.id == plant_disease_association_table.c.plant_id). \
-            join(DiseaseOrm, DiseaseOrm.id == plant_disease_association_table.c.disease_id). \
-            group_by(mode, DiseaseOrm.name). \
-            order_by(mode, DiseaseOrm.name)
+        # stmt2 = select(
+        #     extract(mode, PlantOrm.created_at).label(mode),
+        #     DiseaseOrm.name.label('dis_name'),
+        #     func.count(PlantOrm.id).label('total')
+        # ).join(plant_disease_association_table, PlantOrm.id == plant_disease_association_table.c.plant_id). \
+        #     join(DiseaseOrm, DiseaseOrm.id == plant_disease_association_table.c.disease_id). \
+        #     group_by(mode, DiseaseOrm.name). \
+        #     order_by(mode, DiseaseOrm.name)
+        # ----------------------------------------------------------------
+        # 获取上周的开始和结束日期
+        today = datetime.today()
+        # 获取上周一的时间差
+        last_monday = today - timedelta(days=today.weekday() + 7)
+        # 计算上周日时间
+        last_sunday = last_monday + timedelta(days=6)
 
+        # 构造select
+        select_ = None
+        # 如果mode为周参数需要特殊处理
+        if mode == "week":
+            select_ = select(
+                case(
+                    (func.dayofweek(PlantOrm.created_at) == 1, '周一'),
+                    (func.dayofweek(PlantOrm.created_at) == 2, '周二'),
+                    (func.dayofweek(PlantOrm.created_at) == 3, '周三'),
+                    (func.dayofweek(PlantOrm.created_at) == 4, '周四'),
+                    (func.dayofweek(PlantOrm.created_at) == 5, '周五'),
+                    (func.dayofweek(PlantOrm.created_at) == 6, '周六'),
+                    (func.dayofweek(PlantOrm.created_at) == 7, '周天'),
+                    else_='Unknown'
+                ).label(mode),
+                DiseaseOrm.name.label(mode),
+                func.count(PlantOrm.id).label('total')
+            )
+        else:  # 处理year和month的逻辑
+            select_ = select(
+                func.concat(
+                    extract(mode, PlantOrm.created_at),
+                    "年" if mode == "year" else "月"
+                ).label(mode),
+                DiseaseOrm.name.label(mode),
+                func.count(PlantOrm.id).label('total')
+            )
+        stmt2 = select_.join(
+            plant_disease_association_table, PlantOrm.id == plant_disease_association_table.c.plant_id
+        ).join(
+            DiseaseOrm, DiseaseOrm.id == plant_disease_association_table.c.disease_id
+        ).where(
+            and_(
+                PlantOrm.created_at >= last_monday,
+                PlantOrm.created_at <= last_sunday
+            ) if mode == "week" else true()  # 如果不是week参数,直接放行这个where
+        ).group_by(mode, DiseaseOrm.name) \
+            .order_by(mode, DiseaseOrm.name)
         result = await async_session.execute(stmt2)
-        data = result.all()
         # 确保所有属性在此处都已经加载，避免在打印时触发延迟加载
-        return data
+        return result.all()
 
+    async def get_multi(
+            self, async_session: AsyncSession, *, skip: int = 0, limit: int = 100
+    ) -> Sequence[Row | RowMapping | Any]:
+        result = await async_session.execute(
+            select(self.model).offset(skip).limit(limit)
+        )
+        return result.scalars().all()
 
-async def get_multi(
-        self, async_session: AsyncSession, *, skip: int = 0, limit: int = 100
-) -> Sequence[Row | RowMapping | Any]:
-    result = await async_session.execute(
-        select(self.model).offset(skip).limit(limit)
-    )
-    return result.scalars().all()
+    async def create(self, async_session: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
+        updated_obj = obj_in.model_copy(update={"password": hash_password(obj_in.password)})
+        db_obj = self.model(**updated_obj.dict())
+        async_session.add(db_obj)
+        await async_session.commit()
+        return db_obj
+        # result = await async_session.scalars(
+        #     select(self.model).options(selectinload(self.model.plants))
+        # )
+        # # 这边涉及到关系的不能直接返回,而是关系查询后返回,独自更改扩展类即可
+        # return result.first()
 
+    async def update(
+            self,
+            async_session: AsyncSession,
+            *,
+            db_obj: ModelType,
+            obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+    ) -> ModelType:
+        """
+        通过接收用户请求更新字段, 查找当前用户后按照用户提供字段做变更
+        :param async_session: 会话
+        :param db_obj: 当前用户old
+        :param obj_in: 用户提供更新字段new
+        :return:
+        """
+        result = await async_session.execute(select(self.model).where(self.model.id == db_obj.id))
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.model_dump(exclude_unset=True)
+            print(update_data)
+        user = result.scalars().first()
 
-async def create(self, async_session: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
-    updated_obj = obj_in.model_copy(update={"password": hash_password(obj_in.password)})
-    db_obj = self.model(**updated_obj.dict())
-    async_session.add(db_obj)
-    await async_session.commit()
-    return db_obj
-    # result = await async_session.scalars(
-    #     select(self.model).options(selectinload(self.model.plants))
-    # )
-    # # 这边涉及到关系的不能直接返回,而是关系查询后返回,独自更改扩展类即可
-    # return result.first()
+        for field, val in update_data.items():
+            setattr(user, field, val)
 
+        await async_session.commit()
+        return user
 
-async def update(
-        self,
-        async_session: AsyncSession,
-        *,
-        db_obj: ModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
-) -> ModelType:
-    """
-    通过接收用户请求更新字段, 查找当前用户后按照用户提供字段做变更
-    :param async_session: 会话
-    :param db_obj: 当前用户old
-    :param obj_in: 用户提供更新字段new
-    :return:
-    """
-    result = await async_session.execute(select(self.model).where(self.model.id == db_obj.id))
-    if isinstance(obj_in, dict):
-        update_data = obj_in
-    else:
-        update_data = obj_in.model_dump(exclude_unset=True)
-        print(update_data)
-    user = result.scalars().first()
-
-    for field, val in update_data.items():
-        setattr(user, field, val)
-
-    await async_session.commit()
-    return user
-
-
-async def remove(self, async_session: AsyncSession, *, _id: int) -> None:
-    stmt = await async_session.execute(select(self.model).where(self.model.id == _id))
-    result = stmt.scalar_one()
-    user = await async_session.delete(
-        result
-    )
-    await async_session.flush()
-    await async_session.commit()
+    async def remove(self, async_session: AsyncSession, *, _id: int) -> None:
+        stmt = await async_session.execute(select(self.model).where(self.model.id == _id))
+        result = stmt.scalar_one()
+        user = await async_session.delete(
+            result
+        )
+        await async_session.flush()
+        await async_session.commit()
 
 
 async def main():
@@ -170,7 +211,7 @@ async def main():
     async with AsyncSessionFactory() as session:
         crud_plant = CRUDBase(PlantOrm)
         try:
-            data = await crud_plant.get_multi_with_relations(session, 'x')
+            data = await crud_plant.get_multi_with_relations(session, 'month')
             return data
         except Exception:
             pass

@@ -12,6 +12,7 @@ from app.apis.deps.get_db import get_db
 from app.core.config import ORIGIN_IMG_PATH, MEDIA_ROOT, PREDICT_PATH
 from app.crud.plant import plant_crud
 from app.schemas.plant import Plant, PlantCreate, PlantDiseaseTotal
+from app.utils.group_by import group_by_date
 from app.utils.hasher import gen_hashed, gen_file_path
 from app.vision.yolo_predict import yolo
 
@@ -48,17 +49,18 @@ data: [
 """
 
 
-@router.get("/disease_visualization", response_model=list[PlantDiseaseTotal])
+@router.get("/disease_visualization")
 async def disease_visualization(
         db_session: AsyncSession = Depends(get_db),
         *,
         mode: Literal["year", "month", "week", "day"]
 ):
     plant = await plant_crud.get_multi_with_relations(db_session, mode)
+
     if not plant:
         raise HTTPException(status_code=404, detail="Plant not found")
-
-    return plant
+    grouped = group_by_date(plant, mode)
+    return grouped
 
 
 @router.post("/yolo_identify", response_model=list[Plant])

@@ -36,6 +36,15 @@ async def get_disease(
     return disease
 
 
+@router.get("/category", response_model=list[Disease])
+async def get_all_disease_category(
+        db_session: AsyncSession = Depends(get_db)
+):
+    """获取所有病害类别"""
+    dis_lst = await disease_crud.get_multi(db_session)
+    return dis_lst
+
+
 @router.post("/", response_model=Disease)
 async def create_disease(
         disease_in: DiseaseBase, db_session: AsyncSession = Depends(get_db)

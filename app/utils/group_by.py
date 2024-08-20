@@ -5,15 +5,7 @@
 from typing import Literal
 
 
-def fun(f):
-    """
-
-    :param f:
-    :return:
-    """
-
-
-def group_by_date(data: list, mode: Literal["years", "months", "weeks", "days"]) -> dict:
+def group_by_date(data: list, mode: Literal["year", "month", "week", "day"]) -> dict:
     """
         :param data: 提供一个类似这样的数据 -->:
             data_years = [
@@ -35,20 +27,25 @@ def group_by_date(data: list, mode: Literal["years", "months", "weeks", "days"])
         }
     """
     result = {
-        # 年份去重
+        # 年份去重, 如果是月份和周
         mode: list(set([i[0] for i in data])),
         "datas": {}
     }
+    if mode == "week":
+        result.update({mode: ["周一", "周二", "周三", "周四", "周五", "周六", "周天"]})
+    elif mode == "month":
+        result.update({
+            mode: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+        })
     # 遍历每个元组
     for tup in data:
         # 如果病害名称组不存在与datas中则初始化
         if tup[1] not in result["datas"]:
-            # 获取当前年份对应总计的索引
+            # 获取当前年/月/日对应总计的索引
             cur_year_index = result[mode].index(tup[0])
-            print("--->", cur_year_index)
             result["datas"][tup[1]] = [0] * len(result[mode])  # 先创建一个填充0的数组
             result["datas"][tup[1]][cur_year_index] = tup[2]
         else:
-            # 如果存在, 则肯定是第二年份, 总是获取最后的索引赋值
+            # 如果存在, 则肯定是第二年/月/日, 总是获取最后的索引赋值
             result["datas"][tup[1]][len(result["datas"][tup[1]]) - 1] = tup[2]
     return result
