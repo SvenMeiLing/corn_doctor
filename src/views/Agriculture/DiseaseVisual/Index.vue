@@ -6,9 +6,44 @@
             id="visualContainer"
             content-class="w-full h-full"
     >
-        <n-space class="w-full h-full p-0" :wrap-item="false" :wrap="false">
-            <div id="chart-month" class="h-1/2 w-2/5"></div>
-            <div id="chart-year" class="h-full w-3/5"></div>
+
+        <n-space class="w-full h-full p-0" size="small" :wrap-item="false" :wrap="false">
+            <!--part1-->
+            <div class="h-full w-2/5">
+                <div class="h-[10%]">
+                    <!--标题-->
+                    <n-text class="font-thin text-2xl">平台数据总览</n-text>
+                </div>
+
+                <!--chart1 -->
+                <n-card title=" "
+                        class="h-[90%] w-full p-0"
+                        content-class="h-full w-full p-2 pt-0"
+                        header-class="p-1 pr-2"
+                        footer-class="font-thin text-zinc-400"
+                >
+                    <template #header-extra>
+                        <n-switch :rail-style="railStyle">
+                            <template #checked>
+                                按月显示
+                            </template>
+                            <template #unchecked>
+                                按周显示
+                            </template>
+                        </n-switch>
+                    </template>
+                    <div id="chart-month" class="h-full w-full"></div>
+                    <template #footer>上次更新于{{ dateTime }}</template>
+                </n-card>
+
+            </div>
+
+            <!--part2-->
+            <n-card class="h-full w-3/5 m-0 p-0" content-class="h-full w-full p-2">
+                <!--chart2-->
+                <div id="chart-year" class="h-full w-full"></div>
+            </n-card>
+
         </n-space>
 
     </n-layout>
@@ -27,12 +62,43 @@ import {
 import {LineChart, BarChart} from 'echarts/charts';
 import {UniversalTransition, LabelLayout} from 'echarts/features';
 import {CanvasRenderer} from 'echarts/renderers';
-import {getAllDiseaseCategory, getDisVisual} from "@/apis/disVisual.js";
 
+import {getAllDiseaseCategory, getDisVisual} from "@/apis/disVisual.js";
+import {genDateTime} from '@/utils/genDateTime.js'
 
 const containerRef = ref(null)
 const disCategory = ref([])
 const disNames = ref([])
+
+const dateTime = ref("XXXX-XX-XX")
+/*
+用于切换月、周的显示
+ */
+const railStyle = ({
+                       focused,
+                       checked
+                   }) => {
+    const style = {};
+    if (checked) {
+        style.background = "#d03050";
+        if (focused) {
+            style.boxShadow = "0 0 0 2px #d0305040";
+        }
+        // 按月显示
+        chartWeek("month")
+    } else {
+        style.background = "#2080f0";
+
+        if (focused) {
+            style.boxShadow = "0 0 0 2px #2080f040";
+        }
+        // 按周显示
+        chartWeek("week")
+    }
+    // 记录数据更新时间
+    dateTime.value = genDateTime()
+    return style
+}
 const app = {};
 const posList = [
     'left',
@@ -138,7 +204,7 @@ echarts.use([
     LabelLayout
 ]);
 
-async function chartWeek() {
+async function chartWeek(mode) {
     var chartDom = document.getElementById('chart-month');
     var myChart = echarts.init(chartDom, 'dark');
     var option;
@@ -179,11 +245,11 @@ async function chartWeek() {
         ]
     };
     // 请求数据
-    const resp = await getDisVisual("week")
+    const resp = await getDisVisual(mode)
     // 设置标签
     option.legend.data = disNames.value
     // 设置x轴数据
-    option.xAxis.data = resp.week
+    option.xAxis.data = resp[mode]
     // 设置y轴数据
     option.series = Object.keys(resp.datas).map(key => ({
         name: key,
@@ -192,6 +258,7 @@ async function chartWeek() {
         data: resp.datas[key]
     }))
 
+    // 添加没用出现的病害类别， 并初始化data为全是0的数组
     for (let disName of disNames.value) {
         option.series.push(
             {
@@ -204,6 +271,9 @@ async function chartWeek() {
     }
 
     option && myChart.setOption(option);
+
+    // 记录数据更新时间
+    dateTime.value = genDateTime()
     return myChart
 }
 
@@ -281,14 +351,18 @@ async function chartYear() {
 }
 
 onMounted(async () => {
+    // 获取 所有病害名称,并保存待用
     disCategory.value = await getAllDiseaseCategory()
-    // 所有病害名称
     disNames.value = disCategory.value.map(value => {
         return value.name
     })
-    console.log(disNames.value, "<---log")
-    let mc = await chartWeek()
+
+    // 初始化图表数据， 调用绘制
+    let mc = await chartWeek("week")
     let yc = await chartYear()
+    // 记录数据更新时间
+    dateTime.value = genDateTime()
+
     const visualContainer = document.querySelector("#visualContainer")
     // 创建 ResizeObserver 实例
     const resizeObserver = new ResizeObserver(() => {
@@ -301,22 +375,9 @@ onMounted(async () => {
     // 观察 visualContainer 元素
     resizeObserver.observe(visualContainer);
 
-
-    // 绘制
-    // option && yc.setOption(option)
-
-
 })
-/*
-类别:[叶斑病, 叶枯病]
-年份:[2023,2024]
-数据:[200,300]
-data = [
-    {name:叶斑病, year:[2024, 2025, 2026], total:[22, 445, 355]},
-    {name:叶枯病, year:[2024, 2025, 2026], total:[22, 445, 355]},
-]
- */
-
+// todo: 未作限流功能,可以持久化数据到客户端的某个地方,下次请求时优先使用客户端存在的数据,每三十分钟更新一次
+// todo: 每次都会重新初始化渲染图表dom, 待优化方案(深度合并-> 解决配置项多的嵌套配置)
 </script>
 
 <style scoped>
