@@ -21,14 +21,15 @@ from app.apis.api_v1.plant import router as plant_router
 from app.chat.spark_chat import chat
 from app.core.config import PREDICT_PATH, MODEL_PATH
 from app.middleware.cors_midd import setup_cors
+from app.vision.yolo_predict import frame_predict
 
 API_VERSION = "/api/v1"
 
 
 async def startup_event():
-    # global model
-    # model = YOLO(MODEL_PATH)
-    # model.predict(None)
+    global model
+    model = YOLO(MODEL_PATH)
+    model.predict(None)
     print("模型预激完成...")
 
 

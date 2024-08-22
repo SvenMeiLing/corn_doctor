@@ -64,6 +64,30 @@ def yolo(save_to, source: str | PathLike):
     return res
 
 
+async def frame_predict(websocket: WebSocket, source, model):
+    # 进行预测
+    outputs = model.predict(
+        source,
+        imgsz=320, conf=0.5,
+        show_boxes=True, stream=True
+    )
+    # 获取第一个预测结果的图像
+    for output in outputs:
+        # 获得ndarray格式图像
+        result_image = output.plot()
+        # 转化成Image对象, 并变换色彩
+        im = Image.fromarray(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))  # 加上这一句否者颜色失真
+        # 创建内存对象
+        io_bytes = io.BytesIO()
+        # 保存图像到内存中
+        im.save(io_bytes, format="JPEG")
+        io_bytes.seek(0)
+        # 生成base64的图像链接
+        res = f"data:image/jpeg;base64,{base64.b64encode(io_bytes.read()).decode('utf-8')}"
+        await websocket.send_text(res)
+        print("发送了一帧", time.time())
+
+
 if __name__ == '__main__':
     ...
 

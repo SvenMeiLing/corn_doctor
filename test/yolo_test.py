@@ -67,4 +67,13 @@ if __name__ == '__main__':
         return result
 
 
-    print(group_by_year(data))
+    count = 0
+    lst = []
+
+
+    def read():
+        count += 1
+        print(count)
+
+
+    print(read())
