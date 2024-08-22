@@ -7,23 +7,45 @@
             content-class="w-full h-full"
     >
 
-        <n-space class="w-full h-full p-0" size="small" :wrap-item="false" :wrap="false">
+        <n-space class="w-full h-full p-0 md:flex-nowrap flex-wrap" size="small" :wrap-item="false">
             <!--part1-->
-            <div class="h-full w-2/5">
-                <div class="h-[10%]">
+            <div class="min-h-72 sm:h-full md:w-2/5 w-full">
+                <div class="h-fit w-full mb-1 md:mb-0 flex items-center">
                     <!--标题-->
                     <n-text class="font-thin text-2xl">平台数据总览</n-text>
+
+                    <!--切换按钮-->
+                    <n-text class="text-xl ms-auto text-sky-600 flex items-center cursor-pointer hover:text-sky-900 duration-1000">
+                        <n-icon
+                        class="ms-auto text-xl"
+                        :component="WindStream"
+                    ></n-icon>
+                        切换为实时数据
+                    </n-text>
+
                 </div>
 
                 <!--chart1 -->
-                <n-card title=" "
+                <n-card
+                        title=" "
                         class="h-[90%] w-full p-0"
                         content-class="h-full w-full p-2 pt-0"
                         header-class="p-1 pr-2"
+                        header-extra-class="w-full ps-2"
                         footer-class="font-thin text-zinc-400"
                 >
+
                     <template #header-extra>
-                        <n-switch :rail-style="railStyle">
+
+                        <!--title占位符-->
+                        <span v-show="loading" class="animate-ping bg-red-200 rounded-full w-2 h-2 opacity-75"></span>
+                        <n-text class="ms-3" v-show="loading">
+                            正在加载中......
+                        </n-text>
+                        <n-skeleton v-show="loading" class="w-20 h-5 ms-auto" round/>
+
+                        <!--title内容-->
+                        <n-switch v-show="!loading" class="ms-auto" :rail-style="railStyle">
                             <template #checked>
                                 按月显示
                             </template>
@@ -32,16 +54,43 @@
                             </template>
                         </n-switch>
                     </template>
-                    <div id="chart-month" class="h-full w-full"></div>
+                    <!--chart1占位符-->
+                    <n-space v-show="loading" vertical class="w-full h-full" :wrap-item="false"
+                             :wrap="false"
+                    >
+                        <n-skeleton class="w-full h-1/6" :sharp="false"/>
+                        <n-skeleton class="w-full h-1/6" :sharp="false"/>
+                        <n-skeleton class="w-full h-1/6" :sharp="false"/>
+                        <n-skeleton class="w-full h-1/6" :sharp="false"/>
+                        <n-skeleton class="w-full h-1/6" :sharp="false"/>
+                        <n-skeleton class="w-full h-1/6" :sharp="false"/>
+                    </n-space>
+
+                    <!--chart1内容-->
+                    <div v-show="!loading" id="chart-month" class="h-full w-full"></div>
                     <template #footer>上次更新于{{ dateTime }}</template>
                 </n-card>
 
             </div>
 
             <!--part2-->
-            <n-card class="h-full w-3/5 m-0 p-0" content-class="h-full w-full p-2">
+            <n-card class="min-h-72 sm:h-full md:w-3/5 w-full m-0 p-0" content-class="h-full w-full p-2">
                 <!--chart2-->
-                <div id="chart-year" class="h-full w-full"></div>
+                <div v-show="!loading" id="chart-year" class="h-full w-full"></div>
+                <!--chart2占位符-->
+                <n-space v-show="loading" class="w-full h-full" align="end" :size="9"
+                         :wrap-item="false" :wrap="false">
+                    <n-skeleton class="w-[10%] h-[40%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[60%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[30%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[70%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[50%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[90%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[40%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[60%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[80%]" :sharp="false"/>
+                    <n-skeleton class="w-[10%] h-[100%]" :sharp="false"/>
+                </n-space>
             </n-card>
 
         </n-space>
@@ -62,10 +111,13 @@ import {
 import {LineChart, BarChart} from 'echarts/charts';
 import {UniversalTransition, LabelLayout} from 'echarts/features';
 import {CanvasRenderer} from 'echarts/renderers';
+import {WindStream} from '@vicons/carbon'
 
 import {getAllDiseaseCategory, getDisVisual} from "@/apis/disVisual.js";
 import {genDateTime} from '@/utils/genDateTime.js'
 
+
+const loading = ref(true)
 // 本组件内容根容器, 用于检测此区域大小改变以使其图表自适应
 const containerRef = ref(null)
 // 病害分类及其详情数据
@@ -375,10 +427,11 @@ onMounted(async () => {
     disNames.value = disCategory.value.map(value => {
         return value.name
     })
-
     // 初始化图表数据, 调用绘制方法
     let mc = await chartWeek("week")
     let yc = await chartYear()
+    // 解除加载状态
+    loading.value = false
     // 记录数据更新时间
     dateTime.value = genDateTime()
 
@@ -393,9 +446,18 @@ onMounted(async () => {
     // 观察 visualContainer 元素
     resizeObserver.observe(visualContainer);
 
+    const handleNetworkChange = () => {
+        if (navigator.onLine) {
+            console.log("在线-----")
+        }
+    };
+
+    window.addEventListener('online', handleNetworkChange);
+    window.addEventListener('offline', handleNetworkChange);
 })
-// todo: 未作限流功能,可以持久化数据到客户端的某个地方,下次请求时优先使用客户端存在的数据,每三十分钟更新一次
-// todo: 每次都会重新初始化渲染图表dom, 待优化方案(深度合并-> 解决配置项多的嵌套配置)
+// todo: 1.未作限流功能,可以持久化数据到客户端的某个地方,下次请求时优先使用客户端存在的数据,每三十分钟更新一次
+// todo: 2.每次都会重新初始化渲染图表dom, 待优化方案(深度合并-> 解决配置项多的嵌套配置)
+// todo: 3.当前组件或许需要拆分
 </script>
 
 <style scoped>

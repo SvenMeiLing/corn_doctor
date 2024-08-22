@@ -22,6 +22,9 @@ import {useDesignSettingStore} from "@/stores/designSetting.js";
 const themeStore = useDesignSettingStore()
 const {theme} = storeToRefs(themeStore)
 const {changeTheme} = themeStore
+
+const online = computed(() => navigator.onLine)
+
 onMounted(() => {
     // 监听storage中主题变化, 动态切换
     window.addEventListener('storage', event => {

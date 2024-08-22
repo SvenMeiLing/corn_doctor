@@ -7,6 +7,7 @@
 */
 import axios from 'axios'
 import NProgress from "nprogress";
+import codeMessage from "@/utils/codeMessage.js";
 
 NProgress.configure({
 
@@ -47,7 +48,18 @@ httpInstance.interceptors.response.use(res => {
     e => {
         NProgress.done(); // 隐藏进度条
         // 统一错误提示
-        window.$message.warning(e.message)
+        console.log(e.code)
+        console.log(e)
+        console.log(codeMessage[e.code])
+        if (!e.response) {
+            // 如果没有响应则代表本地网络错误
+            window.$message.warning("网络出现错误!")
+            return e
+        }
+        if (e.response.status !== 200) {
+            // 发送预制错误信息
+            window.$message.warning(codeMessage[e.response.status])
+        }
         return e
     })
 

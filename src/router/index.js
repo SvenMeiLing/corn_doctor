@@ -9,6 +9,7 @@
 // createHistory: 创建history模式路由
 import {createRouter, createWebHistory} from 'vue-router'
 import Layout from '@/views/Layout/Index.vue'
+// import NotFound from '@/views/Error/404.vue'
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import {useUserProfile} from "@/stores/userProfile.js";
@@ -80,6 +81,17 @@ const router = createRouter({
                     component: () => import('@/views/Community/Index.vue'),
                     meta: {title: "社区"},
                     name: "community",
+                },
+                // ---------------匹配404---------------
+                {
+                    path: "/:catchAll(.*)",
+                    redirect: "/404"
+                },
+                {
+                    path: "/404",
+                    component: import("@/views/Error/404.vue"),
+                    meta: {title: "404"},
+                    name: "404"
                 }
             ]
         },

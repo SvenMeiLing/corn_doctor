@@ -66,7 +66,7 @@ const menuOptions = [
             {
                 to: '/recognition'
             },
-            "图像识别"
+            () => "图像识别"
         ),
         key: "Recognition",
         icon: renderIcon(RecognitionIcon)
@@ -164,7 +164,7 @@ const menuOptions = [
             {
                 to: '/flow-recognition'
             },
-            "流式识别"
+            () => "流式识别"
         ),
         key: "flow-recognition",
         icon: renderIcon(FlowStreamReference)
@@ -175,7 +175,7 @@ const menuOptions = [
             {
                 to: '/community'
             },
-            "农户社区"
+            () => "农户社区"
         ),
         key: "community",
         icon: renderIcon(Community)
