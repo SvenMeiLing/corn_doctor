@@ -11,17 +11,20 @@
         </n-space>
 
         <hr>
-        <div class="w-64 h-48 rounded-md bg-zinc-800 flex items-center justify-center">
-            <CameraAction class="w-32"/>
+        <div class="w-64 h-48 rounded-md dark:bg-zinc-800 bg-zinc-200 flex items-center justify-center"
+        >
+            <!--展示摄像头画面-->
+            <img ref="imgRef" class="rounded-md" v-show="isShow" id="output" width="240" height="180" alt="from camera">
+            <!--占位符-->
+            <CameraAction class="w-32" v-show="!isShow"/>
+
         </div>
         <video ref="videoRef" id="video" class="hidden" width="240" height="180" autoplay></video>
-        <img ref="imgRef" v-show="isShow" id="output" width="240" height="180" alt="">
-
     </n-layout>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, computed} from 'vue'
+import {onMounted, ref} from 'vue'
 import {CameraAction} from '@vicons/carbon'
 
 const isShow = ref<Boolean>(false)
@@ -29,6 +32,10 @@ const videoRef = ref<HTMLVideoElement | null>(null)
 const imgRef = ref<HTMLImageElement | null>(null)
 let socket: WebSocket;
 let stream: MediaStream;
+
+/*
+开启ws连接
+ */
 const startWebSocket = () => {
     socket = new WebSocket("ws://127.0.0.1:8000/ws");
     socket.onopen = () => {
@@ -77,7 +84,10 @@ const startWebSocket = () => {
     };
 }
 
-const getMediaStream = async() => {
+/*
+获取用户摄像头视频流
+ */
+const getMediaStream = async () => {
     // 获取摄像头视频流
     try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -92,14 +102,14 @@ const getMediaStream = async() => {
     }
 }
 
+/*
+调用方法进行流式识别
+ */
 const flowRecognition = async () => {
     // 获取摄像头并建立ws链接
     await getMediaStream()
     startWebSocket()
 }
-onMounted(async () => {
-
-})
 </script>
 
 <style scoped>

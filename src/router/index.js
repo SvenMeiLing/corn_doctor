@@ -74,6 +74,12 @@ const router = createRouter({
                     component: () => import('@/views/Login/Index.vue'),
                     meta: {title: "登录", requireAuth: false},
                     name: "login",
+                },
+                {
+                    path: "/community",
+                    component: () => import('@/views/Community/Index.vue'),
+                    meta: {title: "社区"},
+                    name: "community",
                 }
             ]
         },

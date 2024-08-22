@@ -18,12 +18,14 @@ import {
 } from "@vicons/ionicons5";
 import {
     StoreMallDirectoryTwotone as StoreIcon,
-    BubbleChartTwotone as Chart
+    BubbleChartTwotone as Chart,
+    ChatTwotone as Community
 } from '@vicons/material'
 import {Template, FlowStreamReference, ChartMultitype} from '@vicons/carbon'
 import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
 import NounBook from '@/components/NounBook.vue'
+
 
 const route = useRoute()
 const userProfile = useUserProfile()
@@ -166,7 +168,18 @@ const menuOptions = [
         ),
         key: "flow-recognition",
         icon: renderIcon(FlowStreamReference)
-    }
+    },
+    {
+        label: () => h(
+            RouterLink,
+            {
+                to: '/community'
+            },
+            "农户社区"
+        ),
+        key: "community",
+        icon: renderIcon(Community)
+    },
 ];
 const emit = defineEmits(["drawerShow"])
 

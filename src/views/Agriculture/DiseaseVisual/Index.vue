@@ -66,13 +66,21 @@ import {CanvasRenderer} from 'echarts/renderers';
 import {getAllDiseaseCategory, getDisVisual} from "@/apis/disVisual.js";
 import {genDateTime} from '@/utils/genDateTime.js'
 
+// 本组件内容根容器, 用于检测此区域大小改变以使其图表自适应
 const containerRef = ref(null)
+// 病害分类及其详情数据
 const disCategory = ref([])
+// 由病害名称组成的列表
 const disNames = ref([])
 
+// 用于展示最后一次数据更新的时间
 const dateTime = ref("XXXX-XX-XX")
-/*
-用于切换月、周的显示
+
+/**
+ * 一个用于返回 style的回调, 由switch组件的切换行为触发
+ * @param focused  当前聚焦的选项
+ * @param checked  当前选中的选项
+ * @return {{}}  样式表
  */
 const railStyle = ({
                        focused,
@@ -99,6 +107,8 @@ const railStyle = ({
     dateTime.value = genDateTime()
     return style
 }
+
+// 有关图表2的额外配置-----------------
 const app = {};
 const posList = [
     'left',
@@ -190,7 +200,7 @@ const labelOption = {
         name: {}
     }
 };
-//-----------------------------------------------------------
+//-----------------echarts使用的插件------------------------------------------
 echarts.use([
     TitleComponent,
     ToolboxComponent,
@@ -204,6 +214,10 @@ echarts.use([
     LabelLayout
 ]);
 
+/**
+ * 用于绘制以month/week为分组的图表.
+ * @param mode 可以是week或month
+ */
 async function chartWeek(mode) {
     var chartDom = document.getElementById('chart-month');
     var myChart = echarts.init(chartDom, 'dark');
@@ -277,6 +291,10 @@ async function chartWeek(mode) {
     return myChart
 }
 
+/**
+ * 用于绘制以年份分组的图表
+ * @return {Promise<EChartsType>}
+ */
 async function chartYear() {
     var chartDom = document.getElementById('chart-year');
     var myChart = echarts.init(chartDom, 'dark');
@@ -350,6 +368,7 @@ async function chartYear() {
     return myChart
 }
 
+
 onMounted(async () => {
     // 获取 所有病害名称,并保存待用
     disCategory.value = await getAllDiseaseCategory()
@@ -357,7 +376,7 @@ onMounted(async () => {
         return value.name
     })
 
-    // 初始化图表数据， 调用绘制
+    // 初始化图表数据, 调用绘制方法
     let mc = await chartWeek("week")
     let yc = await chartYear()
     // 记录数据更新时间
@@ -366,7 +385,6 @@ onMounted(async () => {
     const visualContainer = document.querySelector("#visualContainer")
     // 创建 ResizeObserver 实例
     const resizeObserver = new ResizeObserver(() => {
-        console.log("重新绘制");
         // 当容器尺寸变化时，重绘制图表
         mc.resize();
         yc.resize();
