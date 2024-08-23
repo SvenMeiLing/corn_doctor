@@ -2,10 +2,12 @@
 # FileName: disease.py
 # Time : 2024/6/13 20:52
 # Author: zzy
-
+from aioredis import Redis
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import Request
 
+from app.apis.deps.get_cache import get_cache
 from app.apis.deps.get_db import get_db
 from app.crud.disease import disease_crud
 from app.schemas.disease_pest import DiseaseBase, Disease, DiseaseInDBBase
@@ -43,6 +45,22 @@ async def get_all_disease_category(
     """获取所有病害类别"""
     dis_lst = await disease_crud.get_multi(db_session)
     return dis_lst
+
+
+@router.get("/ranking")
+async def get_disease_ranking(
+        db_session: AsyncSession = Depends(get_db),
+        *,
+        request: Request
+
+):
+    """
+    获取病害排行
+    todo: 先从缓存中获取, 如果没有再查找数据库
+    """
+    return await request.app.state.redis.get("name")
+    # result = await disease_crud.get_ranking(db_session)
+    # return result
 
 
 @router.post("/", response_model=Disease)

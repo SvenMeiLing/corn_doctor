@@ -7,20 +7,19 @@
 # Time : 2023/8/3 16:32
 # Author: zzy
 import asyncio
-from datetime import timedelta, datetime
 from typing import (
     Any, Dict,
     Generic, Optional, Type,
-    TypeVar, Union, Sequence, Literal
+    TypeVar, Union, Sequence
 )
 
 from pydantic import BaseModel
-from sqlalchemy import select, Row, RowMapping, extract, func, and_, case, true
+from sqlalchemy import select, Row, RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload, load_only
+from sqlalchemy.orm import selectinload
 
 from app.db.base import BaseOrmTable
-from app.models.plant import DiseaseOrm, PlantOrm, plant_disease_association_table
+from app.models.plant import PlantOrm
 from app.utils.security import hash_password
 
 ModelType = TypeVar("ModelType", bound=BaseOrmTable)
@@ -73,79 +72,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             )
         )
         return result.scalars().first()
-
-    async def get_multi_with_relations(
-            self,
-            async_session: AsyncSession,
-            mode: Literal["year", "month", "day"]
-    ) -> Sequence[Row[Any] | RowMapping | Any]:
-        """
-        获取该模型的所有关系字段, 此方法可重载
-        :param mode: 按年月日其一分组做分组查询
-        :param async_session: 会话
-        :return:
-        """
-        stmt = select(self.model).options(
-            selectinload(self.model.diseases).load_only(DiseaseOrm.name)
-        ).options(load_only(self.model.name, self.model.created_at)).group_by(self.model.created_at)
-        # --------------------------------------------------------------
-        # stmt2 = select(
-        #     extract(mode, PlantOrm.created_at).label(mode),
-        #     DiseaseOrm.name.label('dis_name'),
-        #     func.count(PlantOrm.id).label('total')
-        # ).join(plant_disease_association_table, PlantOrm.id == plant_disease_association_table.c.plant_id). \
-        #     join(DiseaseOrm, DiseaseOrm.id == plant_disease_association_table.c.disease_id). \
-        #     group_by(mode, DiseaseOrm.name). \
-        #     order_by(mode, DiseaseOrm.name)
-        # ----------------------------------------------------------------
-        # 获取上周的开始和结束日期
-        today = datetime.today()
-        # 获取上周一的时间差
-        last_monday = today - timedelta(days=today.weekday() + 7)
-        # 计算上周日时间
-        last_sunday = last_monday + timedelta(days=6)
-
-        # 构造select
-        select_ = None
-        # 如果mode为周参数需要特殊处理
-        if mode == "week":
-            select_ = select(
-                case(
-                    (func.dayofweek(PlantOrm.created_at) == 1, '周一'),
-                    (func.dayofweek(PlantOrm.created_at) == 2, '周二'),
-                    (func.dayofweek(PlantOrm.created_at) == 3, '周三'),
-                    (func.dayofweek(PlantOrm.created_at) == 4, '周四'),
-                    (func.dayofweek(PlantOrm.created_at) == 5, '周五'),
-                    (func.dayofweek(PlantOrm.created_at) == 6, '周六'),
-                    (func.dayofweek(PlantOrm.created_at) == 7, '周天'),
-                    else_='Unknown'
-                ).label(mode),
-                DiseaseOrm.name.label(mode),
-                func.count(PlantOrm.id).label('total')
-            )
-        else:  # 处理year和month的逻辑
-            select_ = select(
-                func.concat(
-                    extract(mode, PlantOrm.created_at),
-                    "年" if mode == "year" else "月"
-                ).label(mode),
-                DiseaseOrm.name.label(mode),
-                func.count(PlantOrm.id).label('total')
-            )
-        stmt2 = select_.join(
-            plant_disease_association_table, PlantOrm.id == plant_disease_association_table.c.plant_id
-        ).join(
-            DiseaseOrm, DiseaseOrm.id == plant_disease_association_table.c.disease_id
-        ).where(
-            and_(
-                PlantOrm.created_at >= last_monday,
-                PlantOrm.created_at <= last_sunday
-            ) if mode == "week" else true()  # 如果不是week参数,直接放行这个where
-        ).group_by(mode, DiseaseOrm.name) \
-            .order_by(mode, DiseaseOrm.name)
-        result = await async_session.execute(stmt2)
-        # 确保所有属性在此处都已经加载，避免在打印时触发延迟加载
-        return result.all()
 
     async def get_multi(
             self, async_session: AsyncSession, *, skip: int = 0, limit: int = 100

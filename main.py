@@ -2,13 +2,19 @@
 # FileName: main.py
 # Time : 2024/6/13 20:01
 # Author: zzy
+import asyncio
 import base64
+import logging
+import os
 from contextlib import asynccontextmanager
 from io import BytesIO
 
+import aioredis
 from PIL import Image
+from aioredis import ConnectionPool, Redis
 from fastapi import FastAPI, APIRouter, Body
 from fastapi.responses import StreamingResponse
+from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.websockets import WebSocket
 from ultralytics import YOLO
@@ -19,27 +25,47 @@ from app.apis.api_v1.disease import router as disease_router
 from app.apis.api_v1.pest import router as pest_router
 from app.apis.api_v1.plant import router as plant_router
 from app.chat.spark_chat import chat
-from app.core.config import PREDICT_PATH, MODEL_PATH
+from app.core.config import PREDICT_PATH, MODEL_PATH, REDIS_HOST, REDIS_PORT
 from app.middleware.cors_midd import setup_cors
 from app.vision.yolo_predict import frame_predict
 
 API_VERSION = "/api/v1"
 
+# 设置日志记录的基本配置
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: \t  %(message)s")
 
-async def startup_event():
+redis_pool = None
+
+
+async def startup_preload_model():
+    logging.info("正在预加载模型")
     global model
     model = YOLO(MODEL_PATH)
     model.predict(None)
-    print("模型预激完成...")
+    logging.info("模型预加载完成")
+
+
+async def startup_connection_redis():
+    logging.info("正在连接redis")
+    global redis_pool
+    pool = ConnectionPool(
+        max_connections=os.cpu_count() * 2
+    )
+    app.state.redis = Redis(  # type:ignore
+        host=REDIS_HOST,
+        port=REDIS_PORT,
+        connection_pool=pool
+    )
 
 
 @asynccontextmanager
 async def lifespan(fast_app: FastAPI):
     # Load the ML model
-    await startup_event()
+    await asyncio.gather(
+        startup_connection_redis(), startup_preload_model()
+    )
+
     yield
-    # Clean up the ML models and release the resources
-    pass
 
 
 app = FastAPI(lifespan=lifespan)

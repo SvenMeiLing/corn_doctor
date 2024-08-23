@@ -2,8 +2,11 @@
 # FileName: hd_redis.py
 # Time : 2024/8/22 22:47
 # Author: zzy
+import os
+import time
+
 import aioredis
-from aioredis import Redis
+from aioredis import Redis, ConnectionPool
 
 
 async def get_redis_connection():
@@ -20,6 +23,20 @@ async def get_top_diseases(redis: Redis, top_n):
     key = "daily_disease_ranking"
     top_diseases = await redis.zrevrange(key, 0, top_n - 1, withscores=True)
     return {disease.decode(): int(count) for disease, count in top_diseases}
+
+
+async def hd_redis(id_):
+    redis = aioredis.Redis(
+        connection_pool=ConnectionPool(
+            max_connections=os.cpu_count() * 2
+        )
+    )
+    res = await redis.set("name", "zzy")
+    print(id_)
+
+
+def sync_redis(id_):
+    asyncio.run(hd_redis(id_))
 
 
 if __name__ == '__main__':
@@ -39,4 +56,14 @@ if __name__ == '__main__':
 
         await redis.close()
 
-    asyncio.run(main())
+
+    async def main2():
+        await asyncio.gather(
+            *[hd_redis(_) for _ in range(990)]
+        )
+
+
+    s = time.time()
+    asyncio.run(main2())
+    # [sync_redis(_) for _ in range(990)]
+    print(time.time() - s)
