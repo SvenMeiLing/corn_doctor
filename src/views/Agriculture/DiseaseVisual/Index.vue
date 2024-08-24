@@ -6,7 +6,7 @@
             id="visualContainer"
             content-class="w-full h-full"
     >
-
+        <!--内容容器-->
         <n-space class="w-full h-full p-0 md:flex-nowrap flex-wrap" size="small" :wrap-item="false">
             <!--part1-->
             <div class="min-h-72 sm:h-full md:w-2/5 w-full">
@@ -17,9 +17,9 @@
                     <!--切换按钮-->
                     <n-text class="text-xl ms-auto text-sky-600 flex items-center cursor-pointer hover:text-sky-900 duration-1000">
                         <n-icon
-                        class="ms-auto text-xl"
-                        :component="WindStream"
-                    ></n-icon>
+                                class="ms-auto text-xl"
+                                :component="WindStream"
+                        ></n-icon>
                         切换为实时数据
                     </n-text>
 
