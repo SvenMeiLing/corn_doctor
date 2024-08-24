@@ -1,137 +1,98 @@
 <template>
-    <n-layout
-            :native-scrollbar="false"
-            class="p-[20px]"
-            ref="containerRef"
-            id="visualContainer"
-            content-class="w-full h-full"
-    >
-        <div id="main" class="h-full w-full"></div>
-    </n-layout>
+    <div id="main" class="w-full h-[90%]"></div>
 </template>
-
 <script setup>
+import {onMounted, nextTick} from 'vue'
 import * as echarts from 'echarts/core';
 import {
     GraphicComponent,
     GridComponent,
-    LegendComponent
+    LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent
 } from 'echarts/components';
-import {BarChart} from 'echarts/charts';
+import {BarChart, LineChart} from 'echarts/charts';
 import {CanvasRenderer} from 'echarts/renderers';
+import {LabelLayout, UniversalTransition} from "echarts/features";
 
 echarts.use([
     GraphicComponent,
     GridComponent,
     LegendComponent,
     BarChart,
-    CanvasRenderer
+    CanvasRenderer,
+    TitleComponent,
+    ToolboxComponent,
+    TooltipComponent,
+    GridComponent,
+    LegendComponent,
+    LineChart,
+    CanvasRenderer,
+    UniversalTransition,
+    BarChart,
+    LabelLayout
 ]);
 
-var chartDom = document.getElementById('main');
-var myChart = echarts.init(chartDom, 'dark');
-var option;
+onMounted(() => {
+    nextTick(() => {
+        var chartDom = document.getElementById('main');
+        var myChart = echarts.init(chartDom, "dark");
 
-// There should not be negative values in rawData
-const rawData = [
-    [100, 302, 301, 334, 390, 330, 320],
-    [320, 132, 101, 134, 90, 230, 210],
-    [220, 182, 191, 234, 290, 330, 310],
-    [150, 212, 201, 154, 190, 330, 410],
-    [820, 832, 901, 934, 1290, 1330, 1320]
-];
-const totalData = [];
-for (let i = 0; i < rawData[0].length; ++i) {
-    let sum = 0;
-    for (let j = 0; j < rawData.length; ++j) {
-        sum += rawData[j][i];
-    }
-    totalData.push(sum);
-}
-const grid = {
-    left: 100,
-    right: 100,
-    top: 50,
-    bottom: 50
-};
-const gridWidth = myChart.getWidth() - grid.left - grid.right;
-const gridHeight = myChart.getHeight() - grid.top - grid.bottom;
-const categoryWidth = gridWidth / rawData[0].length;
-const barWidth = categoryWidth * 0.6;
-const barPadding = (categoryWidth - barWidth) / 2;
-const series = [
-    'Direct',
-    'Mail Ad',
-    'Affiliate Ad',
-    'Video Ad',
-    'Search Engine'
-].map((name, sid) => {
-    return {
-        name,
-        type: 'bar',
-        stack: 'total',
-        barWidth: '60%',
-        label: {
-            show: true,
-            formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
-        },
-        data: rawData[sid].map((d, did) =>
-            totalData[did] <= 0 ? 0 : d / totalData[did]
-        )
-    };
-});
-const color = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de'];
-const elements = [];
-for (let j = 1, jlen = rawData[0].length; j < jlen; ++j) {
-    const leftX = grid.left + categoryWidth * j - barPadding;
-    const rightX = leftX + barPadding * 2;
-    let leftY = grid.top + gridHeight;
-    let rightY = leftY;
-    for (let i = 0, len = series.length; i < len; ++i) {
-        const points = [];
-        const leftBarHeight = (rawData[i][j - 1] / totalData[j - 1]) * gridHeight;
-        points.push([leftX, leftY]);
-        points.push([leftX, leftY - leftBarHeight]);
-        const rightBarHeight = (rawData[i][j] / totalData[j]) * gridHeight;
-        points.push([rightX, rightY - rightBarHeight]);
-        points.push([rightX, rightY]);
-        points.push([leftX, leftY]);
-        leftY -= leftBarHeight;
-        rightY -= rightBarHeight;
-        elements.push({
-            type: 'polygon',
-            shape: {
-                points
-            },
-            style: {
-                fill: color[i],
-                opacity: 0.25
+        var option;
+
+        const rawData = [
+            [100, 302, 301, 334, 390, 330, 320],
+            [320, 132, 101, 134, 90, 230, 210],
+            [220, 182, 191, 234, 290, 330, 310],
+            [150, 212, 201, 154, 190, 330, 410],
+            [820, 832, 901, 934, 1290, 1330, 1320]
+        ];
+
+// 选择需要显示的列索引，例如当天的数据
+        const dayIndex = 6; // 这里选择的是第7列数据（索引为6）
+
+        const categoryData = ['玉米叶斑病', '玉米锈病', '玉米叶枯病', '玉米条纹病毒', '玉米灰斑病'];
+        const dataForDay = rawData.map((data) => data[dayIndex]);
+
+// 为了显示排序后的数据，生成排序后的数据和标签
+        const sortedData = dataForDay.map((value, index) => ({
+            name: categoryData[index],
+            value
+        })).sort((a, b) => b.value - a.value);
+
+        const series = [{
+            name: '病害数量',
+            type: 'bar',
+            data: sortedData.map((item) => item.value),
+            label: {
+                show: true,
+                position: 'top',
+                formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
             }
-        });
-    }
-}
-option = {
-    legend: {
-        selectedMode: false
-    },
-    grid,
-    yAxis: {
-        type: 'value'
-    },
-    xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    series,
-    graphic: {
-        elements
-    }
-};
+        }];
 
-option && myChart.setOption(option);
+        option = {
+            legend: {
+                selectedMode: false
+            },
+            grid: {
+                left: 50,
+                right: 50,
+                top: 50,
+                bottom: 50
+            },
+            yAxis: {
+                type: 'value'
+            },
+            xAxis: {
+                type: 'category',
+                data: sortedData.map((item) => item.name)
+            },
+            series
+        };
+
+        option && myChart.setOption(option);
+    })
+
+})
+
 
 </script>
-
-<style scoped>
-
-</style>

@@ -130,6 +130,7 @@ const labelOption = {
     }
 };
 const option = reactive({
+    animationDuration: 10000,
     tooltip: {
         trigger: 'axis',
         axisPointer: {

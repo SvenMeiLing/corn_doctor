@@ -7,9 +7,36 @@
             content-class="w-full h-full"
     >
         <!--内容容器-->
-        <n-space class="w-full h-full p-0 md:flex-nowrap flex-wrap" size="small" :wrap-item="false">
-            <!--part1-->
-            <Chart1></Chart1>
+        <n-space
+                class="w-full h-full p-0 md:flex-nowrap flex-wrap"
+                size="small" :wrap-item="false">
+            <div class="min-h-72 sm:h-full md:w-2/5 w-full">
+                <!--title-->
+                <div class="h-[10%] w-full mb-1 md:mb-0 flex items-center">
+                    <!--标题-->
+                    <n-text class="font-thin text-2xl">平台数据总览</n-text>
+
+                    <!--切换按钮-->
+                    <n-text
+                            class="text-xl ms-auto text-sky-600 flex bg-zinc-700 rounded-md p-1 items-center cursor-pointer
+                hover:bg-zinc-600 duration-1000 active:p-2"
+                            @click="toggleComponent">
+                        <n-icon
+                                class="ms-auto text-xl"
+                                :component="WindStream"
+                        ></n-icon>
+                        {{ isRealTime ? '切换为一周数据' : '切换为实时数据' }}
+                    </n-text>
+
+                </div>
+
+                <!--part1-->
+                <transition name="fade" mode="in-out"
+                >
+                    <component :is="activeComponent"></component>
+                </transition>
+
+            </div>
 
             <!--part2-->
             <Chart2></Chart2>
@@ -19,160 +46,25 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue'
-import * as echarts from 'echarts/core';
-import {
-    TitleComponent,
-    ToolboxComponent,
-    TooltipComponent,
-    GridComponent,
-    LegendComponent,
-} from 'echarts/components';
-import {LineChart, BarChart} from 'echarts/charts';
-import {UniversalTransition, LabelLayout} from 'echarts/features';
-import {CanvasRenderer} from 'echarts/renderers';
+import {onMounted, ref, computed, shallowRef} from 'vue'
 
-import {getDisVisual} from "@/apis/disVisual.js";
 import Chart1 from "@/views/Agriculture/DiseaseVisual/components/Chart1.vue";
 import Chart2 from "@/views/Agriculture/DiseaseVisual/components/Chart2.vue";
+import {WindStream} from "@vicons/carbon";
+import RealTime from "@/views/Agriculture/DiseaseVisual/components/RealTime.vue";
 
 
-const loading = ref(true)
-// 本组件内容根容器, 用于检测此区域大小改变以使其图表自适应
 const containerRef = ref(null)
-// 病害分类及其详情数据
-const disCategory = ref([])
-// 由病害名称组成的列表
-const disNames = ref([])
+const activeComponent = shallowRef(Chart1)
 
-// 用于展示最后一次数据更新的时间
-const dateTime = ref("XXXX-XX-XX")
-
-
-// 有关图表2的额外配置-----------------
-const app = {};
-const posList = [
-    'left',
-    'right',
-    'top',
-    'bottom',
-    'inside',
-    'insideTop',
-    'insideLeft',
-    'insideRight',
-    'insideBottom',
-    'insideTopLeft',
-    'insideTopRight',
-    'insideBottomLeft',
-    'insideBottomRight'
-];
-app.configParameters = {
-    rotate: {
-        min: -90,
-        max: 90
-    },
-    align: {
-        options: {
-            left: 'left',
-            center: 'center',
-            right: 'right'
-        }
-    },
-    verticalAlign: {
-        options: {
-            top: 'top',
-            middle: 'middle',
-            bottom: 'bottom'
-        }
-    },
-    position: {
-        options: posList.reduce(function (map, pos) {
-            map[pos] = pos;
-            return map;
-        }, {})
-    },
-    distance: {
-        min: 0,
-        max: 100
-    }
-};
-app.config = {
-    rotate: 90,
-    align: 'left',
-    verticalAlign: 'middle',
-    position: 'insideBottom',
-    distance: 15,
-    onChange: function () {
-        const labelOption = {
-            rotate: app.config.rotate,
-            align: app.config.align,
-            verticalAlign: app.config.verticalAlign,
-            position: app.config.position,
-            distance: app.config.distance
-        };
-        myChart.setOption({
-            series: [
-                {
-                    label: labelOption
-                },
-                {
-                    label: labelOption
-                },
-                {
-                    label: labelOption
-                },
-                {
-                    label: labelOption
-                }
-            ]
-        });
-    }
-};
-const labelOption = {
-    show: true,
-    position: app.config.position,
-    distance: app.config.distance,
-    align: app.config.align,
-    verticalAlign: app.config.verticalAlign,
-    rotate: app.config.rotate,
-    formatter: '{c}  {name|{a}}',
-    fontSize: 16,
-    rich: {
-        name: {}
-    }
-};
-//-----------------echarts使用的插件------------------------------------------
-echarts.use([
-    TitleComponent,
-    ToolboxComponent,
-    TooltipComponent,
-    GridComponent,
-    LegendComponent,
-    LineChart,
-    CanvasRenderer,
-    UniversalTransition,
-    BarChart,
-    LabelLayout
-]);
-
-
-
-
+const isRealTime = ref(false)
+const toggleComponent = () => {
+    // 切换组件
+    activeComponent.value = activeComponent.value === Chart1 ? RealTime : Chart1
+    isRealTime.value = !isRealTime.value
+}
 
 onMounted(async () => {
-    // // 获取 所有病害名称,并保存待用
-    // disCategory.value = await getAllDiseaseCategory()
-    // disNames.value = disCategory.value.map(value => {
-    //     return value.name
-    // })
-    // // 初始化图表数据, 调用绘制方法
-    // let mc = await initChart("week")
-    // let yc = await chartYear()
-    // // 解除加载状态
-    // loading.value = false
-    // // 记录数据更新时间
-    // dateTime.value = genDateTime()
-    //
     // const visualContainer = document.querySelector("#visualContainer")
     // // 创建 ResizeObserver 实例
     // const resizeObserver = new ResizeObserver(() => {
@@ -190,5 +82,13 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
 
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 </style>

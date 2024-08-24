@@ -1,25 +1,11 @@
 <template>
   <!--part1-->
-    <div class="min-h-72 sm:h-full md:w-2/5 w-full">
-        <div class="h-fit w-full mb-1 md:mb-0 flex items-center">
-            <!--标题-->
-            <n-text class="font-thin text-2xl">平台数据总览</n-text>
-
-            <!--切换按钮-->
-            <n-text class="text-xl ms-auto text-sky-600 flex items-center cursor-pointer hover:text-sky-900 duration-1000">
-                <n-icon
-                        class="ms-auto text-xl"
-                        :component="WindStream"
-                ></n-icon>
-                切换为实时数据
-            </n-text>
-
-        </div>
+    <div class="w-full h-[90%]">
 
         <!--chart1 -->
         <n-card
                 title=" "
-                class="h-[90%] w-full p-0"
+                class="h-full w-full p-0"
                 content-class="h-full w-full p-2 pt-0"
                 header-class="p-1 pr-2"
                 header-extra-class="w-full ps-2"
@@ -73,11 +59,34 @@
 
 <script setup lang="ts">
 import {ref, reactive, onMounted, nextTick} from "vue";
+import {
+    TitleComponent,
+    ToolboxComponent,
+    TooltipComponent,
+    GridComponent,
+    LegendComponent,
+} from 'echarts/components';
+import {LineChart, BarChart} from 'echarts/charts';
+import {UniversalTransition, LabelLayout} from 'echarts/features';
+import {CanvasRenderer} from 'echarts/renderers';
 import {WindStream} from "@vicons/carbon";
 import * as echarts from "echarts/core";
 import {getAllDiseaseCategory, getDisVisual} from "@/apis/disVisual.js";
 import {genDateTime} from "@/utils/genDateTime.js";
 
+
+echarts.use([
+    TitleComponent,
+    ToolboxComponent,
+    TooltipComponent,
+    GridComponent,
+    LegendComponent,
+    LineChart,
+    CanvasRenderer,
+    UniversalTransition,
+    BarChart,
+    LabelLayout
+]);
 
 // 图表dom元素
 const chartDom = ref<HTMLDivElement | null>(null)
@@ -93,7 +102,7 @@ const disNames = ref([])
 const dateTime = ref("XXXX-XX-XX")
 // 读取store中主题配置
 import {useDesignSettingStore} from "@/stores/designSetting.js";
-import {storeToRefs} from "pinia";
+import {storeToRefs} from 'pinia'
 import {EChartsType} from 'echarts'
 
 const themeStore = useDesignSettingStore()
@@ -113,6 +122,8 @@ const switchMode = (value) => {
 
 }
 const option = reactive({
+    animationDuration: 5000,
+    animationDurationUpdate: 2000,
     legend: {
         data: ['玉米叶斑病', '玉米锈病', '玉米叶枯病', '玉米条纹病', '玉米黑粉病']
     },
