@@ -52,15 +52,21 @@ async def get_disease_ranking(
         db_session: AsyncSession = Depends(get_db),
         *,
         request: Request
-
 ):
     """
     获取病害排行
     todo: 先从缓存中获取, 如果没有再查找数据库
     """
-    return await request.app.state.redis.get("name")
-    # result = await disease_crud.get_ranking(db_session)
-    # return result
+    key = "daily_disease_ranking"
+    cache: Redis = request.app.state.redis
+    top_diseases = await cache.zrevrange(key, 0, -1, withscores=True)
+
+    # 如果缓存中没有从mysql获取数据
+    if top_diseases is None:
+        result = await disease_crud.get_ranking(db_session)
+        # todo:并持久化到缓存中
+        return result
+    return top_diseases
 
 
 @router.post("/", response_model=Disease)

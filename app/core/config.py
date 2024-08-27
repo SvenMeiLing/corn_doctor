@@ -9,10 +9,11 @@ from dotenv import load_dotenv
 
 # 项目根路径
 PROJECT_PATH = Path(__file__).parent.parent.parent
+
 # 应用程序路径
 APP_PATH = PROJECT_PATH / "app"
 
-load_dotenv()
+load_dotenv()  # 加载环境变量
 
 
 def getenv_boolean(var_name, default_value=False):
@@ -61,6 +62,11 @@ SQLALCHEMY_DATABASE_URI = (
 REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+MAX_CONNECTIONS = os.getenv("MAX_CONNECTIONS")
+
+# Celery配置
+BACKEND = os.getenv("BACKEND")
+BROKER = os.getenv("BROKER")
 
 # smtp 配置 ----可忽略-----
 SMTP_TLS = getenv_boolean("SMTP_TLS", True)

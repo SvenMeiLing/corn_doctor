@@ -65,15 +65,3 @@ if __name__ == '__main__':
                             result[dis["name"]]["year"].index(year)  # 索引对应年份的total
                         ] += 1  # 对total+1
         return result
-
-
-    count = 0
-    lst = []
-
-
-    def read():
-        count += 1
-        print(count)
-
-
-    print(read())

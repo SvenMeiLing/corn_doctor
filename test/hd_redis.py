@@ -46,12 +46,13 @@ if __name__ == '__main__':
     async def main():
         redis = await get_redis_connection()
 
-        await record_disease(redis, "blight", 100)
-        await record_disease(redis, "rust", 90)
-        await record_disease(redis, "smut", 12)
-        await record_disease(redis, "霜霉病", 12)
+        await record_disease(redis, "玉米叶斑病", 100)
+        await record_disease(redis, "玉米锈病", 90)
+        await record_disease(redis, "玉米叶枯病", 12)
+        await record_disease(redis, "玉米条纹病", 12)
+        await record_disease(redis, "玉米灰斑病", 12)
 
-        top_diseases = await get_top_diseases(redis, 4)
+        top_diseases = await get_top_diseases(redis, -1)
         print(top_diseases)
 
         await redis.close()
@@ -64,6 +65,5 @@ if __name__ == '__main__':
 
 
     s = time.time()
-    asyncio.run(main2())
-    # [sync_redis(_) for _ in range(990)]
+    asyncio.run(main())
     print(time.time() - s)
