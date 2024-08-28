@@ -53,7 +53,9 @@ class TimestampColumns(AsyncAttrs, DeclarativeBase):
 """
 An integer that indicates how this mapped column should be sorted compared to the others when the ORM is creating a Table. Among mapped columns that have the same value the default ordering is used, placing first the mapped columns defined in the main class, then the ones in the super classes. Defaults to 0. The sort is ascending.
 """
-
-# from app.models.user import UserOrm
-# from app.models.plant import PlantOrm, PestOrm, DiseaseOrm
-# from app.models.store import ProductOrm, StoreOrm, CategoryOrm
+"""
+在迁移时请解除下面model的注释
+"""
+from app.models.user import UserOrm
+from app.models.plant import PlantOrm, PestOrm, DiseaseOrm
+from app.models.store import ProductOrm, StoreOrm, CategoryOrm

@@ -8,6 +8,7 @@ from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.apis.deps.get_current_user import get_current_user
 from app.apis.deps.get_db import get_db
 from app.core.config import ORIGIN_IMG_PATH, MEDIA_ROOT, PREDICT_PATH
 from app.crud.plant import plant_crud
@@ -16,7 +17,7 @@ from app.utils.group_by import group_by_date
 from app.utils.hasher import gen_hashed, gen_file_path
 from app.vision.yolo_predict import yolo
 
-router = APIRouter(prefix="/plant")
+router = APIRouter(prefix="/plant", dependencies=[Depends(get_current_user)])
 
 
 @router.get("/", response_model=Plant)

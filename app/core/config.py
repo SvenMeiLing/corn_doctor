@@ -22,7 +22,7 @@ def getenv_boolean(var_name, default_value=False):
     if env_value is not None:
         result = env_value.upper() in ("TRUE", "1")
     return result
-
+#
 
 API_VERSION = "/api/v1"
 
@@ -49,6 +49,8 @@ BACKEND_CORS_ORIGINS = os.getenv(
 # 项目名称
 PROJECT_NAME = os.getenv("PROJECT_NAME")
 
+# JWT配置
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 # Mysql数据库配置
 MYSQL_SERVER = os.getenv("MYSQL_SERVER")
 MYSQL_USER = os.getenv("MYSQL_USER")

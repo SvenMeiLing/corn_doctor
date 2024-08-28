@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.apis.deps.get_db import get_db
 from app.core import config
 from app.crud.user import user_crud
-from app.schemas.user import Token
+from app.schemas.token import Token
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.utils import security

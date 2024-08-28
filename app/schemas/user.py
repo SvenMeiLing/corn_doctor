@@ -40,8 +40,3 @@ class UserInDBBase(UserBase):
 
 class User(UserInDBBase):
     pass
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
