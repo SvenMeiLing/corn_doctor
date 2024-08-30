@@ -2,11 +2,14 @@
     <n-menu :options="menuOptions"
             @update:value="handleUpdateValue"
             v-model:value="activeKey"
-    />
+            responsive
+    >
+    </n-menu>
 </template>
 
 <script setup>
-import {watch, ref, h} from "vue";
+import {watch, ref, h, computed} from "vue";
+import {storeToRefs} from "pinia";
 import {useRoute} from 'vue-router'
 import {NIcon} from "naive-ui";
 import {RouterLink} from "vue-router";
@@ -21,7 +24,7 @@ import {
     BubbleChartTwotone as Chart,
     ChatTwotone as Community
 } from '@vicons/material'
-import {Template, FlowStreamReference, ChartMultitype} from '@vicons/carbon'
+import {Template, FlowStreamReference, ChartMultitype, Identification} from '@vicons/carbon'
 import {useUserProfile} from "@/stores/userProfile.js";
 import drone from '@/components/drone.vue'
 import NounBook from '@/components/NounBook.vue'
@@ -29,6 +32,8 @@ import NounBook from '@/components/NounBook.vue'
 
 const route = useRoute()
 const userProfile = useUserProfile()
+const {profile} = storeToRefs(userProfile)
+
 // 每次重载页面时, 优先使用上一次会话中的路由
 const activeKey = ref(userProfile.profile.lastRoute)
 
@@ -37,7 +42,10 @@ function renderIcon(icon, props) {
     return () => h(NIcon, props, {default: () => h(icon)});
 }
 
-const menuOptions = [
+// 全部菜单项目
+// todo: 需要筛选出普通用户可访问的例如:/home /login
+// todo: 1.通过props传入进来menu|2.通过在menu筛选配置文件中的路由
+const menuOptions = computed(() => [
     {
         label: () => h(
             RouterLink,
@@ -52,7 +60,7 @@ const menuOptions = [
         icon: renderIcon(HomeIcon), // 图标
     },
     {
-        key: "divider-1",
+        key: "divider-1",  // 分割线(非路由)
         type: "divider",
         props: {
             style: {
@@ -68,13 +76,13 @@ const menuOptions = [
             },
             () => "图像识别"
         ),
-        key: "Recognition",
-        icon: renderIcon(RecognitionIcon)
+        key: "recognition",
+        icon: renderIcon(RecognitionIcon),
+        show: profile.value.isLoggedIn
     },
-
     {
+        key: "drone",
         label: "无人机平台",
-        key: "pinball-1973",
         icon: renderIcon(drone, {size: 30}),
         disabled: false,
         children: [
@@ -83,17 +91,19 @@ const menuOptions = [
                 key: "rat",
                 icon: renderIcon(BookIcon)
             }
-        ]
+        ],
+        show: profile.value.isLoggedIn
     },
     {
-        label: "寻羊冒险记",
         key: "a-wild-sheep-chase",
+        label: "寻羊冒险记",
         icon: renderIcon(BookIcon),
-        disabled: true
+        disabled: true,
+        show: profile.value.isLoggedIn
     },
     {
-        label: "服务平台",
         key: "agriculture",
+        label: "服务平台",
         icon: renderIcon(Template),
         children: [
             {
@@ -156,7 +166,8 @@ const menuOptions = [
                 ]
             },
 
-        ]
+        ],
+        show: profile.value.isLoggedIn
     },
     {
         label: () => h(
@@ -167,7 +178,8 @@ const menuOptions = [
             () => "流式识别"
         ),
         key: "flow-recognition",
-        icon: renderIcon(FlowStreamReference)
+        icon: renderIcon(FlowStreamReference),
+        show: profile.value.isLoggedIn
     },
     {
         label: () => h(
@@ -178,9 +190,22 @@ const menuOptions = [
             () => "农户社区"
         ),
         key: "community",
-        icon: renderIcon(Community)
+        icon: renderIcon(Community),
+        show: profile.value.isLoggedIn
     },
-];
+    {
+        label: () => h(
+            RouterLink,
+            {
+                to: "/login"
+            },
+            () => "登录"
+        ),
+        key: "login",
+        icon: renderIcon(Identification),
+        show: !profile.value.isLoggedIn
+    }
+]);
 const emit = defineEmits(["drawerShow"])
 
 const handleUpdateValue = (key, item) => {

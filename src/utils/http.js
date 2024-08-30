@@ -8,6 +8,13 @@
 import axios from 'axios'
 import NProgress from "nprogress";
 import codeMessage from "@/utils/codeMessage.js";
+import {useUserProfile} from "@/stores/userProfile.js";
+import {useRouter} from "vue-router";
+
+// 过滤掉一些不需要progress的路由
+const noProgress = ["ranking"]
+
+const router = useRouter()
 
 NProgress.configure({
 
@@ -28,9 +35,20 @@ export const httpInstance = axios.create({
 })
 
 
+// axios请求拦截器
 httpInstance.interceptors.request.use(
     config => {
-        NProgress.start(); // 显示进度条
+        // 获取用户数据
+        const userProfile = useUserProfile()
+        // 拼接token
+        const token = userProfile.profile.accessToken
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`
+        }
+        // 移除某些不需要进度条动画的路由
+        if (!noProgress.includes(config.url.split("/").pop())) {
+            NProgress.start(); // 显示进度条
+        }
         return config;
     }, error => {
         NProgress.done(); // 隐藏进度条
@@ -42,15 +60,11 @@ httpInstance.interceptors.request.use(
 // axios响应式拦截器
 httpInstance.interceptors.response.use(res => {
         NProgress.done(); // 隐藏进度条
-        console.log("===>", res)
         return res.data
     },
     e => {
         NProgress.done(); // 隐藏进度条
         // 统一错误提示
-        console.log(e.code)
-        console.log(e)
-        console.log(codeMessage[e.code])
         if (!e.response) {
             // 如果没有响应则代表本地网络错误
             window.$message.warning("网络出现错误!")
@@ -59,6 +73,14 @@ httpInstance.interceptors.response.use(res => {
         if (e.response.status !== 200) {
             // 发送预制错误信息
             window.$message.warning(codeMessage[e.response.status])
+        } else if (e.response.status === 401) {
+            console.log(401)
+            // token失效,清楚本地消息
+            const userProfile = useUserProfile()
+            // 清楚信息
+            userProfile.clearProfile()
+            // 跳转到/login
+            router.push("/login")
         }
         return e
     })

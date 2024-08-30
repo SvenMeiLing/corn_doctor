@@ -8,11 +8,13 @@
 // createRoute: 创建route实例对象
 // createHistory: 创建history模式路由
 import {createRouter, createWebHistory} from 'vue-router'
+
 import Layout from '@/views/Layout/Index.vue'
 // import NotFound from '@/views/Error/404.vue'
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import {useUserProfile} from "@/stores/userProfile.js";
+import {validateJwtFormat} from '@/utils/useValidJWT.js'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -108,6 +110,7 @@ export function setupRouterGuard(router) {
     createProgressGuard(router);
 }
 
+
 export function createProgressGuard(router) {
     router.beforeEach(async () => {
         // 执行进度条
@@ -144,6 +147,18 @@ export function createShowTitle(router) {
     })
 }
 
+export function loginRedirect(router) {
+    router.beforeEach((to, from, next) => {
+        // 如果已经登录,依然访问login视图, 则跳转到home
+        if (to?.name?.includes("login")) {
+            console.log("包含")
+            next("/")
+        } else {
+            next()
+        }
+    })
+}
+
 /*
 校验路由是否可以访问
  */
@@ -151,11 +166,21 @@ export function requireAuth(router) {
     router.beforeEach((to, from, next) => {
         // 如果当前访问的路由需要验证, 且处于未登陆状态
         const userProfile = useUserProfile()
-        if (to.meta.requireAuth !== false && !userProfile.profile.isLoggedIn) {
-            // 跳转到登录页
-            console.log("跳转到登录页", "登陆状态为-->", userProfile.profile.isLoggedIn)
-            next("/login")
+        // todo: 如果当前页需要认证,交由下一逻辑处理
+        if (to.meta.requireAuth !== false) {
+            let token = userProfile.profile.accessToken
+            if (token && validateJwtFormat(token)) {
+                // 对token的基本校验, 防止随便伪造token
+                next()
+            } else {
+                // token无效, 清除token和登陆状态
+                userProfile.setUserProfile("accessToken", null)
+                userProfile.setUserProfile("isLoggedIn", false)
+                window.$message?.error("已清除无效的令牌Token,请重新登录!")
+                next("/login")
+            }
         } else {
+            // 不需要校验的页面, 直接放行
             next()
         }
     })

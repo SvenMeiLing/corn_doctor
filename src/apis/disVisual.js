@@ -17,5 +17,8 @@ export function getDisVisual(mode) {
 
 export function getAllDiseaseCategory(){
     return request('/disease/category')
+}
 
+export function getDiseaseRanking() {
+    return request('/disease/ranking')
 }

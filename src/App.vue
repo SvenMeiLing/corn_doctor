@@ -1,5 +1,4 @@
 <template>
-
     <n-config-provider
             :theme="theme.name" :id="theme.title"
     >
@@ -23,7 +22,6 @@ const themeStore = useDesignSettingStore()
 const {theme} = storeToRefs(themeStore)
 const {changeTheme} = themeStore
 
-const online = computed(() => navigator.onLine)
 
 onMounted(() => {
     // 监听storage中主题变化, 动态切换

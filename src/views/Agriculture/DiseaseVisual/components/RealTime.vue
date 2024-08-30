@@ -1,96 +1,73 @@
 <template>
-    <div id="main" class="w-full h-[90%]"></div>
+    <div id="main" ref="chartDom" class="w-full h-[90%]"></div>
 </template>
-<script setup>
-import {onMounted, nextTick} from 'vue'
-import * as echarts from 'echarts/core';
-import {
-    GraphicComponent,
-    GridComponent,
-    LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent
-} from 'echarts/components';
-import {BarChart, LineChart} from 'echarts/charts';
-import {CanvasRenderer} from 'echarts/renderers';
-import {LabelLayout, UniversalTransition} from "echarts/features";
+<script setup lang="ts">
+import {onMounted, reactive, ref} from 'vue'
+import * as echarts from 'echarts';
+import {getDiseaseRanking} from "@/apis/disVisual.js";
 
-echarts.use([
-    GraphicComponent,
-    GridComponent,
-    LegendComponent,
-    BarChart,
-    CanvasRenderer,
-    TitleComponent,
-    ToolboxComponent,
-    TooltipComponent,
-    GridComponent,
-    LegendComponent,
-    LineChart,
-    CanvasRenderer,
-    UniversalTransition,
-    BarChart,
-    LabelLayout
-]);
-
-onMounted(() => {
-    nextTick(() => {
-        var chartDom = document.getElementById('main');
-        var myChart = echarts.init(chartDom, "dark");
-
-        var option;
-
-        const rawData = [
-            [100, 302, 301, 334, 390, 330, 320],
-            [320, 132, 101, 134, 90, 230, 210],
-            [220, 182, 191, 234, 290, 330, 310],
-            [150, 212, 201, 154, 190, 330, 410],
-            [820, 832, 901, 934, 1290, 1330, 1320]
-        ];
-
-// 选择需要显示的列索引，例如当天的数据
-        const dayIndex = 6; // 这里选择的是第7列数据（索引为6）
-
-        const categoryData = ['玉米叶斑病', '玉米锈病', '玉米叶枯病', '玉米条纹病毒', '玉米灰斑病'];
-        const dataForDay = rawData.map((data) => data[dayIndex]);
-
-// 为了显示排序后的数据，生成排序后的数据和标签
-        const sortedData = dataForDay.map((value, index) => ({
-            name: categoryData[index],
-            value
-        })).sort((a, b) => b.value - a.value);
-
-        const series = [{
-            name: '病害数量',
+const chartDom = ref<HTMLDivElement | null>(null)
+const myChart = ref<echarts.EChartsType>(null)
+const option = reactive({
+    xAxis: {
+        max: 'dataMax'
+    },
+    yAxis: {
+        type: 'category',
+        data: ['玉米叶斑病', '玉米锈病', "玉米叶枯病", '玉米灰斑病', '玉米叶枯病'],
+        inverse: true,
+        animationDuration: 300,
+        animationDurationUpdate: 300,
+        max: 5, // only the largest 3 bars will be displayed
+        axisLabel: {
+            margin: 4,
+        }
+    },
+    series: [
+        {
+            realtimeSort: true,
+            name: '当日数据',
             type: 'bar',
-            data: sortedData.map((item) => item.value),
+            data: [],
             label: {
                 show: true,
-                position: 'top',
-                formatter: (params) => Math.round(params.value * 1000) / 10 + '%'
-            }
-        }];
+                position: 'right',
+                valueAnimation: true
+            },
+            barWidth: '40%'  // 设置条形图的宽度，可以根据需要调整
+        }
+    ],
+    legend: {
+        show: true
+    },
+    animationDuration: 5000,
+    animationDurationUpdate: 4000,
+    animationEasing: 'linear',
+    animationEasingUpdate: 'linear',
+    grid: {
+        left: '1.5%',
+        right: '8.5%', // 右边可以显示到万单位
+        containLabel: true
+    },
+})
+onMounted(() => {
+    myChart.value = echarts.init(chartDom.value, 'dark')
 
-        option = {
-            legend: {
-                selectedMode: false
-            },
-            grid: {
-                left: 50,
-                right: 50,
-                top: 50,
-                bottom: 50
-            },
-            yAxis: {
-                type: 'value'
-            },
-            xAxis: {
-                type: 'category',
-                data: sortedData.map((item) => item.name)
-            },
-            series
-        };
+    setInterval(async function () {
+        // 每次间隔都请求一次排名数据, 长轮询
+        const res = await getDiseaseRanking()
+        let disNames = []
+        let disDatas = []
+        res.forEach(value => {
+            // example:[["玉米灰斑病", 31425], ["玉米叶斑病", 30338], ["玉米锈病", 30196], ["玉米条纹病", 28698], ["玉米叶枯病", 27232]]
+            disNames.push(value[0])
+            disDatas.push(value[1])
+        })
+        option.yAxis.data = disNames
+        option.series[0].data = disDatas
+        option && myChart.value.setOption(option);
+    }, 1000);
 
-        option && myChart.setOption(option);
-    })
 
 })
 
