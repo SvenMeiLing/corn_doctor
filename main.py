@@ -136,4 +136,4 @@ app.mount("/predict", StaticFiles(directory=PREDICT_PATH), name="predict")
 if __name__ == '__main__':
     import uvicorn
 
-    uvicorn.run(app, host='0.0.0.0')
+    uvicorn.run("main:app", reload=True)

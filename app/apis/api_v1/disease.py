@@ -7,7 +7,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-from app.apis.deps.get_cache import get_cache
 from app.apis.deps.get_db import get_db
 from app.crud.disease import disease_crud
 from app.schemas.disease_pest import DiseaseBase, Disease, DiseaseInDBBase

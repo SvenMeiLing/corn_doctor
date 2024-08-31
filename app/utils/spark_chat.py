@@ -1,8 +1,8 @@
 # coding=utf-8
 import os
 
-from sparkai.llm.llm import ChatSparkLLM, ChunkPrintHandler, AsyncChunkPrintHandler
 from sparkai.core.messages import ChatMessage
+from sparkai.llm.llm import ChatSparkLLM, AsyncChunkPrintHandler
 
 try:
     from dotenv import load_dotenv

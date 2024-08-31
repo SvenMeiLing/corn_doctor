@@ -32,7 +32,8 @@ async def get_plant(
 
 @router.post("/", response_model=Plant)
 async def create_plant(
-        plant_in: PlantCreate, db_session: AsyncSession = Depends(get_db)
+        plant_in: PlantCreate,
+        db_session: AsyncSession = Depends(get_db)
 ):
     print(plant_in, "<-------------")
     plant_in = await plant_crud.create(db_session, obj_in=plant_in)

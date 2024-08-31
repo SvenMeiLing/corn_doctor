@@ -22,6 +22,8 @@ def getenv_boolean(var_name, default_value=False):
     if env_value is not None:
         result = env_value.upper() in ("TRUE", "1")
     return result
+
+
 #
 
 API_VERSION = "/api/v1"
@@ -51,11 +53,13 @@ PROJECT_NAME = os.getenv("PROJECT_NAME")
 
 # JWT配置
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
+JWT_PREFIX = os.getenv("JWT_PREFIX", "user")
+
 # Mysql数据库配置
 MYSQL_SERVER = os.getenv("MYSQL_SERVER")
-MYSQL_USER = os.getenv("MYSQL_USER")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
-MYSQL_DB = os.getenv("MYSQL_DB")
+MYSQL_USER = os.getenv("MYSQL_USER", "root")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "168168956")
+MYSQL_DB = os.getenv("MYSQL_DB", "fast-corn")
 SQLALCHEMY_DATABASE_URI = (
     f"mysql+aiomysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_SERVER}/{MYSQL_DB}"
 )
