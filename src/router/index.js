@@ -148,9 +148,10 @@ export function createShowTitle(router) {
 }
 
 export function loginRedirect(router) {
+    const userProfile = useUserProfile()
     router.beforeEach((to, from, next) => {
         // 如果已经登录,依然访问login视图, 则跳转到home
-        if (to?.name?.includes("login")) {
+        if (userProfile.profile.isLoggedIn && to?.name?.includes("login")) {
             console.log("包含")
             next("/")
         } else {

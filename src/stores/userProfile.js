@@ -7,7 +7,7 @@
 */
 import {reactive} from 'vue'
 import {defineStore} from 'pinia'
-import {loginAPI} from "@/apis/login.js";
+import {loginAPI} from "@/apis/user.js";
 
 export const useUserProfile = defineStore(
     'userProfile',

@@ -14,15 +14,6 @@ import 'vfonts/FiraCode.css'
 //1.导入createPinia
 import {createPinia} from "pinia"
 
-// 已登录用户重定向行为
-loginRedirect(router)
-// 校验路由通过
-requireAuth(router)
-// 路由进度条,请求进度条
-setupRouterGuard(router);
-// 标签页title更新
-createShowTitle(router)
-
 
 //2.执行方法得到示例
 const pinia = createPinia()
@@ -32,3 +23,13 @@ const app = createApp(App).use(router)
 app.use(pinia)
     .use(naive)
     .mount('#app')
+
+// 已登录用户重定向行为
+loginRedirect(router)
+// 校验路由通过
+requireAuth(router)
+// 路由进度条,请求进度条
+setupRouterGuard(router);
+// 标签页title更新
+createShowTitle(router)
+

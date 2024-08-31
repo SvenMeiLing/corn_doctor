@@ -21,10 +21,11 @@
 
 <script setup>
 import {ref} from 'vue'
+import {useRouter} from 'vue-router'
 import {useUserProfile} from "@/stores/userProfile.js";
 
 const userProfile = useUserProfile()
-
+const router = useRouter()
 
 const formRef = ref(null);
 const formValue = ref({
@@ -47,6 +48,7 @@ const handleValidateClick = (e) => {
     formRef.value?.validate(async (errors) => {
         if (!errors) {
             await userProfile.getAccessToken()
+            await router.push("/")
             window.$message.success("好");
         } else {
             console.log(errors);
