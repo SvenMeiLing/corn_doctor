@@ -23,18 +23,12 @@ reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token")
 
 
 async def get_current_user(
-        request: Request,
         session: Annotated[AsyncSession, Depends(get_db)],
         token: str = Security(reusable_oauth2),
 ) -> Type[UserOrm]:
     """
     匹配出用户传来token
     """
-    # 先从缓存中获取用户信息
-    userinfo = await get_current_user_toredis(request.app.state.redis, token)
-    if userinfo:
-        return userinfo
-    # 如果缓存没有则走数据库
     try:
         payload = jwt.decode(
             token, config.SECRET_KEY, algorithms=[config.ALGORITHM]
@@ -48,15 +42,6 @@ async def get_current_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
-
-async def get_current_user_toredis(
-        redis: Redis,
-        token: str
-):
-    # 获取用户信息(名称, id, 头像, 邮箱等)
-    userinfo = json.loads(await redis.get(f"{config.JWT_PREFIX}:{token}"))
-    return userinfo
 
 
 def get_current_active_user(current_user: UserOrm = Security(get_current_user)):
@@ -76,4 +61,6 @@ def get_current_active_superuser(current_user: CurrentUser) -> UserOrm:
         )
     return current_user
 # todo: 如何解决redis jwt重传问题?
-# 尝试去判断这个jwt是否存在
+# 在创建一个token时去get是否存在, 如果存在则不创建
+# user:1
+# 如果已经存在一个token, 则吊销它新建一个
