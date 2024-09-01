@@ -54,6 +54,7 @@ PROJECT_NAME = os.getenv("PROJECT_NAME")
 # JWT配置
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 JWT_PREFIX = os.getenv("JWT_PREFIX", "user")
+BLACKLISTED_TOKENS = os.getenv("BLACKLISTED_TOKENS", "blacklisted_tokens")
 
 # Mysql数据库配置
 MYSQL_SERVER = os.getenv("MYSQL_SERVER")
