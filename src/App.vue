@@ -4,9 +4,12 @@
     >
 
         <n-message-provider>
-            <RouterView/>
-            <!-- 特定的登录页面视图 -->
-            <RouterView name="login"/>
+            <n-notification-provider>
+                <RouterView/>
+                <!-- 特定的登录页面视图 -->
+                <RouterView name="login"/>
+            </n-notification-provider>
+
         </n-message-provider>
 
 

@@ -35,8 +35,10 @@
 import LayoutHeader from "@/views/Layout/components/LayoutHeader.vue";
 import Home from "@/views/Home/Index.vue"
 import LayoutFooter from "@/views/Layout/components/LayoutFooter.vue";
-import {useMessage} from "naive-ui";
+import {useMessage, useNotification} from "naive-ui";
 
 const message = useMessage()
+const notification = useNotification()
 window.$message = message
+window.$notice = notification
 </script>

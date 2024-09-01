@@ -124,7 +124,7 @@ onMounted(() => {
     <n-space
             :wrap-item="false"
             :wrap="false"
-            class="h-1/6 lg:h-2/6 ">
+            class="h-1/6 lg:h-2/6 sm:h-fit">
         <n-grid cols="1 s:1 m:1 xl:1" responsive="screen">
             <n-grid-item>
                 <n-space vertical align="start" class="xl:gap-1 2xl:gap-3">
@@ -136,7 +136,7 @@ onMounted(() => {
                               size="large"
                               @click="showModal = true"
                     >
-                        <n-text class="text-lg lg:text-2xl font-extralight  dark:text-black ">尝试一下</n-text>
+                        <n-text class="text-lg lg:text-2xl font-extralight  dark:text-black">尝试一下</n-text>
                         <n-icon :component="LightbulbTwotone" size="30" class="bulb"></n-icon>
                     </n-button>
 

@@ -1,5 +1,5 @@
 <template>
-    <n-space vertical class="h-5/6 lg:h-4/6" :wrap="true" :wrap-item="false">
+    <n-space vertical class="h-5/6 lg:h-4/6"  :wrap-item="false">
         <n-data-table bordered class="shadow-lg rounded-md h-full" :columns="createColumns"
                       :data="data" :flex-height="true">
             <template #empty>

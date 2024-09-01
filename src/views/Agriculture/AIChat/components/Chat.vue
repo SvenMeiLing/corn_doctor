@@ -1,83 +1,92 @@
 <template>
-    <n-space vertical :class="props.strClass"
-             :wrap-item="false" :wrap="false"
-    >
-        <!--聊天框容器-->
-        <n-scrollbar content-class="p-2" ref="containerRef">
-            <transition-group enter-active-class="animate__animated animate__fadeIn animate__slower">
-                <!--系统消息-->
-                <n-card
-                        bordered
-                        embedded
-                        title=""
-                        class="max-w-60 xl:w-fit me-auto m-2"
-                        size="small"
-                >
-                    <template #header>
-                        <n-avatar
-                                class="me-auto"
-                                size="medium"
-                                color="none "
-                                src="/public/corn-logo.svg"
-                        >
-                        </n-avatar>
-                        <n-flex align="center" justify="center" :size="0">
-                            <Marked :mark-down-text="'🌽我是玉米医生智能AI客服,为您解答与农业相关的问题'"/>
-                        </n-flex>
-                    </template>
-                </n-card>
-
-                <!--每条消息-->
-                <n-card
-                        bordered
-                        embedded
-                        title=""
-                        class="max-w-60 xl:w-fit even:ms-auto m-2"
-                        size="small"
-                        v-for="(item, index) in chatHistory.data"
-                        v-if="chatHistory"
-                        :key="index"
-                >
-                    <template #header>
-
-                        <n-avatar
-                                class="me-auto"
-                                size="medium"
-                                color="none"
-                                src="/public/corn-logo.svg"
-                        >
-                            <template #default v-if="index % 2 === 0">
-                                <n-icon class="text-black dark:text-white"
-                                        :component="UserAvatarFilled"></n-icon>
-                            </template>
-                        </n-avatar>
-
-                        <n-flex align="center" justify="center" :size="0">
-                            <Marked :mark-down-text="item.text"/>
-                            <n-text depth="3" class="ms-auto">{{ item.dateTime }}</n-text>
-                        </n-flex>
-                    </template>
-                </n-card>
-            </transition-group>
-        </n-scrollbar>
-        <n-flex
-                :wrap="false"
-                align="center"
-                class="p-1"
+    <n-layout :native-scrollbar="false" class="mt-1 rounded dark:bg-zinc-800">
+        <n-space vertical :class="props.strClass"
+                 :wrap-item="false" :wrap="false"
         >
-            <n-input
-                    placeholder="请输入你的问题:"
-                    type="textarea"
-                    :autosize="{
+            <!--聊天框容器-->
+            <n-scrollbar content-class="p-2" ref="containerRef">
+                <transition-group enter-active-class="animate__animated animate__fadeIn animate__slower">
+                    <!--系统消息-->
+                    <n-card
+                            bordered
+                            embedded
+                            title=""
+                            class="max-w-60 xl:w-fit me-auto m-2"
+                            size="small"
+                    >
+                        <template #header>
+                            <n-avatar
+                                    class="me-auto"
+                                    size="medium"
+                                    color="none "
+                                    src="/public/corn-logo.svg"
+                            >
+                            </n-avatar>
+                            <n-flex align="center" justify="center" :size="0">
+                                <Marked :mark-down-text="'🌽我是玉米医生智能AI客服,为您解答与农业相关的问题'"/>
+                            </n-flex>
+                        </template>
+                    </n-card>
+
+                    <!--每条消息-->
+                    <n-card
+                            bordered
+                            embedded
+                            title=""
+                            class="max-w-60 xl:w-fit even:ms-auto m-2"
+                            size="small"
+                            v-for="(item, index) in chatHistory.data"
+                            v-if="chatHistory"
+                            :key="index"
+                    >
+                        <template #header>
+
+                            <n-avatar
+                                    class="me-auto"
+                                    size="medium"
+                                    color="none"
+                                    src="/public/corn-logo.svg"
+                            >
+                                <template #default v-if="index % 2 === 0">
+                                    <n-icon class="text-black dark:text-white"
+                                            :component="UserAvatarFilled"></n-icon>
+                                </template>
+                            </n-avatar>
+
+                            <n-flex align="center" justify="center" :size="0">
+                                <Marked :mark-down-text="item.text"/>
+                                <n-text depth="3" class="ms-auto">{{ item.dateTime }}</n-text>
+                            </n-flex>
+                        </template>
+                    </n-card>
+                </transition-group>
+            </n-scrollbar>
+            <n-flex
+                    :wrap="false"
+                    align="center"
+                    class="p-1"
+            >
+            </n-flex>
+
+        </n-space>
+    </n-layout>
+
+  <!--输入与发送-->
+    <n-flex :wrap="false" class="mt-1">
+        <n-input
+                placeholder="请输入你的问题:"
+                type="textarea"
+                :autosize="{
                             minRows: 1,
                             maxRows: 5
                          }"
-                    v-model:value="message"
-                    @keydown.enter="sendQuestion"
-            ></n-input>
-            <n-button class="h-full" @click="sendQuestion">发送</n-button>
-        </n-flex>
-    </n-space>
+                v-model:value="message"
+                @keydown.enter="sendQuestion"
+        ></n-input>
+        <n-button @click="sendQuestion">发送</n-button>
+    </n-flex>
+
+
 </template>
 
 <script setup>
@@ -123,7 +132,7 @@ const myIndexedDB = localforage.createInstance({name: 'cornIndexedDB',})
 const props = defineProps({
     strClass: {
         // 用于title组件传递
-        default: "mt-2 w-full h-5/6 rounded dark:bg-zinc-800",
+        default: "mt-1 w-full h-full",
         type: String
     },
     chatHistory: {

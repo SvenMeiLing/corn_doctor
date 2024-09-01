@@ -69,7 +69,6 @@ import {
 import {LineChart, BarChart} from 'echarts/charts';
 import {UniversalTransition, LabelLayout} from 'echarts/features';
 import {CanvasRenderer} from 'echarts/renderers';
-import {WindStream} from "@vicons/carbon";
 import * as echarts from "echarts/core";
 import {getAllDiseaseCategory, getDisVisual} from "@/apis/disVisual.js";
 import {genDateTime} from "@/utils/genDateTime.js";
@@ -146,14 +145,7 @@ const option = reactive({
     yAxis: {
         type: 'value'
     },
-    series: [
-        {
-            name: '玉米叶斑病',
-            type: 'line',
-            stack: 'Total',
-            data: [120, 132, 101, 134, 90, 230, 210]
-        }
-    ]
+    series: []
 })
 
 /**
@@ -177,8 +169,33 @@ async function initChart(mode, chartDom) {
  * @return {Promise<void>}
  */
 async function updateChart(mode) {
-    // 请求数据
+    // 请求数据, 如果没有数据照常渲染
     const resp = await getDisVisual(mode)
+    if (resp?.response?.status === 404) {
+        // 设置标签
+        option.legend.data = disNames.value
+        // 添加没用出现的病害类别， 并初始化data为全是0的数组
+        for (let disName of disNames.value) {
+            option.series.push(
+                {
+                    name: disName,
+                    type: 'line',
+                    stack: 'Total',
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                }
+            )
+        }
+        myChart.value?.setOption(option)
+        // 记录数据更新时间
+        dateTime.value = genDateTime()
+        // 提示用户
+        window.$notice.warning({
+            content: '平台本周暂无数据',
+            duration: 2500,
+            keepAliveOnHover: true
+        })
+        return
+    }
     // 设置标签
     option.legend.data = disNames.value
     // 设置x轴数据

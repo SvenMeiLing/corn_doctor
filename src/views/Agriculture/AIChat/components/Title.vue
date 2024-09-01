@@ -3,16 +3,16 @@
              class="h-1/6"
     >
         <!--标题主体部分-->
-        <n-flex>
+        <n-flex :size="1">
             <!--左部分-->
             <n-text tag="div" class="text-xl sm:text-xl md:text-2xl xl:text-3xl">
                 本页面由
                 <n-text tag="q" type="info">讯飞星火</n-text>
                 赞助播出
             </n-text>
-            <n-divider vertical class="hidden md:flex dark:bg-zinc-500"/>
+            <n-divider vertical class="hidden md:hidden dark:bg-zinc-500"/>
 
-            <!--右部分-->
+            <!--右部分/下部分历史会话-->
             <MessageGroup @chatHistory="handHistory"/>
 
             <!--放大按钮-->
@@ -54,7 +54,7 @@
         <div class="aline mt-1"></div>
 
     </n-space>
-    <Chat :chat-history="chatHistory"/>
+    <Chat :chat-history="chatHistory" class="md:mt-2"/>
 </template>
 
 <script setup>

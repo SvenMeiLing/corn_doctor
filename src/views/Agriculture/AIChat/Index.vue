@@ -1,7 +1,7 @@
 <template>
     <n-layout embedded class="p-[20px] h-full">
         <Title/>
-<!--        <Chat/>-->
+        <!--        <Chat/>-->
     </n-layout>
 
 </template>
