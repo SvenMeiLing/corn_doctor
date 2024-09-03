@@ -7,7 +7,7 @@
                      align="center"
                      :wrap-item="false" :wrap="false">
                 <!--当屏幕尺寸小于sm时出现菜单按钮-->
-                <n-button class="sm:block hidden p-1"
+                <n-button class="flex sm:hidden p-1"
                           :bordered="true"
                           @click="activate('left')"
                 >
@@ -41,7 +41,17 @@
                                 </template>
                             </n-avatar>
                         </template>
-                        <n-card title="用户信息">
+                        <n-card title="个人中心">
+                            <template #header-extra>
+                                <!--消息中心按钮xs尺寸时出现-->
+                                <n-badge class="sm:hidden flex" dot :offset="[-5.5,5.5]">
+                                    <n-button circle>
+                                        <n-icon>
+                                            <NewspaperOutline/>
+                                        </n-icon>
+                                    </n-button>
+                                </n-badge>
+                            </template>
                             <template #default>
                                 <!--用户名称-->
                                 <n-text tag="b" type="info" class="mr-1 text-2xl">@</n-text>
@@ -99,7 +109,6 @@
                         </n-button>
                     </n-badge>
                 </n-flex>
-            <div class="md:bg-red-400 sm:bg-sky-200">xxx</div>
             </n-space>
 
         </n-space>

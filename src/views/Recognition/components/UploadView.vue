@@ -124,10 +124,10 @@ onMounted(() => {
     <n-space
             :wrap-item="false"
             :wrap="false"
-            class="h-1/6 lg:h-2/6 sm:h-fit">
+            class="h-1/6 lg:h-2/6 sm:h-fit h-fit">
         <n-grid cols="1 s:1 m:1 xl:1" responsive="screen">
             <n-grid-item>
-                <n-space vertical align="start" class="xl:gap-1 2xl:gap-3">
+                <n-space vertical align="start" class="xl:gap-1 2xl:gap-3 gap-1">
 
                     <n-text class="text-lg lg:text-4xl font-thin 2xl:text-5xl" tag="div">上传植物相片, 以进行即时分析
                     </n-text>
