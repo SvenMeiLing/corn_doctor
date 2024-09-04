@@ -7,7 +7,7 @@
                      align="center"
                      :wrap-item="false" :wrap="false">
                 <!--当屏幕尺寸小于sm时出现菜单按钮-->
-                <n-button class="flex sm:hidden p-1"
+                <n-button class="flex md:hidden p-1"
                           :bordered="true"
                           @click="activate('left')"
                 >
