@@ -10,12 +10,67 @@
             <n-button class="text-sm" size="tiny" type="info">
                 疑难杂症 | 发帖提问
             </n-button>
+            <n-button
+                    class="text-sm"
+                    size="tiny"
+                    @click="showAside = !showAside"
+                    type="error">
+                热榜 | 频道
+            </n-button>
         </div>
 
+        <!--aside侧边区域 当xs时通过点击显示 -->
+        <transition
+                enter-from-class="opacity-0"
+                leave-to-class="opacity-0"
+                enter-active-class="transition duration-1000"
+                leave-active-class="transition duration-1000"
+        >
+            <aside v-if="showAside" class="gap-1 flex w-full sm:w-fit h-fit mb-1">
+                <n-list hoverable clickable class="w-fit ms-auto">
+                    <n-list-item>
+                        <!--热榜-->
+                        <n-thing title="热门帖子" content-style="margin-top: 10px;">
+                            <template #description>
+                                <n-space size="small" style="margin-top: 4px">
+                                    <n-tag :bordered="false" type="error" size="small">
+                                        1.吡虫啉对植物的伤害
+                                    </n-tag>
+                                    <n-tag :bordered="false" size="small">
+                                        2.华农101种子upup
+                                    </n-tag>
+                                    <n-tag :bordered="false" size="small">
+                                        3.华农101种子upup
+                                    </n-tag>
+                                    <n-tag :bordered="false" size="small">
+                                        4.先玉305销量再创佳绩upup
+                                    </n-tag>
+                                </n-space>
+                            </template>
+                        </n-thing>
+                        <n-divider class="mt-1 mb-1"/>
+                        <!--频道-->
+                        <n-thing title="推荐分类" content-style="margin-top: 10px;">
+                            <template #description>
+                                <n-space size="small" style="margin-top: 4px">
+                                    <n-text tag="ins">玉米</n-text>
+                                    <n-text tag="ins">草莓</n-text>
+                                    <n-text tag="ins">小麦</n-text>
+                                    <n-text tag="ins">水稻</n-text>
+                                    <n-text tag="ins">山药</n-text>
+                                    <n-text tag="ins">葡萄</n-text>
+                                    <n-text tag="ins">葡萄</n-text>
+                                </n-space>
+                            </template>
+                        </n-thing>
+                    </n-list-item>
+                </n-list>
+            </aside>
+        </transition>
 
         <!--主体-->
         <n-layout
-                content-class="gap-1 flex-nowrap"
+                content-class="sm:gap-1 flex-nowrap"
                 has-sider
         >
             <!--遇见一个bug， 布局总是自动换行， 加了has-sider就好了-->
@@ -24,7 +79,7 @@
             <n-layout
                     :native-scrollbar="false"
                     class="w-3/5 sm:w-auto"
-                    content-class="pe-3"
+                    content-class="sm:pe-3"
             >
                 <!--帖子组-->
                 <div class="lg:flex flex-nowrap gap-1">
@@ -198,8 +253,8 @@
                 </div>
             </n-layout>
 
-            <!--aside侧边区域-->
-            <aside class="gap-1 flex flex-col w-2/5 w-fit sm:w-fit h-fit">
+            <!--aside侧边区域 当display大于sm时显示 -->
+            <aside class="hidden gap-1 sm:flex flex-col w-min sm:w-fit h-fit">
                 <!--热榜-->
                 <n-list hoverable clickable class="w-full ms-auto">
                     <n-list-item>
@@ -230,13 +285,13 @@
                         <n-thing title="推荐分类" content-style="margin-top: 10px;">
                             <template #description>
                                 <n-space size="small" style="margin-top: 4px">
-                                   <n-text tag="ins">玉米</n-text>
-                                   <n-text tag="ins">草莓</n-text>
-                                   <n-text tag="ins">小麦</n-text>
-                                   <n-text tag="ins">水稻</n-text>
-                                   <n-text tag="ins">山药</n-text>
-                                   <n-text tag="ins">葡萄</n-text>
-                                   <n-text tag="ins">葡萄</n-text>
+                                    <n-text tag="ins">玉米</n-text>
+                                    <n-text tag="ins">草莓</n-text>
+                                    <n-text tag="ins">小麦</n-text>
+                                    <n-text tag="ins">水稻</n-text>
+                                    <n-text tag="ins">山药</n-text>
+                                    <n-text tag="ins">葡萄</n-text>
+                                    <n-text tag="ins">葡萄</n-text>
                                 </n-space>
                             </template>
                         </n-thing>
@@ -252,12 +307,14 @@
 </template>
 
 <script setup>
+// can we have a dinner together this weekend
 import {Heart, HeartOutline} from '@vicons/ionicons5'
 import {ChatFilled} from '@vicons/material'
 import {ref} from 'vue'
 import {genDateTime} from "@/utils/genDateTime.js";
 
 const liked = ref(false)
+const showAside = ref(false)
 
 const clickLike = () => {
     liked.value = !liked.value

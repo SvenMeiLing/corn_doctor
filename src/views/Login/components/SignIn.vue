@@ -49,10 +49,9 @@ const handleValidateClick = (e) => {
         if (!errors) {
             await userProfile.getAccessToken()
             await router.push("/")
-            window.$message.success("好");
         } else {
             console.log(errors);
-            window.$message.error("不好");
+            window.$message.error("登录失败");
         }
     });
 }
