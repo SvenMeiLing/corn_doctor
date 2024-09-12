@@ -71,6 +71,12 @@ REDIS_PORT = os.getenv("REDIS_PORT", 6379)
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 MAX_CONNECTIONS = os.getenv("MAX_CONNECTIONS")
 
+# ES(ElasticSearch)配置
+ES_HOSTS = os.getenv("ES_HOSTS", "https://127.0.0.1:9200")
+# 格式以逗号分隔 -> account,password
+ES_BASIC_AUTH = os.getenv("ES_BASIC_AUTH", ('zzy', '168168956')).split(",")
+CA_CERTS = os.getenv("CA_CERTS", APP_PATH / "core" / "http_ca.crt")
+
 # Celery配置
 BACKEND = os.getenv("BACKEND")
 BROKER = os.getenv("BROKER")

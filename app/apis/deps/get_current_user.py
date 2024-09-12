@@ -8,7 +8,7 @@ import jwt
 from aioredis import Redis
 from fastapi import HTTPException, Depends, Security
 from fastapi.security import OAuth2PasswordBearer
-from jwt import PyJWTError
+from jwt import PyJWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from starlette.status import HTTP_403_FORBIDDEN
@@ -42,20 +42,27 @@ async def get_current_user(
             token, config.SECRET_KEY, algorithms=[config.ALGORITHM]
         )
         token_data = TokenPayload(**payload)
-    except PyJWTError:
+
+    except ExpiredSignatureError:  # 过期错误
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN, detail="The token has expired"
+        )
+    except PyJWTError:  # 其他错误(无效token, 签名错误等)
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
         )
+
     user = await session.get(UserOrm, token_data.sub)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+
     return user
 
 
 async def token_revoking(
         redis: Redis, token: str
 ):
-    # 将 token 添加到布隆过滤器
+    # 将 token 添加到集合中
     await redis.sadd(config.BLACKLISTED_TOKENS, token)
     # 设置过期时间
     await redis.expire(config.BLACKLISTED_TOKENS, config.ACCESS_TOKEN_EXPIRE_MINUTES)
