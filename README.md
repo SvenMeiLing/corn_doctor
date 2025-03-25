@@ -9,5 +9,5 @@
 * :corn: 提供玉米作物的病虫害(高达十几种)检测
 * :airplane:可拓展至农用无人机摄像头或任意IOT设备(wait......)
 * :chart_with_downwards_trend:可视化的病害数据, 精确的分析
-* :popcorn:社区?AI?商城?
+* :popcorn:AI?
 * :wave:等待
